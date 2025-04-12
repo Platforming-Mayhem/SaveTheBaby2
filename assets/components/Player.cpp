@@ -287,8 +287,8 @@ namespace K
 		if (this->isJumping)
 		{
 			this->col->ResetVelocity();
-			this->direction.z = (-(this->jumpTime - 0.5f) + 0.5f) * 0.5f * K::Time::deltaTime() * 60.0f;
-			this->jumpTime += K::Time::deltaTime() * 2.5f;
+			this->direction.z = (-(this->jumpTime - 0.5f) + 0.5f) * K::Time::deltaTime() * 60.0f;
+			this->jumpTime += K::Time::deltaTime() * 5.0f;
 		}
 		else
 		{
