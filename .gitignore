@@ -38,3 +38,6 @@
 
 #Bin
 bin
+
+#Cmake
+assets/CMakeLists.txt
