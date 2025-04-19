@@ -1,6 +1,5 @@
 #pragma once
 #include <K_Engine.h>
-#include "Camera.h"
 #include "Mesh.h"
 
 namespace K 
@@ -8,8 +7,9 @@ namespace K
 	KC_API class Quit : public K::Component
 	{
 	private:
-		K::Camera* mainCamera;
 		K::Mesh* mesh;
+		float selectedTint[3];
+		float unSelectedTint[3];
 		bool selected = false;
 		std::string properties;
 	public:

@@ -9,6 +9,7 @@ namespace K
 	private:
 		K::Mesh* mesh;
 		float selectedTint[3];
+		float unSelectedTint[3];
 		bool selected = false;
 		std::string properties;
 	public:
