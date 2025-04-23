@@ -6,11 +6,6 @@ namespace K
 
 	Mesh::Mesh() 
 	{
-		if (glewInit() == GLEW_OK)
-			std::cout << "GLEW OK MATE" << std::endl;
-		else
-			std::cout << "Error GLEW" << std::endl;
-
 		this->vertices = K::Quad;
 
 		this->indices = { 0, 3, 1, 0, 2, 3 };
