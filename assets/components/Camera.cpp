@@ -108,15 +108,17 @@ namespace K
 
 			K::Editor::viewMatrix = &this->viewMatrix;
 
-			for (auto& mat : K::materialManager.materials) 
+			for (auto& matInfo : K::materialManager.materials) 
 			{
-				glUseProgram(mat.second.id);
+				K::Material* mat = (K::Material*)matInfo.second.dependenciesPointers[0];
 
-				glUniformMatrix4fv(glGetUniformLocation(mat.second.id, "viewMatrix"), 1, GL_FALSE, &this->viewMatrix.m[0][0]);
+				glUseProgram(mat->GetShader()->shader);
 
-				glUniformMatrix4fv(glGetUniformLocation(mat.second.id, "projectionMatrix"), 1, GL_FALSE, &this->projectionMatrix.m[0][0]);
+				glUniformMatrix4fv(mat->GetUniform("viewMatrix"), 1, GL_FALSE, &this->viewMatrix.m[0][0]);
 
-				glUniform3f(glGetUniformLocation(mat.second.id, "fogColour"), this->backgroundColour[0], this->backgroundColour[1], this->backgroundColour[2]);
+				glUniformMatrix4fv(mat->GetUniform("projectionMatrix"), 1, GL_FALSE, &this->projectionMatrix.m[0][0]);
+
+				glUniform3f(mat->GetUniform("fogColour"), this->backgroundColour[0], this->backgroundColour[1], this->backgroundColour[2]);
 			}
 
 			glUseProgram(this->parent->GetMaterial()->GetShader()->shader);

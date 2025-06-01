@@ -237,14 +237,14 @@ namespace K
 
 	void Sprite::RenderBind() 
 	{
-		glUniform1i(glGetUniformLocation(this->parent->GetMaterial()->GetShader()->shader, "canChromaKey"), this->canChromaKey);
-		glUniform1i(glGetUniformLocation(this->parent->GetMaterial()->GetShader()->shader, "hasNormal"), this->hasNormal);
-		glUniform3f(glGetUniformLocation(this->parent->GetMaterial()->GetShader()->shader, "chromaKey"), this->chromaKeyColour[0], this->chromaKeyColour[1], this->chromaKeyColour[2]);
-		glUniform1i(glGetUniformLocation(this->parent->GetMaterial()->GetShader()->shader, "hasTexture"), true);
+		glUniform1i(this->parent->GetMaterial()->GetUniform("canChromaKey"), this->canChromaKey);
+		glUniform1i(this->parent->GetMaterial()->GetUniform("hasNormal"), this->hasNormal);
+		glUniform3f(this->parent->GetMaterial()->GetUniform("chromaKey"), this->chromaKeyColour[0], this->chromaKeyColour[1], this->chromaKeyColour[2]);
+		glUniform1i(this->parent->GetMaterial()->GetUniform("hasTexture"), true);
 
-		glUniform1i(glGetUniformLocation(this->parent->GetMaterial()->GetShader()->shader, "texture0"), 0);
-		glUniform1i(glGetUniformLocation(this->parent->GetMaterial()->GetShader()->shader, "texture1"), 1);
-		glUniform1i(glGetUniformLocation(this->parent->GetMaterial()->GetShader()->shader, "frame"), this->frame);
+		glUniform1i(this->parent->GetMaterial()->GetUniform("texture0"), 0);
+		glUniform1i(this->parent->GetMaterial()->GetUniform("texture1"), 1);
+		glUniform1i(this->parent->GetMaterial()->GetUniform("frame"), this->frame);
 
 		this->renderTexture->Bind(0);
 
@@ -260,10 +260,10 @@ namespace K
 	{
 		this->renderTexture->Unbind();
 		this->normalTexture->Unbind();
-		glUniform1i(glGetUniformLocation(this->parent->GetMaterial()->GetShader()->shader, "frame"), 0);
-		glUniform1i(glGetUniformLocation(this->parent->GetMaterial()->GetShader()->shader, "hasTexture"), false);
-		glUniform1i(glGetUniformLocation(this->parent->GetMaterial()->GetShader()->shader, "hasNormal"), false);
-		glUniform1i(glGetUniformLocation(this->parent->GetMaterial()->GetShader()->shader, "canChromaKey"), false);
+		glUniform1i(this->parent->GetMaterial()->GetUniform("frame"), 0);
+		glUniform1i(this->parent->GetMaterial()->GetUniform("hasTexture"), false);
+		glUniform1i(this->parent->GetMaterial()->GetUniform("hasNormal"), false);
+		glUniform1i(this->parent->GetMaterial()->GetUniform("canChromaKey"), false);
 	}
 
 	void Sprite::Bind() 
