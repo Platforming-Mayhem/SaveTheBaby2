@@ -84,7 +84,7 @@ namespace K
 
 	void Mesh::Render() 
 	{
-		glDrawElements(GL_TRIANGLES, this->indices.size() * sizeof(int), GL_UNSIGNED_INT, nullptr);
+		glDrawElements(GL_TRIANGLES, this->indices.size(), GL_UNSIGNED_INT, nullptr);
 	}
 
 	void Mesh::RenderUnbind() 
