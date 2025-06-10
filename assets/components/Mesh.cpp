@@ -29,9 +29,6 @@ namespace K
 
 	void Mesh::RenderInit() 
 	{
-		if(this->shader == "")
-			this->shader = this->parent->GetMaterial()->GetLocation();
-
 		glCreateVertexArrays(1, &this->VAO);
 		glGenBuffers(1, &this->VBO);
 		glGenBuffers(1, &this->EBO);
@@ -156,8 +153,11 @@ namespace K
 				}
 				break;
 			case 4:
-				this->shader = temp;
-				this->parent->SetMaterial(new K::Material(this->shader));
+				if (temp != "") 
+				{
+					this->shader = temp;
+					this->parent->SetMaterial(new K::Material(this->shader));
+				}
 				break;
 			}
 		}

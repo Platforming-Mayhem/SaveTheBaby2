@@ -120,8 +120,6 @@ namespace K
 
 				glUniform3f(mat->GetUniform("fogColour"), this->backgroundColour[0], this->backgroundColour[1], this->backgroundColour[2]);
 			}
-
-			glUseProgram(this->parent->GetMaterial()->GetShader()->shader);
 		}
 	}
 

@@ -40,7 +40,6 @@ namespace K
 			glUseProgram(mat->GetShader()->shader);
 			glUniform3f(mat->GetUniform("lightDirection"), this->lightDirection.x, this->lightDirection.y, this->lightDirection.z);
 		}
-		glUseProgram(this->parent->GetMaterial()->GetShader()->shader);
 	}
 
 	void Light::Bind()

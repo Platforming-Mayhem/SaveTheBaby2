@@ -197,16 +197,6 @@ namespace K
 		{
 			this->renderTexture = newTexture;
 			this->ResetFrame();
-			if (this->renderTexture->GetFilePath().contains(".gif"))
-			{
-				this->parent->SetMaterial(new K::Material("shaders/3D.shader"));
-				glUseProgram(this->parent->GetMaterial()->GetShader()->shader);
-			}
-			else
-			{
-				this->parent->SetMaterial(new K::Material("shaders/2D.shader"));
-				glUseProgram(this->parent->GetMaterial()->GetShader()->shader);
-			}
 			if (reScale) 
 			{
 				this->parent->GetTransform()->scale->x = this->renderTexture->GetWidth() / 32.0f;
