@@ -248,12 +248,14 @@ namespace K
 
 	void Sprite::RenderUnbind() 
 	{
-		this->renderTexture->Unbind();
-		this->normalTexture->Unbind();
 		glUniform1i(this->parent->GetMaterial()->GetUniform("frame"), 0);
 		glUniform1i(this->parent->GetMaterial()->GetUniform("hasTexture"), false);
 		glUniform1i(this->parent->GetMaterial()->GetUniform("hasNormal"), false);
 		glUniform1i(this->parent->GetMaterial()->GetUniform("canChromaKey"), false);
+
+		this->renderTexture->Unbind();
+
+		this->normalTexture->Unbind();
 	}
 
 	void Sprite::Bind() 
