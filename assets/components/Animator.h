@@ -10,6 +10,7 @@ namespace K
 		std::string properties;
 		std::vector<K::Texture*> animations;
 		K::Texture* currentTexture;
+		bool loaded = false;
 		int selectedTexture = 0;
 	public:
 

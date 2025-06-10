@@ -29,13 +29,14 @@ namespace K
 
 	void K::Animator::Bind() 
 	{
-		if (!this->animations.empty())
+		if (!this->loaded)
 		{
 			for (auto i : this->animations)
 			{
 				i->Bind(0);
 				i->Unbind();
 			}
+			this->loaded = true;
 		}
 	}
 
