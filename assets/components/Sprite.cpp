@@ -227,14 +227,15 @@ namespace K
 
 	void Sprite::RenderBind() 
 	{
-		glUniform1i(this->parent->GetMaterial()->GetUniform("canChromaKey"), this->canChromaKey);
-		glUniform1i(this->parent->GetMaterial()->GetUniform("hasNormal"), this->hasNormal);
-		glUniform3f(this->parent->GetMaterial()->GetUniform("chromaKey"), this->chromaKeyColour[0], this->chromaKeyColour[1], this->chromaKeyColour[2]);
+		glUniform1i(this->parent->GetMaterial()->GetUniform("frame"), this->frame);
 		glUniform1i(this->parent->GetMaterial()->GetUniform("hasTexture"), true);
+		glUniform1i(this->parent->GetMaterial()->GetUniform("hasNormal"), this->hasNormal);
+		glUniform1i(this->parent->GetMaterial()->GetUniform("canChromaKey"), this->canChromaKey);
+
+		glUniform3f(this->parent->GetMaterial()->GetUniform("chromaKey"), this->chromaKeyColour[0], this->chromaKeyColour[1], this->chromaKeyColour[2]);
 
 		glUniform1i(this->parent->GetMaterial()->GetUniform("texture0"), 0);
 		glUniform1i(this->parent->GetMaterial()->GetUniform("texture1"), 1);
-		glUniform1i(this->parent->GetMaterial()->GetUniform("frame"), this->frame);
 
 		this->renderTexture->Bind(0);
 
