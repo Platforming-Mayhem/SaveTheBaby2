@@ -33,16 +33,16 @@ namespace K
 		//Draw Circle
 		glUseProgram(this->parent->GetMaterial()->GetShader()->shader);
 		glClear(GL_DEPTH_BUFFER_BIT);
-		glUniform1i(glGetUniformLocation(this->parent->GetMaterial()->GetShader()->shader, "canChromaKey"), false);
-		glUniform1i(glGetUniformLocation(this->parent->GetMaterial()->GetShader()->shader, "hasTexture"), false);
-		glUniform1i(glGetUniformLocation(this->parent->GetMaterial()->GetShader()->shader, "hasNormal"), false);
-		glUniform3f(glGetUniformLocation(this->parent->GetMaterial()->GetShader()->shader, "colorTint"), 0.0f, 1.0f, 0.0f);
+		glUniform1i(this->parent->GetMaterial()->GetUniform("canChromaKey"), false);
+		glUniform1i(this->parent->GetMaterial()->GetUniform("hasTexture"), false);
+		glUniform1i(this->parent->GetMaterial()->GetUniform("hasNormal"), false);
+		glUniform3f(this->parent->GetMaterial()->GetUniform("colorTint"), 0.0f, 1.0f, 0.0f);
 		K::Vector3 topPosition = this->GetPosition() + K::Vector3(0.0f, 0.0f, this->GetHeight() * 0.5f);
 		K::Vector3 bottomPosition = this->GetPosition() - K::Vector3(0.0f, 0.0f, this->GetHeight() * 0.5f);
 		K::Transform temp = K::Transform(new K::Vector3(), new K::Vector3(), new K::Vector3(1.0f, 1.0f, 1.0f));
 		*temp.position = topPosition;
 		temp.PassModelMatrix();
-		glUniformMatrix4fv(glGetUniformLocation(this->parent->GetMaterial()->GetShader()->shader, "modelMatrix"), 1, GL_FALSE, &temp.modelMatrix.m[0][0]);
+		glUniformMatrix4fv(this->parent->GetMaterial()->GetUniform("modelMatrix"), 1, GL_FALSE, &temp.modelMatrix.m[0][0]);
 		float theta = 360.0f / 16.0f;
 		glBegin(GL_LINE_STRIP);
 		for (int i = 0; i <= 8; i++)
@@ -52,7 +52,7 @@ namespace K
 		glEnd();
 		*temp.position = bottomPosition;
 		temp.PassModelMatrix();
-		glUniformMatrix4fv(glGetUniformLocation(this->parent->GetMaterial()->GetShader()->shader, "modelMatrix"), 1, GL_FALSE, &temp.modelMatrix.m[0][0]);
+		glUniformMatrix4fv(this->parent->GetMaterial()->GetUniform("modelMatrix"), 1, GL_FALSE, &temp.modelMatrix.m[0][0]);
 		glBegin(GL_LINE_STRIP);
 		for (int i = 8; i <= 16; i++)
 		{
@@ -61,7 +61,7 @@ namespace K
 		glEnd();
 		*temp.position = this->GetPosition();
 		temp.PassModelMatrix();
-		glUniformMatrix4fv(glGetUniformLocation(this->parent->GetMaterial()->GetShader()->shader, "modelMatrix"), 1, GL_FALSE, &temp.modelMatrix.m[0][0]);
+		glUniformMatrix4fv(this->parent->GetMaterial()->GetUniform("modelMatrix"), 1, GL_FALSE, &temp.modelMatrix.m[0][0]);
 
 		glBegin(GL_LINE_STRIP);
 		glVertex3f(this->radius, 0.0f, this->GetHeight() * 0.5f);
@@ -73,7 +73,7 @@ namespace K
 		glVertex3f(-this->radius, 0.0f, this->GetHeight() * -0.5f);
 		glEnd();
 
-		glUniform3f(glGetUniformLocation(this->parent->GetMaterial()->GetShader()->shader, "colorTint"), 1.0f, 1.0f, 1.0f);
+		glUniform3f(this->parent->GetMaterial()->GetUniform("colorTint"), 1.0f, 1.0f, 1.0f);
 	}
 
 	void Collider::CapsuleColliderStatic()
@@ -251,14 +251,14 @@ namespace K
 		//Draw Circle
 		glUseProgram(this->parent->GetMaterial()->GetShader()->shader);
 		glClear(GL_DEPTH_BUFFER_BIT);
-		glUniform1i(glGetUniformLocation(this->parent->GetMaterial()->GetShader()->shader, "canChromaKey"), false);
-		glUniform1i(glGetUniformLocation(this->parent->GetMaterial()->GetShader()->shader, "hasTexture"), false);
-		glUniform1i(glGetUniformLocation(this->parent->GetMaterial()->GetShader()->shader, "hasNormal"), false);
-		glUniform3f(glGetUniformLocation(this->parent->GetMaterial()->GetShader()->shader, "colorTint"), 0.0f, 1.0f, 0.0f);
+		glUniform1i(this->parent->GetMaterial()->GetUniform("canChromaKey"), false);
+		glUniform1i(this->parent->GetMaterial()->GetUniform("hasTexture"), false);
+		glUniform1i(this->parent->GetMaterial()->GetUniform("hasNormal"), false);
+		glUniform3f(this->parent->GetMaterial()->GetUniform("colorTint"), 0.0f, 1.0f, 0.0f);
 		K::Transform temp = K::Transform(new K::Vector3(), new K::Vector3(), new K::Vector3(1.0f, 1.0f, 1.0f));
 		*temp.position = this->GetPosition();
 		temp.PassModelMatrix();
-		glUniformMatrix4fv(glGetUniformLocation(this->parent->GetMaterial()->GetShader()->shader, "modelMatrix"), 1, GL_FALSE, &temp.modelMatrix.m[0][0]);
+		glUniformMatrix4fv(this->parent->GetMaterial()->GetUniform("modelMatrix"), 1, GL_FALSE, &temp.modelMatrix.m[0][0]);
 		float theta = 360.0f / 16.0f;
 		glBegin(GL_LINE_LOOP);
 		for (int i = 0; i < 16; i++)
@@ -271,23 +271,23 @@ namespace K
 		{
 			//DEBUGGING
 			glClear(GL_DEPTH_BUFFER_BIT);
-			glUniform1i(glGetUniformLocation(this->parent->GetMaterial()->GetShader()->shader, "canChromaKey"), false);
-			glUniform1i(glGetUniformLocation(this->parent->GetMaterial()->GetShader()->shader, "hasNormal"), false);
-			glUniform1i(glGetUniformLocation(this->parent->GetMaterial()->GetShader()->shader, "hasTexture"), false);
+			glUniform1i(this->parent->GetMaterial()->GetUniform("canChromaKey"), false);
+			glUniform1i(this->parent->GetMaterial()->GetUniform("hasNormal"), false);
+			glUniform1i(this->parent->GetMaterial()->GetUniform("hasTexture"), false);
 			for (K::ContactPoint pointOnLine : K::Physics::GetClosestPoints(this->GetPosition()))
 			{
 				if ((pointOnLine.position - this->GetPosition()).magnitude() < this->GetRadius())
 				{
-					glUniform3f(glGetUniformLocation(this->parent->GetMaterial()->GetShader()->shader, "colorTint"), 1.0f, 0.0f, 0.0f);
+					glUniform3f(this->parent->GetMaterial()->GetUniform("colorTint"), 1.0f, 0.0f, 0.0f);
 				}
 				else 
 				{
-					glUniform3f(glGetUniformLocation(this->parent->GetMaterial()->GetShader()->shader, "colorTint"), 0.0f, 0.0f, 1.0f);
+					glUniform3f(this->parent->GetMaterial()->GetUniform("colorTint"), 0.0f, 0.0f, 1.0f);
 				}
 				*temp.position = pointOnLine.position;
 				*temp.scale = K::Vector3(0.1f, 0.1f, 0.1f);
 				temp.PassModelMatrix();
-				glUniformMatrix4fv(glGetUniformLocation(this->parent->GetMaterial()->GetShader()->shader, "modelMatrix"), 1, GL_FALSE, &temp.modelMatrix.m[0][0]);
+				glUniformMatrix4fv(this->parent->GetMaterial()->GetUniform("modelMatrix"), 1, GL_FALSE, &temp.modelMatrix.m[0][0]);
 				glBegin(GL_QUADS);
 				glVertex3f(-1.0f, 0.0f, 1.0f);
 				glVertex3f(-1.0f, 0.0f, -1.0f);
@@ -296,7 +296,7 @@ namespace K
 				glEnd();
 			}
 		}
-		glUniform3f(glGetUniformLocation(this->parent->GetMaterial()->GetShader()->shader, "colorTint"), 1.0f, 1.0f, 1.0f);
+		glUniform3f(this->parent->GetMaterial()->GetUniform("colorTint"), 1.0f, 1.0f, 1.0f);
 	}
 
 	float Collider::GetRadius() 
@@ -315,28 +315,28 @@ namespace K
 		if (this->linePoints.size() > 0)
 		{
 			glClear(GL_DEPTH_BUFFER_BIT);
-			glUniform1i(glGetUniformLocation(this->parent->GetMaterial()->GetShader()->shader, "canChromaKey"), false);
-			glUniform1i(glGetUniformLocation(this->parent->GetMaterial()->GetShader()->shader, "hasNormal"), false);
-			glUniform1i(glGetUniformLocation(this->parent->GetMaterial()->GetShader()->shader, "hasTexture"), false);
+			glUniform1i(this->parent->GetMaterial()->GetUniform("canChromaKey"), false);
+			glUniform1i(this->parent->GetMaterial()->GetUniform("hasNormal"), false);
+			glUniform1i(this->parent->GetMaterial()->GetUniform("hasTexture"), false);
 			K::Transform transform = K::Transform(new K::Vector3(), new K::Vector3(), new K::Vector3(1.0f, 1.0f, 1.0f));
 			transform.PassModelMatrix();
-			glUniformMatrix4fv(glGetUniformLocation(this->parent->GetMaterial()->GetShader()->shader, "modelMatrix"), 1, GL_FALSE, &transform.modelMatrix.m[0][0]);
+			glUniformMatrix4fv(this->parent->GetMaterial()->GetUniform("modelMatrix"), 1, GL_FALSE, &transform.modelMatrix.m[0][0]);
 			for (int i = 0; i < this->linePoints.size(); i++)
 			{
 				if (i == this->selectedLine) 
 				{
-					glUniform3f(glGetUniformLocation(this->parent->GetMaterial()->GetShader()->shader, "colorTint"), 0.0f, 0.0f, 1.0f);
+					glUniform3f(this->parent->GetMaterial()->GetUniform("colorTint"), 0.0f, 0.0f, 1.0f);
 				}
 				else 
 				{
-					glUniform3f(glGetUniformLocation(this->parent->GetMaterial()->GetShader()->shader, "colorTint"), 0.0f, 1.0f, 0.0f);
+					glUniform3f(this->parent->GetMaterial()->GetUniform("colorTint"), 0.0f, 1.0f, 0.0f);
 				}
 				glBegin(GL_LINES);
 				glVertex3f(this->linePointsModelMatrix[i].point[0].x, 0.0f, this->linePointsModelMatrix[i].point[0].y);
 				glVertex3f(this->linePointsModelMatrix[i].point[1].x, 0.0f, this->linePointsModelMatrix[i].point[1].y);
 				glEnd();
 			}
-			glUniform3f(glGetUniformLocation(this->parent->GetMaterial()->GetShader()->shader, "colorTint"), 1.0f, 1.0f, 1.0f);
+			glUniform3f(this->parent->GetMaterial()->GetUniform("colorTint"), 1.0f, 1.0f, 1.0f);
 		}
 	}
 

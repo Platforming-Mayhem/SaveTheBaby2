@@ -75,8 +75,8 @@ namespace K
 		glBindVertexArray(this->VAO);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->EBO);
 
-		glUniform3f(glGetUniformLocation(this->parent->GetMaterial()->GetShader()->shader, "colorTint"), this->colourTint[0], this->colourTint[1], this->colourTint[2]);
-		glUniform1i(glGetUniformLocation(this->parent->GetMaterial()->GetShader()->shader, "canDepth"), this->canDepth);
+		glUniform3f(this->parent->GetMaterial()->GetUniform("colorTint"), this->colourTint[0], this->colourTint[1], this->colourTint[2]);
+		glUniform1i(this->parent->GetMaterial()->GetUniform("canDepth"), this->canDepth);
 	}
 
 	void Mesh::Render() 
