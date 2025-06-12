@@ -92,14 +92,14 @@ namespace K
 
 	void Shooter::Render() 
 	{
-		glUniform1i(this->parent->GetMaterial()->GetUniform("canChromaKey"), this->canChromaKey);
-		glUniform1i(this->parent->GetMaterial()->GetUniform("hasNormal"), false);
-		glUniform3f(this->parent->GetMaterial()->GetUniform("chromaKey"), this->chromaKeyColour[0], this->chromaKeyColour[1], this->chromaKeyColour[2]);
-		glUniform1i(this->parent->GetMaterial()->GetUniform("hasTexture"), true);
+		glUniform1i(this->parent->GetMaterial()->GetShader()->GetUniform("canChromaKey"), this->canChromaKey);
+		glUniform1i(this->parent->GetMaterial()->GetShader()->GetUniform("hasNormal"), false);
+		glUniform3f(this->parent->GetMaterial()->GetShader()->GetUniform("chromaKey"), this->chromaKeyColour[0], this->chromaKeyColour[1], this->chromaKeyColour[2]);
+		glUniform1i(this->parent->GetMaterial()->GetShader()->GetUniform("hasTexture"), true);
 
-		glUniform1i(this->parent->GetMaterial()->GetUniform("texture0"), 0);
-		glUniform1i(this->parent->GetMaterial()->GetUniform("texture1"), 1);
-		glUniform1i(this->parent->GetMaterial()->GetUniform("frame"), this->frame);
+		glUniform1i(this->parent->GetMaterial()->GetShader()->GetUniform("texture0"), 0);
+		glUniform1i(this->parent->GetMaterial()->GetShader()->GetUniform("texture1"), 1);
+		glUniform1i(this->parent->GetMaterial()->GetShader()->GetUniform("frame"), this->frame);
 
 		this->bulletTexture->Bind(0);
 
@@ -109,30 +109,30 @@ namespace K
 			{
 				K::Transform temp = K::Transform(new K::Vector3(bullet->GetLocation()), new K::Vector3(), new K::Vector3(1.0f, 1.0f, 1.0f));
 				temp.PassModelMatrix();
-				glUniformMatrix4fv(this->parent->GetMaterial()->GetUniform("modelMatrix"), 1, GL_FALSE, &temp.modelMatrix.m[0][0]);
+				glUniformMatrix4fv(this->parent->GetMaterial()->GetShader()->GetUniform("modelMatrix"), 1, GL_FALSE, &temp.modelMatrix.m[0][0]);
 				bullet->Render();
 			}
 		}
 
 		this->bulletTexture->Unbind();
 
-		glUniform1i(this->parent->GetMaterial()->GetUniform("frame"), 0);
-		glUniform1i(this->parent->GetMaterial()->GetUniform("hasTexture"), false);
-		glUniform1i(this->parent->GetMaterial()->GetUniform("hasNormal"), false);
-		glUniform1i(this->parent->GetMaterial()->GetUniform("canChromaKey"), false);
+		glUniform1i(this->parent->GetMaterial()->GetShader()->GetUniform("frame"), 0);
+		glUniform1i(this->parent->GetMaterial()->GetShader()->GetUniform("hasTexture"), false);
+		glUniform1i(this->parent->GetMaterial()->GetShader()->GetUniform("hasNormal"), false);
+		glUniform1i(this->parent->GetMaterial()->GetShader()->GetUniform("canChromaKey"), false);
 	}
 
 	void Shooter::RangeVisualisation() 
 	{
 		glUseProgram(this->parent->GetMaterial()->GetShader()->shader);
 		glClear(GL_DEPTH_BUFFER_BIT);
-		glUniform1i(this->parent->GetMaterial()->GetUniform("canChromaKey"), false);
-		glUniform1i(this->parent->GetMaterial()->GetUniform("hasTexture"), false);
-		glUniform3f(this->parent->GetMaterial()->GetUniform("colorTint"), 0.0f, 1.0f, 0.0f);
+		glUniform1i(this->parent->GetMaterial()->GetShader()->GetUniform("canChromaKey"), false);
+		glUniform1i(this->parent->GetMaterial()->GetShader()->GetUniform("hasTexture"), false);
+		glUniform3f(this->parent->GetMaterial()->GetShader()->GetUniform("colorTint"), 0.0f, 1.0f, 0.0f);
 		K::Transform temp = K::Transform(new K::Vector3(), new K::Vector3(), new K::Vector3(1.0f, 1.0f, 1.0f));
 		*temp.position = this->col->GetPosition();
 		temp.PassModelMatrix();
-		glUniformMatrix4fv(this->parent->GetMaterial()->GetUniform("modelMatrix"), 1, GL_FALSE, &temp.modelMatrix.m[0][0]);
+		glUniformMatrix4fv(this->parent->GetMaterial()->GetShader()->GetUniform("modelMatrix"), 1, GL_FALSE, &temp.modelMatrix.m[0][0]);
 
 		float theta = 360.0f / 16.0f;
 		glBegin(GL_LINE_LOOP);
@@ -172,7 +172,7 @@ namespace K
 		glVertex3f(rotatedMax.x, rotatedMax.y, rotatedMax.z);
 		glEnd();
 
-		glUniform3f(this->parent->GetMaterial()->GetUniform("colorTint"), 1.0f, 1.0f, 1.0f);
+		glUniform3f(this->parent->GetMaterial()->GetShader()->GetUniform("colorTint"), 1.0f, 1.0f, 1.0f);
 	}
 
 	void Shooter::UpdateEditor()

@@ -114,11 +114,11 @@ namespace K
 
 				glUseProgram(mat->GetShader()->shader);
 
-				glUniformMatrix4fv(mat->GetUniform("viewMatrix"), 1, GL_FALSE, &this->viewMatrix.m[0][0]);
+				glUniformMatrix4fv(mat->GetShader()->GetUniform("viewMatrix"), 1, GL_FALSE, &this->viewMatrix.m[0][0]);
 
-				glUniformMatrix4fv(mat->GetUniform("projectionMatrix"), 1, GL_FALSE, &this->projectionMatrix.m[0][0]);
+				glUniformMatrix4fv(mat->GetShader()->GetUniform("projectionMatrix"), 1, GL_FALSE, &this->projectionMatrix.m[0][0]);
 
-				glUniform3f(mat->GetUniform("fogColour"), this->backgroundColour[0], this->backgroundColour[1], this->backgroundColour[2]);
+				glUniform3f(mat->GetShader()->GetUniform("fogColour"), this->backgroundColour[0], this->backgroundColour[1], this->backgroundColour[2]);
 			}
 		}
 	}

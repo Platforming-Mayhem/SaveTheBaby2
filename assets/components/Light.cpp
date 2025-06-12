@@ -38,7 +38,7 @@ namespace K
 		{
 			K::Material* mat = (K::Material*)matInfo.second.dependenciesPointers[0];
 			glUseProgram(mat->GetShader()->shader);
-			glUniform3f(mat->GetUniform("lightDirection"), this->lightDirection.x, this->lightDirection.y, this->lightDirection.z);
+			glUniform3f(mat->GetShader()->GetUniform("lightDirection"), this->lightDirection.x, this->lightDirection.y, this->lightDirection.z);
 		}
 	}
 

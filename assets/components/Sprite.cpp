@@ -227,15 +227,15 @@ namespace K
 
 	void Sprite::RenderBind() 
 	{
-		glUniform1i(this->parent->GetMaterial()->GetUniform("frame"), this->frame);
-		glUniform1i(this->parent->GetMaterial()->GetUniform("hasTexture"), true);
-		glUniform1i(this->parent->GetMaterial()->GetUniform("hasNormal"), this->hasNormal);
-		glUniform1i(this->parent->GetMaterial()->GetUniform("canChromaKey"), this->canChromaKey);
+		glUniform1i(this->parent->GetMaterial()->GetShader()->GetUniform("frame"), this->frame);
+		glUniform1i(this->parent->GetMaterial()->GetShader()->GetUniform("hasTexture"), true);
+		glUniform1i(this->parent->GetMaterial()->GetShader()->GetUniform("hasNormal"), this->hasNormal);
+		glUniform1i(this->parent->GetMaterial()->GetShader()->GetUniform("canChromaKey"), this->canChromaKey);
 
-		glUniform3f(this->parent->GetMaterial()->GetUniform("chromaKey"), this->chromaKeyColour[0], this->chromaKeyColour[1], this->chromaKeyColour[2]);
+		glUniform3f(this->parent->GetMaterial()->GetShader()->GetUniform("chromaKey"), this->chromaKeyColour[0], this->chromaKeyColour[1], this->chromaKeyColour[2]);
 
-		glUniform1i(this->parent->GetMaterial()->GetUniform("texture0"), 0);
-		glUniform1i(this->parent->GetMaterial()->GetUniform("texture1"), 1);
+		glUniform1i(this->parent->GetMaterial()->GetShader()->GetUniform("texture0"), 0);
+		glUniform1i(this->parent->GetMaterial()->GetShader()->GetUniform("texture1"), 1);
 
 		this->renderTexture->Bind(0);
 
@@ -249,10 +249,10 @@ namespace K
 
 	void Sprite::RenderUnbind() 
 	{
-		glUniform1i(this->parent->GetMaterial()->GetUniform("frame"), 0);
-		glUniform1i(this->parent->GetMaterial()->GetUniform("hasTexture"), false);
-		glUniform1i(this->parent->GetMaterial()->GetUniform("hasNormal"), false);
-		glUniform1i(this->parent->GetMaterial()->GetUniform("canChromaKey"), false);
+		glUniform1i(this->parent->GetMaterial()->GetShader()->GetUniform("frame"), 0);
+		glUniform1i(this->parent->GetMaterial()->GetShader()->GetUniform("hasTexture"), false);
+		glUniform1i(this->parent->GetMaterial()->GetShader()->GetUniform("hasNormal"), false);
+		glUniform1i(this->parent->GetMaterial()->GetShader()->GetUniform("canChromaKey"), false);
 
 		this->renderTexture->Unbind();
 

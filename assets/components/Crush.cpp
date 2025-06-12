@@ -67,19 +67,19 @@ namespace K
 	{
 		glClear(GL_DEPTH_BUFFER_BIT);
 		glUseProgram(this->parent->GetMaterial()->GetShader()->shader);
-		glUniform1i(this->parent->GetMaterial()->GetUniform("canChromaKey"), false);
-		glUniform1i(this->parent->GetMaterial()->GetUniform("hasNormal"), false);
-		glUniform1i(this->parent->GetMaterial()->GetUniform("hasTexture"), false);
+		glUniform1i(this->parent->GetMaterial()->GetShader()->GetUniform("canChromaKey"), false);
+		glUniform1i(this->parent->GetMaterial()->GetShader()->GetUniform("hasNormal"), false);
+		glUniform1i(this->parent->GetMaterial()->GetShader()->GetUniform("hasTexture"), false);
 		K::Transform transform = K::Transform(new K::Vector3(), new K::Vector3(), new K::Vector3(1.0f, 1.0f, 1.0f));
 		transform.PassModelMatrix();
-		glUniformMatrix4fv(this->parent->GetMaterial()->GetUniform("modelMatrix"), 1, GL_FALSE, &transform.modelMatrix.m[0][0]);
+		glUniformMatrix4fv(this->parent->GetMaterial()->GetShader()->GetUniform("modelMatrix"), 1, GL_FALSE, &transform.modelMatrix.m[0][0]);
 
-		glUniform3f(this->parent->GetMaterial()->GetUniform("colorTint"), 0.0f, 1.0f, 0.0f);
+		glUniform3f(this->parent->GetMaterial()->GetShader()->GetUniform("colorTint"), 0.0f, 1.0f, 0.0f);
 		glBegin(GL_LINES);
 		glVertex3f(this->parent->GetTransform()->position->x, this->parent->GetTransform()->position->y, this->parent->GetTransform()->position->z);
 		glVertex3f(this->parent->GetTransform()->position->x + this->offset->x, this->parent->GetTransform()->position->y + this->offset->y, this->parent->GetTransform()->position->z + this->offset->z);
 		glEnd();
-		glUniform3f(this->parent->GetMaterial()->GetUniform("colorTint"), 1.0f, 1.0f, 1.0f);
+		glUniform3f(this->parent->GetMaterial()->GetShader()->GetUniform("colorTint"), 1.0f, 1.0f, 1.0f);
 	}
 
 	void Crush::UpdateEditor()
