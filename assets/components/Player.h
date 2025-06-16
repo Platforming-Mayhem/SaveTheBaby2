@@ -8,25 +8,12 @@ namespace K
 	KC_API class Player : public K::Component
 	{
 	private:
-		bool hasGravity = false;
-		bool flip = false;
-
-		int animationState = 0;
-
-		bool isJumping = false;
-		bool isSlowingDown = false;
-
 		float movementSpeed = 1.0f;
+		float accelerateTime = 0.0f;
+		float moveDirection = 0.0f;
+		float previousDirection = 0.0f;
 
-		float moveTime = 0.0f;
-
-		float jumpTime = 0.0f;
-
-		K::Vector3 originalScale;
-		K::Vector3 direction;
-		K::Animator* animator;
-		K::Collider* col;
-		K::Sprite* sprite;
+		K::Collider* col = nullptr;
 		std::string properties;
 	public:
 		Player();

@@ -1,4 +1,3 @@
 scenes\Watermark.JAWS
 scenes\Menu.JAWS
-scenes\SaveTheBaby_LevelOne.JAWS
-scenes\End.JAWS
+scenes\LevelOne.JAWS

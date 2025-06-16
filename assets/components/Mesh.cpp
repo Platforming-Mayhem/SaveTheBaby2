@@ -29,6 +29,10 @@ namespace K
 
 	void Mesh::RenderInit() 
 	{
+		this->shader = "shaders/2D.shader";
+
+		this->parent->SetMaterial(new K::Material(this->shader));
+
 		glCreateVertexArrays(1, &this->VAO);
 		glGenBuffers(1, &this->VBO);
 		glGenBuffers(1, &this->EBO);
