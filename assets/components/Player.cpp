@@ -119,8 +119,8 @@ namespace K
 		//Player Accelerates
 		if (this->decelerateTime == 0.0f) 
 		{
-			this->parent->GetTransform()->position->x += SineAccelerateByTime(this->accelerateTime, 1.6f, 0.3f) * K::Time::deltaTime() * this->movementSpeed * this->moveDirection;
-			this->previousSpeed = SineAccelerateByTime(this->accelerateTime, 1.6f, 0.3f);
+			this->previousSpeed = SineAccelerateByTime(this->accelerateTime, 1.0f, 0.3f);
+			this->parent->GetTransform()->position->x += this->previousSpeed * K::Time::deltaTime() * this->movementSpeed * this->moveDirection;
 		}
 		//Player Decelerates
 		else if (this->accelerateTime == 0.0f)
