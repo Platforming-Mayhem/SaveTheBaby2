@@ -33,6 +33,8 @@ namespace K
 		std::vector<K::Line> linePointsModelMatrix;
 		std::string properties;
 	public:
+		float angleUp = 0.0f;
+		float angleRight = 0.0f;
 		K::Collider* other = nullptr;
 
 		enum class ColliderType { Circle = 0, Line = 1, Capsule = 2};

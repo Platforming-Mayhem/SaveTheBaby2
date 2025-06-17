@@ -309,7 +309,7 @@ namespace K
 			{
 				K::Vector3 originToJ = J.normal.normalise() * -(J.position - position).magnitude();
 				K::Vector3 normal = J.normal.normalise();
-				if (originToJ.magnitude() < col->GetRadius())
+				if (originToJ.magnitude() <= col->GetRadius())
 				{
 					K::Vector3 up = K::Vector3(0.0f, 0.0f, 1.0f);
 					K::Vector3 right = K::Vector3(1.0f, 0.0f, 0.0f);
@@ -323,6 +323,8 @@ namespace K
 					{
 						col->SetIsColliding(true);
 						col->other = J.other;
+						col->angleRight = angle;
+						col->angleUp = angle1;
 						count++;
 					}
 				}
@@ -351,10 +353,12 @@ namespace K
 					{
 						col->SetIsColliding(true);
 						col->other = J.other;
+						col->angleRight = angle;
+						col->angleUp = angle1;
 						count++;
 					}
 				}
-				else if (originToJ.magnitude() == col->GetRadius() && originToJ.z > 0.0f)
+				else if (originToJ.magnitude() == col->GetRadius() && originToJ.z > 0.0f) 
 				{
 					K::Vector3 up = K::Vector3(0.0f, 0.0f, 1.0f);
 					K::Vector3 right = K::Vector3(1.0f, 0.0f, 0.0f);
@@ -365,6 +369,8 @@ namespace K
 					{
 						col->SetIsColliding(true);
 						col->other = J.other;
+						col->angleRight = angle;
+						col->angleUp = angle1;
 						count++;
 					}
 				}
@@ -387,6 +393,8 @@ namespace K
 					{
 						col->SetIsColliding(true);
 						col->other = J.other;
+						col->angleRight = angle;
+						col->angleUp = angle1;
 						count++;
 					}
 				}
@@ -401,6 +409,8 @@ namespace K
 					{
 						col->SetIsColliding(true);
 						col->other = J.other;
+						col->angleRight = angle;
+						col->angleUp = angle1;
 						count++;
 					}
 				}
@@ -422,7 +432,7 @@ namespace K
 				}
 			}
 		}
-		if (offsetAmount.magnitude() <= 0.0f || count == 0) 
+		if (count == 0) 
 		{
 			col->SetIsColliding(false);
 			col->other = nullptr;

@@ -76,13 +76,13 @@ namespace K
 			return -(((x + duration) * (x - duration)) / (duration * duration));
 	}
 
-	void Player::Update() 
+	void Player::HorizontalMovement() 
 	{
 		if (InputManager::IsKeyPressedDown(GLFW_KEY_RIGHT))
 		{
 			this->moveDirection += 1.0f;
 		}
-		else if (InputManager::IsKeyReleased(GLFW_KEY_RIGHT)) 
+		else if (InputManager::IsKeyReleased(GLFW_KEY_RIGHT))
 		{
 			this->moveDirection -= 1.0f;
 			this->accelerateTime = 0.0f;
@@ -98,36 +98,43 @@ namespace K
 			this->accelerateTime = 0.0f;
 			this->decelerateTime += K::Time::deltaTime();
 		}
-		if (this->moveDirection != 0.0f) 
+		if (this->moveDirection != 0.0f)
 		{
 			if (this->decelerateTime > 0.0f && this->decelerateTime <= this->decelerationSpeed)
 			{
 				this->decelerateTime += K::Time::deltaTime();
 				this->accelerateTime = 0.0f;
 			}
-			else 
+			else
 			{
 				this->accelerateTime += K::Time::deltaTime();
 				this->decelerateTime = 0.0f;
 			}
 		}
-		else 
+		else
 		{
 			this->accelerateTime = 0.0f;
 			this->decelerateTime += K::Time::deltaTime();
 		}
 		//Player Accelerates
-		if (this->decelerateTime == 0.0f) 
+		if (this->decelerateTime == 0.0f)
 		{
 			this->previousSpeed = SineAccelerateByTime(this->accelerateTime, 1.0f, 0.3f);
-			this->parent->GetTransform()->position->x += this->previousSpeed * K::Time::deltaTime() * this->movementSpeed * this->moveDirection;
+			this->parent->GetTransform()->position->x += this->previousSpeed * K::Time::deltaTime() * this->movementSpeed * this->moveDirection * this->col->angleUp;
+			this->parent->GetTransform()->position->z += this->previousSpeed * K::Time::deltaTime() * this->movementSpeed * this->moveDirection * -this->col->angleRight;
 		}
 		//Player Decelerates
 		else if (this->accelerateTime == 0.0f)
 		{
-			this->decelerationSpeed = this->previousSpeed * 0.3f;
-			this->parent->GetTransform()->position->x += SineDecelerateByTime(this->decelerateTime, this->decelerationSpeed) * this->previousSpeed * K::Time::deltaTime() * this->movementSpeed * this->previousDirection;
+			this->decelerationSpeed = this->previousSpeed * 0.2f;
+			this->parent->GetTransform()->position->x += SineDecelerateByTime(this->decelerateTime, this->decelerationSpeed) * this->previousSpeed * K::Time::deltaTime() * this->movementSpeed * this->previousDirection * this->col->angleUp;
+			this->parent->GetTransform()->position->z += SineDecelerateByTime(this->decelerateTime, this->decelerationSpeed) * this->previousSpeed * K::Time::deltaTime() * this->movementSpeed * this->previousDirection * -this->col->angleRight;
 		}
+	}
+
+	void Player::Update() 
+	{
+		HorizontalMovement();
 	}
 
 	void Player::Unbind() 
