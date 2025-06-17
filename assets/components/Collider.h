@@ -35,6 +35,7 @@ namespace K
 	public:
 		float angleUp = 0.0f;
 		float angleRight = 0.0f;
+		K::Vector3 collisionResolution;
 		K::Collider* other = nullptr;
 
 		enum class ColliderType { Circle = 0, Line = 1, Capsule = 2};
