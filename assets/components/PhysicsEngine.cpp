@@ -354,6 +354,20 @@ namespace K
 						count++;
 					}
 				}
+				else if (originToJ.magnitude() == col->GetRadius() && originToJ.z > 0.0f)
+				{
+					K::Vector3 up = K::Vector3(0.0f, 0.0f, 1.0f);
+					K::Vector3 right = K::Vector3(1.0f, 0.0f, 0.0f);
+					float angle = K::Vector3::DotProduct(normal, right);
+					float angle1 = K::Vector3::DotProduct(normal, up);
+
+					if (angle < 0.8f && angle > -0.8f && angle1 > 0.0f)
+					{
+						col->SetIsColliding(true);
+						col->other = J.other;
+						count++;
+					}
+				}
 			}
 			for (K::ContactPoint J : K::Physics::GetClosestPoints(bottomPosition, avoidLayer))
 			{
@@ -368,6 +382,20 @@ namespace K
 
 					K::Vector3 contactResolution = originToJ + (normal * col->GetRadius());
 					offsetAmount += contactResolution;
+
+					if (angle < 0.8f && angle > -0.8f && angle1 > 0.0f)
+					{
+						col->SetIsColliding(true);
+						col->other = J.other;
+						count++;
+					}
+				}
+				else if (originToJ.magnitude() == col->GetRadius() && originToJ.z < 0.0f) 
+				{
+					K::Vector3 up = K::Vector3(0.0f, 0.0f, 1.0f);
+					K::Vector3 right = K::Vector3(1.0f, 0.0f, 0.0f);
+					float angle = K::Vector3::DotProduct(normal, right);
+					float angle1 = K::Vector3::DotProduct(normal, up);
 
 					if (angle < 0.8f && angle > -0.8f && angle1 > 0.0f)
 					{
@@ -394,7 +422,7 @@ namespace K
 				}
 			}
 		}
-		if (offsetAmount.magnitude() <= 0.0f || count == 0) 
+		if (offsetAmount.magnitude() <= 0.0f && count == 0) 
 		{
 			col->SetIsColliding(false);
 			col->other = nullptr;
