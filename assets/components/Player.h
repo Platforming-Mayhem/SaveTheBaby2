@@ -9,7 +9,6 @@ namespace K
 	{
 	private:
 		float movementSpeed = 1.0f;
-		float currentSpeed = 0.0f;
 		float decelerationSpeed = 0.3f;
 		float accelerateTime = 0.0f;
 		float decelerateTime = 0.0f;
@@ -25,8 +24,6 @@ namespace K
 		~Player();
 
 		float GetMovementSpeed();
-
-		void HorizontalMovement();
 
 		void Init() override;
 
