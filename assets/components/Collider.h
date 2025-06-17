@@ -22,6 +22,7 @@ namespace K
 	{
 	private:
 		bool isColliding = false;
+		bool isHittingWall = false;
 		bool isStatic = true;
 		K::Vector3 offset = K::Vector3();
 		float time = 0.0f;
@@ -68,11 +69,15 @@ namespace K
 
 		float GetHeight();
 
+		bool IsHittingWall();
+
 		bool IsColliding();
 
 		bool IsStatic();
 
 		void SetIsColliding(bool value);
+
+		void SetIsHittingWall(bool value);
 
 		void LineEditor();
 

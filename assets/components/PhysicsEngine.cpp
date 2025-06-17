@@ -322,10 +322,15 @@ namespace K
 					if (angle < 0.8f && angle > -0.8f && angle1 > 0.0f)
 					{
 						col->SetIsColliding(true);
+						col->SetIsHittingWall(false);
 						col->other = J.other;
 						col->angleRight = angle;
 						col->angleUp = angle1;
 						count++;
+					}
+					else
+					{
+						col->SetIsHittingWall(true);
 					}
 				}
 			}
@@ -352,10 +357,15 @@ namespace K
 					if (angle < 0.8f && angle > -0.8f && angle1 > 0.0f)
 					{
 						col->SetIsColliding(true);
+						col->SetIsHittingWall(false);
 						col->other = J.other;
 						col->angleRight = angle;
 						col->angleUp = angle1;
 						count++;
+					}
+					else
+					{
+						col->SetIsHittingWall(true);
 					}
 				}
 				else if (originToJ.magnitude() == col->GetRadius() && originToJ.z > 0.0f) 
@@ -368,10 +378,15 @@ namespace K
 					if (angle < 0.8f && angle > -0.8f && angle1 > 0.0f)
 					{
 						col->SetIsColliding(true);
+						col->SetIsHittingWall(false);
 						col->other = J.other;
 						col->angleRight = angle;
 						col->angleUp = angle1;
 						count++;
+					}
+					else
+					{
+						col->SetIsHittingWall(true);
 					}
 				}
 			}
@@ -392,10 +407,15 @@ namespace K
 					if (angle < 0.8f && angle > -0.8f && angle1 > 0.0f)
 					{
 						col->SetIsColliding(true);
+						col->SetIsHittingWall(false);
 						col->other = J.other;
 						col->angleRight = angle;
 						col->angleUp = angle1;
 						count++;
+					}
+					else
+					{
+						col->SetIsHittingWall(true);
 					}
 				}
 				else if (originToJ.magnitude() == col->GetRadius() && originToJ.z < 0.0f) 
@@ -408,10 +428,15 @@ namespace K
 					if (angle < 0.8f && angle > -0.8f && angle1 > 0.0f)
 					{
 						col->SetIsColliding(true);
+						col->SetIsHittingWall(false);
 						col->other = J.other;
 						col->angleRight = angle;
 						col->angleUp = angle1;
 						count++;
+					}
+					else 
+					{
+						col->SetIsHittingWall(true);
 					}
 				}
 			}

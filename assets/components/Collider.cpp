@@ -446,6 +446,16 @@ namespace K
 		this->isColliding = value;
 	}
 
+	void Collider::SetIsHittingWall(bool value) 
+	{
+		this->isHittingWall = value;
+	}
+
+	bool Collider::IsHittingWall() 
+	{
+		return this->isHittingWall;
+	}
+
 	bool Collider::IsColliding() 
 	{
 		return this->isColliding;

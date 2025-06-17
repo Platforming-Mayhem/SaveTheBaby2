@@ -98,6 +98,21 @@ namespace K
 			this->accelerateTime = 0.0f;
 			this->decelerateTime += K::Time::deltaTime();
 		}
+
+		if (this->col->IsHittingWall()) 
+		{
+			if (this->col->collisionResolution.x > 0.0f)
+			{
+				this->col->angleUp = std::clamp(this->col->angleUp, 0.0f, 1.0f);
+				this->decelerateTime = this->decelerationSpeed;
+			}
+			else if (this->col->collisionResolution.x < 0.0f)
+			{
+				this->col->angleUp = std::clamp(this->col->angleUp, -1.0f, 0.0f);
+				this->decelerateTime = this->decelerationSpeed;
+			}
+		}
+
 		if (this->moveDirection != 0.0f)
 		{
 			if (this->decelerateTime > 0.0f && this->decelerateTime <= this->decelerationSpeed)
@@ -126,7 +141,7 @@ namespace K
 		//Player Decelerates
 		else if (this->accelerateTime == 0.0f)
 		{
-			this->decelerationSpeed = this->previousSpeed * 0.2f;
+			this->decelerationSpeed = this->previousSpeed * 0.3f;
 			this->parent->GetTransform()->position->x += SineDecelerateByTime(this->decelerateTime, this->decelerationSpeed) * this->previousSpeed * K::Time::deltaTime() * this->movementSpeed * this->previousDirection * this->col->angleUp;
 			this->parent->GetTransform()->position->z += SineDecelerateByTime(this->decelerateTime, this->decelerationSpeed) * this->previousSpeed * K::Time::deltaTime() * this->movementSpeed * this->previousDirection * -this->col->angleRight;
 		}
