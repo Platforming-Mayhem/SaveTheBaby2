@@ -9,9 +9,12 @@ namespace K
 	{
 	private:
 		float movementSpeed = 1.0f;
+		float decelerationSpeed = 0.3f;
 		float accelerateTime = 0.0f;
+		float decelerateTime = 0.0f;
 		float moveDirection = 0.0f;
 		float previousDirection = 0.0f;
+		float previousSpeed = 0.0f;
 
 		K::Collider* col = nullptr;
 		std::string properties;

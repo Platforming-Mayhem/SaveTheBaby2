@@ -60,12 +60,20 @@ namespace K
 		
 	}
 
-	float SineByTime(float x, float duration, float snipAmount = 0.0f) 
+	float SineAccelerateByTime(float x, float duration, float snipAmount = 0.0f) 
 	{
 		if (x >= duration)
 			return 1.0f;
 		else
 			return -((x + snipAmount) * (x - 2 * duration - snipAmount))/((duration + snipAmount)*(duration + snipAmount));
+	}
+
+	float SineDecelerateByTime(float x, float duration)
+	{
+		if (x >= duration)
+			return 0.0f;
+		else
+			return -(((x + duration) * (x - duration)) / (duration * duration));
 	}
 
 	void Player::Update() 
@@ -78,6 +86,7 @@ namespace K
 		{
 			this->moveDirection -= 1.0f;
 			this->accelerateTime = 0.0f;
+			this->decelerateTime += K::Time::deltaTime();
 		}
 		if (InputManager::IsKeyPressedDown(GLFW_KEY_LEFT))
 		{
@@ -87,22 +96,50 @@ namespace K
 		{
 			this->moveDirection -= -1.0f;
 			this->accelerateTime = 0.0f;
+			this->decelerateTime += K::Time::deltaTime();
 		}
 		if (this->moveDirection != 0.0f) 
 		{
-			this->accelerateTime += K::Time::deltaTime();
+			if (this->decelerateTime > 0.0f && this->decelerateTime <= this->decelerationSpeed)
+			{
+				this->decelerateTime += K::Time::deltaTime();
+				this->accelerateTime = 0.0f;
+			}
+			else 
+			{
+				this->accelerateTime += K::Time::deltaTime();
+				this->decelerateTime = 0.0f;
+			}
 		}
 		else 
 		{
 			this->accelerateTime = 0.0f;
+			this->decelerateTime += K::Time::deltaTime();
 		}
-		//Player Accelerate
-		this->parent->GetTransform()->position->x += SineByTime(this->accelerateTime, 1.6f, 0.3f) * K::Time::deltaTime() * this->movementSpeed * this->moveDirection;
+		//Player Accelerates
+		if (this->decelerateTime == 0.0f) 
+		{
+			this->parent->GetTransform()->position->x += SineAccelerateByTime(this->accelerateTime, 1.6f, 0.3f) * K::Time::deltaTime() * this->movementSpeed * this->moveDirection;
+			this->previousSpeed = SineAccelerateByTime(this->accelerateTime, 1.6f, 0.3f);
+		}
+		//Player Decelerates
+		else if (this->accelerateTime == 0.0f)
+		{
+			if (this->previousSpeed < 0.7f) 
+			{
+				this->decelerationSpeed = 0.0f;
+			}
+			else 
+			{
+				this->decelerationSpeed = 0.3f;
+			}
+			this->parent->GetTransform()->position->x += SineDecelerateByTime(this->decelerateTime, this->decelerationSpeed) * this->previousSpeed * K::Time::deltaTime() * this->movementSpeed * this->previousDirection;
+		}
 	}
 
 	void Player::Unbind() 
 	{
-		if (this->moveDirection != 0.0f) 
+		if (this->moveDirection != 0.0f && this->decelerateTime == 0.0f) 
 		{
 			this->previousDirection = this->moveDirection;
 		}
