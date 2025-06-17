@@ -125,14 +125,7 @@ namespace K
 		//Player Decelerates
 		else if (this->accelerateTime == 0.0f)
 		{
-			if (this->previousSpeed < 0.7f) 
-			{
-				this->decelerationSpeed = 0.0f;
-			}
-			else 
-			{
-				this->decelerationSpeed = 0.3f;
-			}
+			this->decelerationSpeed = this->previousSpeed * 0.3f;
 			this->parent->GetTransform()->position->x += SineDecelerateByTime(this->decelerateTime, this->decelerationSpeed) * this->previousSpeed * K::Time::deltaTime() * this->movementSpeed * this->previousDirection;
 		}
 	}

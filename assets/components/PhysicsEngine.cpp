@@ -422,7 +422,7 @@ namespace K
 				}
 			}
 		}
-		if (offsetAmount.magnitude() <= 0.0f && count == 0) 
+		if (offsetAmount.magnitude() <= 0.0f || count == 0) 
 		{
 			col->SetIsColliding(false);
 			col->other = nullptr;
