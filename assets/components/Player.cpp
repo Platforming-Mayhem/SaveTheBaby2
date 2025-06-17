@@ -104,11 +104,13 @@ namespace K
 			if (this->col->collisionResolution.x > 0.0f)
 			{
 				this->col->angleUp = std::clamp(this->col->angleUp, 0.0f, 1.0f);
+				this->accelerateTime = 0.0f;
 				this->decelerateTime = this->decelerationSpeed;
 			}
 			else if (this->col->collisionResolution.x < 0.0f)
 			{
 				this->col->angleUp = std::clamp(this->col->angleUp, -1.0f, 0.0f);
+				this->accelerateTime = 0.0f;
 				this->decelerateTime = this->decelerationSpeed;
 			}
 		}

@@ -454,6 +454,7 @@ namespace K
 					offsetAmount += contactResolution;
 					col->other = J.other;
 					count++;
+					col->SetIsHittingWall(true);
 				}
 			}
 		}
