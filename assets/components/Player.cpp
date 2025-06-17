@@ -76,65 +76,79 @@ namespace K
 			return -(((x + duration) * (x - duration)) / (duration * duration));
 	}
 
+	void Player::HorizontalMovement() 
+	{
+		if (this->col->IsColliding())
+		{
+			if (InputManager::IsKeyPressedDown(GLFW_KEY_RIGHT))
+			{
+				this->moveDirection += 1.0f;
+			}
+			else if (InputManager::IsKeyReleased(GLFW_KEY_RIGHT))
+			{
+				this->moveDirection -= 1.0f;
+				this->accelerateTime = 0.0f;
+				this->decelerateTime += K::Time::deltaTime();
+			}
+			if (InputManager::IsKeyPressedDown(GLFW_KEY_LEFT))
+			{
+				this->moveDirection += -1.0f;
+			}
+			else if (InputManager::IsKeyReleased(GLFW_KEY_LEFT))
+			{
+				this->moveDirection -= -1.0f;
+				this->accelerateTime = 0.0f;
+				this->decelerateTime += K::Time::deltaTime();
+			}
+			if (this->moveDirection != 0.0f)
+			{
+				if (this->decelerateTime > 0.0f && this->decelerateTime <= this->decelerationSpeed)
+				{
+					this->decelerateTime += K::Time::deltaTime();
+					this->accelerateTime = 0.0f;
+				}
+				else
+				{
+					this->accelerateTime += K::Time::deltaTime();
+					this->decelerateTime = 0.0f;
+				}
+			}
+			else
+			{
+				this->accelerateTime = 0.0f;
+				this->decelerateTime += K::Time::deltaTime();
+			}
+			//Player Accelerates
+			if (this->decelerateTime == 0.0f)
+			{
+				this->previousSpeed = SineAccelerateByTime(this->accelerateTime, 1.0f, 0.3f);
+				this->currentSpeed = this->previousSpeed * K::Time::deltaTime() * this->movementSpeed * this->moveDirection;
+				this->parent->GetTransform()->position->x += this->currentSpeed;
+			}
+			//Player Decelerates
+			else if (this->accelerateTime == 0.0f)
+			{
+				if (this->previousSpeed < 0.7f)
+				{
+					this->decelerationSpeed = 0.0f;
+				}
+				else
+				{
+					this->decelerationSpeed = 0.3f;
+				}
+				this->currentSpeed = SineDecelerateByTime(this->decelerateTime, this->decelerationSpeed) * this->previousSpeed * K::Time::deltaTime() * this->movementSpeed * this->previousDirection;
+				this->parent->GetTransform()->position->x += this->currentSpeed;
+			}
+		}
+		else
+		{
+			this->parent->GetTransform()->position->x += this->currentSpeed;
+		}
+	}
+
 	void Player::Update() 
 	{
-		if (InputManager::IsKeyPressedDown(GLFW_KEY_RIGHT))
-		{
-			this->moveDirection += 1.0f;
-		}
-		else if (InputManager::IsKeyReleased(GLFW_KEY_RIGHT)) 
-		{
-			this->moveDirection -= 1.0f;
-			this->accelerateTime = 0.0f;
-			this->decelerateTime += K::Time::deltaTime();
-		}
-		if (InputManager::IsKeyPressedDown(GLFW_KEY_LEFT))
-		{
-			this->moveDirection += -1.0f;
-		}
-		else if (InputManager::IsKeyReleased(GLFW_KEY_LEFT))
-		{
-			this->moveDirection -= -1.0f;
-			this->accelerateTime = 0.0f;
-			this->decelerateTime += K::Time::deltaTime();
-		}
-		if (this->moveDirection != 0.0f) 
-		{
-			if (this->decelerateTime > 0.0f && this->decelerateTime <= this->decelerationSpeed)
-			{
-				this->decelerateTime += K::Time::deltaTime();
-				this->accelerateTime = 0.0f;
-			}
-			else 
-			{
-				this->accelerateTime += K::Time::deltaTime();
-				this->decelerateTime = 0.0f;
-			}
-		}
-		else 
-		{
-			this->accelerateTime = 0.0f;
-			this->decelerateTime += K::Time::deltaTime();
-		}
-		//Player Accelerates
-		if (this->decelerateTime == 0.0f) 
-		{
-			this->previousSpeed = SineAccelerateByTime(this->accelerateTime, 1.0f, 0.3f);
-			this->parent->GetTransform()->position->x += this->previousSpeed * K::Time::deltaTime() * this->movementSpeed * this->moveDirection;
-		}
-		//Player Decelerates
-		else if (this->accelerateTime == 0.0f)
-		{
-			if (this->previousSpeed < 0.7f) 
-			{
-				this->decelerationSpeed = 0.0f;
-			}
-			else 
-			{
-				this->decelerationSpeed = 0.3f;
-			}
-			this->parent->GetTransform()->position->x += SineDecelerateByTime(this->decelerateTime, this->decelerationSpeed) * this->previousSpeed * K::Time::deltaTime() * this->movementSpeed * this->previousDirection;
-		}
+		HorizontalMovement();
 	}
 
 	void Player::Unbind() 
