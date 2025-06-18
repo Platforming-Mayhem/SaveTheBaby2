@@ -166,6 +166,7 @@ namespace K
 				break;
 			}
 			ImGui::Checkbox("Is Colliding", &this->isColliding);
+			ImGui::Checkbox("Is Hitting Wall", &this->isHittingWall);
 		}
 	}
 

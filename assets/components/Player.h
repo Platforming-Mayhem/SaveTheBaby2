@@ -12,6 +12,7 @@ namespace K
 		float jumpHeight = 12.0f;
 
 		float moveDirection = 0.0f;
+		float wallStopper = 1.0f;
 
 		float currentSpeed = 0.0f;
 		float decelerationSpeed = 0.3f;

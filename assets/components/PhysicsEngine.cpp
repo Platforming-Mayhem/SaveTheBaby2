@@ -301,7 +301,8 @@ namespace K
 	K::Vector3 Physics::GetCollisionResolution(K::Collider* col, std::vector<K::Layer> avoidLayer)
 	{
 		K::Vector3 offsetAmount = K::Vector3();
-		int count = 0;
+		int groundCount = 0;
+		int wallCount = 0;
 		if (col->colliderType == K::Collider::ColliderType::Circle) 
 		{
 			K::Vector3 position = col->GetPosition();
@@ -322,15 +323,17 @@ namespace K
 					if (angle < 0.8f && angle > -0.8f && angle1 > 0.0f)
 					{
 						col->SetIsColliding(true);
-						col->SetIsHittingWall(false);
 						col->other = J.other;
 						col->angleRight = angle;
 						col->angleUp = angle1;
-						count++;
+						groundCount++;
 					}
 					else
 					{
 						col->SetIsHittingWall(true);
+						col->wallRight = -angle;
+						col->wallUp = angle1;
+						wallCount++;
 					}
 				}
 			}
@@ -357,18 +360,21 @@ namespace K
 					if (angle < 0.8f && angle > -0.8f && angle1 > 0.0f)
 					{
 						col->SetIsColliding(true);
-						col->SetIsHittingWall(false);
 						col->other = J.other;
 						col->angleRight = angle;
 						col->angleUp = angle1;
-						count++;
+						groundCount++;
 					}
 					else
 					{
 						col->SetIsHittingWall(true);
+						col->otherWall = J.other;
+						col->wallRight = -angle;
+						col->wallUp = angle1;
+						wallCount++;
 					}
 				}
-				else if (originToJ.magnitude() < col->GetRadius() + K::Time::deltaTime() && originToJ.z > 0.0f)
+				else if (originToJ.magnitude() < col->GetRadius() + (K::Time::deltaTime() * 4.0f) && originToJ.z > 0.0f)
 				{
 					K::Vector3 up = K::Vector3(0.0f, 0.0f, 1.0f);
 					K::Vector3 right = K::Vector3(1.0f, 0.0f, 0.0f);
@@ -378,15 +384,18 @@ namespace K
 					if (angle < 0.8f && angle > -0.8f && angle1 > 0.0f)
 					{
 						col->SetIsColliding(true);
-						col->SetIsHittingWall(false);
 						col->other = J.other;
 						col->angleRight = angle;
 						col->angleUp = angle1;
-						count++;
+						groundCount++;
 					}
 					else
 					{
 						col->SetIsHittingWall(true);
+						col->otherWall = J.other;
+						col->wallRight = -angle;
+						col->wallUp = angle1;
+						wallCount++;
 					}
 				}
 			}
@@ -407,18 +416,21 @@ namespace K
 					if (angle < 0.8f && angle > -0.8f && angle1 > 0.0f)
 					{
 						col->SetIsColliding(true);
-						col->SetIsHittingWall(false);
 						col->other = J.other;
 						col->angleRight = angle;
 						col->angleUp = angle1;
-						count++;
+						groundCount++;
 					}
 					else
 					{
 						col->SetIsHittingWall(true);
+						col->otherWall = J.other;
+						col->wallRight = -angle;
+						col->wallUp = angle1;
+						wallCount++;
 					}
 				}
-				else if (originToJ.magnitude() < col->GetRadius() + K::Time::deltaTime() && originToJ.z < 0.0f)
+				else if (originToJ.magnitude() < col->GetRadius() + (K::Time::deltaTime() * 4.0f) && originToJ.z < 0.0f)
 				{
 					K::Vector3 up = K::Vector3(0.0f, 0.0f, 1.0f);
 					K::Vector3 right = K::Vector3(1.0f, 0.0f, 0.0f);
@@ -428,15 +440,18 @@ namespace K
 					if (angle < 0.8f && angle > -0.8f && angle1 > 0.0f)
 					{
 						col->SetIsColliding(true);
-						col->SetIsHittingWall(false);
 						col->other = J.other;
 						col->angleRight = angle;
 						col->angleUp = angle1;
-						count++;
+						groundCount++;
 					}
 					else 
 					{
 						col->SetIsHittingWall(true);
+						col->otherWall = J.other;
+						col->wallRight = -angle;
+						col->wallUp = angle1;
+						wallCount++;
 					}
 				}
 			}
@@ -450,18 +465,33 @@ namespace K
 				{
 					K::Vector3 normal = J.normal.normalise();
 					float depth = col->GetRadius() - std::fabsf(col->GetPosition().x - J.position.x);
+
+					K::Vector3 up = K::Vector3(0.0f, 0.0f, 1.0f);
+					K::Vector3 right = K::Vector3(1.0f, 0.0f, 0.0f);
+
+					float angle = K::Vector3::DotProduct(normal, right);
+					float angle1 = K::Vector3::DotProduct(normal, up);
+
 					K::Vector3 contactResolution = K::Vector3(depth * normal.x, 0.0f, 0.0f);
 					offsetAmount += contactResolution;
 					col->other = J.other;
-					count++;
 					col->SetIsHittingWall(true);
+					col->wallRight = -angle;
+					col->wallUp = angle1;
+					wallCount++;
 				}
 			}
 		}
-		if (count == 0) 
+		if (groundCount == 0) 
 		{
 			col->SetIsColliding(false);
 			col->other = nullptr;
+		}
+		if (wallCount == 0) 
+		{
+			col->SetIsHittingWall(false);
+			col->wallRight = 0.0f;
+			col->wallUp = 0.0f;
 		}
 		return offsetAmount;
 	}
