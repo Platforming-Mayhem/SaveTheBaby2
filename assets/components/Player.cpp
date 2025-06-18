@@ -76,6 +76,11 @@ namespace K
 			return -(((x + duration) * (x - duration)) / (duration * duration));
 	}
 
+	float JumpByTime(float x, float duration) 
+	{
+		return -((4 * x) * (x - duration)) / (duration * duration);
+	}
+
 	void Player::HorizontalMovement() 
 	{
 		if (InputManager::IsKeyPressedDown(GLFW_KEY_RIGHT))
