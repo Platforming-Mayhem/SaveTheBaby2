@@ -157,6 +157,10 @@ namespace K
 			this->parent->GetTransform()->position->x += SineDecelerateByTime(this->decelerateTime, this->decelerationSpeed) * this->previousSpeed * K::Time::deltaTime() * this->movementSpeed * this->previousDirection * this->col->angleUp;
 			this->parent->GetTransform()->position->z += SineDecelerateByTime(this->decelerateTime, this->decelerationSpeed) * this->previousSpeed * K::Time::deltaTime() * this->movementSpeed * this->previousDirection * -this->col->angleRight;
 		}
+		if (this->col->IsColliding()) 
+		{
+			this->col->ResetVelocity();
+		}
 	}
 
 	void Player::VerticalMovement() 

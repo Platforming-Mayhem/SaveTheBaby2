@@ -368,7 +368,7 @@ namespace K
 						col->SetIsHittingWall(true);
 					}
 				}
-				else if (originToJ.magnitude() == col->GetRadius() && originToJ.z > 0.0f) 
+				else if (originToJ.magnitude() < col->GetRadius() + K::Time::deltaTime() && originToJ.z > 0.0f)
 				{
 					K::Vector3 up = K::Vector3(0.0f, 0.0f, 1.0f);
 					K::Vector3 right = K::Vector3(1.0f, 0.0f, 0.0f);
@@ -418,7 +418,7 @@ namespace K
 						col->SetIsHittingWall(true);
 					}
 				}
-				else if (originToJ.magnitude() == col->GetRadius() && originToJ.z < 0.0f) 
+				else if (originToJ.magnitude() < col->GetRadius() + K::Time::deltaTime() && originToJ.z < 0.0f)
 				{
 					K::Vector3 up = K::Vector3(0.0f, 0.0f, 1.0f);
 					K::Vector3 right = K::Vector3(1.0f, 0.0f, 0.0f);
