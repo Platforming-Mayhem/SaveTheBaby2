@@ -17,6 +17,7 @@ namespace K
 	const char* Player::GetPropertyValues()
 	{
 		this->properties = std::to_string(this->movementSpeed);
+		this->properties += "," + std::to_string(this->jumpHeight);
 		return this->properties.c_str();
 	}
 
@@ -31,6 +32,9 @@ namespace K
 		{
 		case 0:
 			this->movementSpeed = std::stof(value);
+			break;
+		case 1:
+			this->jumpHeight = std::stof(value);
 			break;
 		}
 	}
@@ -52,6 +56,7 @@ namespace K
 		if (ImGui::CollapsingHeader("Player Settings")) 
 		{
 			ImGui::DragFloat("Movement Speed", &this->movementSpeed);
+			ImGui::DragFloat("Jump Height", &this->jumpHeight);
 		}
 	}
 
@@ -78,7 +83,7 @@ namespace K
 
 	float JumpByTime(float x, float duration) 
 	{
-		return -((4 * x) * (x - duration)) / (duration * duration);
+		return (- (8.0f / (duration * duration)) * x) + ((4 * duration) / (duration * duration));
 	}
 
 	void Player::HorizontalMovement() 
@@ -152,8 +157,27 @@ namespace K
 			this->parent->GetTransform()->position->x += SineDecelerateByTime(this->decelerateTime, this->decelerationSpeed) * this->previousSpeed * K::Time::deltaTime() * this->movementSpeed * this->previousDirection * this->col->angleUp;
 			this->parent->GetTransform()->position->z += SineDecelerateByTime(this->decelerateTime, this->decelerationSpeed) * this->previousSpeed * K::Time::deltaTime() * this->movementSpeed * this->previousDirection * -this->col->angleRight;
 		}
-		if (this->col->IsColliding()) 
+	}
+
+	void Player::VerticalMovement() 
+	{
+		if (InputManager::IsKeyPressedDown(GLFW_KEY_SPACE) && this->col->IsColliding()) 
 		{
+			this->isJumping = true;
+			this->jumpTime = 0.0f;
+		}
+		else if (InputManager::IsKeyReleased(GLFW_KEY_SPACE))
+		{
+
+		}
+		if (this->col->IsColliding() && this->jumpTime >= 0.5f)
+		{
+			this->isJumping = false;
+		}
+		if (this->isJumping) 
+		{
+			this->jumpTime += K::Time::deltaTime();
+			this->parent->GetTransform()->position->z += JumpByTime(this->jumpTime, 1.0f) * K::Time::deltaTime() * this->jumpHeight;
 			this->col->ResetVelocity();
 		}
 	}
@@ -161,6 +185,7 @@ namespace K
 	void Player::Update() 
 	{
 		HorizontalMovement();
+		VerticalMovement();
 	}
 
 	void Player::Unbind() 

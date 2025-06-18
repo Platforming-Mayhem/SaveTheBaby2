@@ -9,6 +9,7 @@ namespace K
 	{
 	private:
 		float movementSpeed = 1.0f;
+		float jumpHeight = 12.0f;
 
 		float moveDirection = 0.0f;
 
@@ -22,6 +23,8 @@ namespace K
 		float previousDirection = 0.0f;
 		float previousSpeed = 0.0f;
 
+		bool isJumping = false;
+
 		K::Collider* col = nullptr;
 		std::string properties;
 	public:
@@ -32,6 +35,8 @@ namespace K
 		float GetMovementSpeed();
 
 		void HorizontalMovement();
+
+		void VerticalMovement();
 
 		void Init() override;
 
