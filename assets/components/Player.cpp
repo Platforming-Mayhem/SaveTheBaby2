@@ -132,29 +132,48 @@ namespace K
 		{
 			if (this->col->wallRight > 0.0f && this->moveDirection > 0.0f)
 			{
-				this->accelerateTime = 0.0f;
+				this->accelerateTime = -0.3f;
 				this->decelerateTime = this->decelerationSpeed;
 				std::cout << "Stop Move Right" << std::endl;
 			}
-			else if (this->col->wallRight < 0.0f && this->moveDirection < 0.0f)
+			else if (this->col->wallRight > 0.0f && this->moveDirection < 0.0f)
 			{
 				this->accelerateTime = 0.0f;
+				this->decelerateTime = 0.0f;
+				std::cout << "Move Left" << std::endl;
+			}
+			if (this->col->wallRight < 0.0f && this->moveDirection < 0.0f)
+			{
+				this->accelerateTime = -0.3f;
 				this->decelerateTime = this->decelerationSpeed;
 				std::cout << "Stop Move Left" << std::endl;
+			}
+			else if (this->col->wallRight < 0.0f && this->moveDirection > 0.0f)
+			{
+				this->accelerateTime = 0.0f;
+				this->decelerateTime = 0.0f;
+				std::cout << "Move Right" << std::endl;
+			}
+		}
+		else 
+		{
+			if (this->accelerateTime < 0.0f) 
+			{
+				this->accelerateTime = 0.0f;
 			}
 		}
 
 		//Player Accelerates
 		if (this->decelerateTime == 0.0f)
 		{
-			this->previousSpeed = SineAccelerateByTime(this->accelerateTime, 1.0f, 0.0f);
+			this->previousSpeed = SineAccelerateByTime(this->accelerateTime, 1.0f, 0.3f);
 			this->parent->GetTransform()->position->x += this->previousSpeed * K::Time::deltaTime() * this->movementSpeed * this->moveDirection * this->col->angleUp;
 			this->parent->GetTransform()->position->z += this->previousSpeed * K::Time::deltaTime() * this->movementSpeed * this->moveDirection * -this->col->angleRight;
 		}
 		//Player Decelerates
 		else if (this->accelerateTime == 0.0f)
 		{
-			this->decelerationSpeed = this->previousSpeed * 0.3f;
+			this->decelerationSpeed = this->previousSpeed * 0.1f;
 			this->parent->GetTransform()->position->x += SineDecelerateByTime(this->decelerateTime, this->decelerationSpeed) * this->previousSpeed * K::Time::deltaTime() * this->movementSpeed * this->previousDirection * this->col->angleUp;
 			this->parent->GetTransform()->position->z += SineDecelerateByTime(this->decelerateTime, this->decelerationSpeed) * this->previousSpeed * K::Time::deltaTime() * this->movementSpeed * this->previousDirection * -this->col->angleRight;
 		}
@@ -209,8 +228,8 @@ namespace K
 		}
 		if (this->isJumping) 
 		{
-			this->jumpTime += K::Time::deltaTime();
-			this->parent->GetTransform()->position->z += JumpByTime(this->jumpTime, 1.0f) * K::Time::deltaTime() * this->jumpHeight;
+			this->jumpTime += K::Time::deltaTime() * 2.0f;
+			this->parent->GetTransform()->position->z += JumpByTime(this->jumpTime, 1.0f) * K::Time::deltaTime() * this->jumpHeight * 2.0f;
 			this->col->angleRight = 0.0f;
 			this->col->ResetVelocity();
 		}
