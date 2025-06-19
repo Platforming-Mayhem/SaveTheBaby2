@@ -86,8 +86,8 @@ namespace K
 			}
 			else
 			{
-				*(this->parent->GetTransform()->position) += K::Vector3(0.0f, 0.0f, -this->time * K::Physics::GetFixedTimeStep() * K::Time::deltaTime());
-				this->time += (1 / K::Physics::GetFixedTimeStep()) * K::Time::deltaTime() * 60.0f * 2.0f;
+				*(this->parent->GetTransform()->position) += K::Vector3(0.0f, 0.0f, -this->time * K::Time::deltaTime() * 48.0f);
+				this->time += K::Time::deltaTime();
 			}
 			this->collisionResolution = K::Physics::GetCollisionResolution(this);
 			//*this->parent->GetTransform()->position += this->collisionResolution;
@@ -104,8 +104,8 @@ namespace K
 			}
 			else
 			{
-				*(this->parent->GetTransform()->position) += K::Vector3(0.0f, 0.0f, -this->time * K::Physics::GetFixedTimeStep() * K::Time::deltaTime());
-				this->time += (1 / K::Physics::GetFixedTimeStep()) * K::Time::deltaTime() * 60.0f * 2.0f;
+				*(this->parent->GetTransform()->position) += K::Vector3(0.0f, 0.0f, -this->time * K::Time::deltaTime() * 48.0f);
+				this->time += K::Time::deltaTime();
 			}
 			this->collisionResolution = K::Physics::GetCollisionResolution(this);
 			*this->parent->GetTransform()->position += this->collisionResolution;
