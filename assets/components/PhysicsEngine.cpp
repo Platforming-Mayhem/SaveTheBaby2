@@ -360,6 +360,7 @@ namespace K
 					if (angle < 0.8f && angle > -0.8f && angle1 > 0.0f)
 					{
 						col->SetIsColliding(true);
+						col->groundContactPoint = J.position;
 						col->other = J.other;
 						col->angleRight = angle;
 						col->angleUp = angle1;
@@ -385,6 +386,7 @@ namespace K
 					if (angle < 0.8f && angle > -0.8f && angle1 > 0.0f)
 					{
 						col->SetIsColliding(true);
+						col->groundContactPoint = J.position;
 						col->other = J.other;
 						col->angleRight = angle;
 						col->angleUp = angle1;
@@ -418,6 +420,7 @@ namespace K
 					if (angle < 0.8f && angle > -0.8f && angle1 > 0.0f)
 					{
 						col->SetIsColliding(true);
+						col->groundContactPoint = J.position;
 						col->other = J.other;
 						col->angleRight = angle;
 						col->angleUp = angle1;
@@ -443,6 +446,7 @@ namespace K
 					if (angle < 0.8f && angle > -0.8f && angle1 > 0.0f)
 					{
 						col->SetIsColliding(true);
+						col->groundContactPoint = J.position;
 						col->other = J.other;
 						col->angleRight = angle;
 						col->angleUp = angle1;

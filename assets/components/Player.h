@@ -19,11 +19,16 @@ namespace K
 		float accelerateTime = 0.0f;
 		float decelerateTime = 0.0f;
 		float jumpTime = 0.0f;
+		float jumpBufferTime = 0.0f;
 
 		float previousDirection = 0.0f;
 		float previousSpeed = 0.0f;
 
+		int jumps = 2;
+		int maxJumps = 2;
+
 		bool isJumping = false;
+		bool jumpButtonPressed = false;
 
 		K::Collider* col = nullptr;
 		std::string properties;

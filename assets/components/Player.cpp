@@ -162,18 +162,38 @@ namespace K
 
 	void Player::VerticalMovement() 
 	{
-		if (InputManager::IsKeyPressedDown(GLFW_KEY_SPACE) && this->col->IsColliding()) 
+		if (InputManager::IsKeyPressedDown(GLFW_KEY_SPACE)) 
 		{
-			this->isJumping = true;
-			this->jumpTime = 0.0f;
+			this->jumpButtonPressed = true;
+			this->jumpBufferTime = 0.0f;
 		}
 		else if (InputManager::IsKeyReleased(GLFW_KEY_SPACE))
 		{
 
 		}
+		if (this->jumpButtonPressed)
+		{
+			if (this->jumpBufferTime >= 0.2f)
+			{
+				this->jumpButtonPressed = false;
+			}
+			else
+			{
+				this->jumpBufferTime += K::Time::deltaTime();
+			}
+			if (this->jumps > 0) 
+			{
+				this->isJumping = true;
+				this->jumpTime = 0.0f;
+				this->jumps--;
+				this->jumpButtonPressed = false;
+				this->jumpBufferTime = 0.2f;
+			}
+		}
 		if (this->col->IsColliding() && this->jumpTime >= 0.5f)
 		{
 			this->isJumping = false;
+			this->jumps = this->maxJumps;
 		}
 		if (this->isJumping) 
 		{
