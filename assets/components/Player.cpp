@@ -171,6 +171,17 @@ namespace K
 		{
 
 		}
+		if (!this->col->IsColliding() && this->jumps == this->maxJumps)
+		{
+			if (this->fallBufferTime >= 0.2f) 
+			{
+				this->jumps = 0;
+			}
+			else 
+			{
+				this->fallBufferTime += K::Time::deltaTime();
+			}
+		}
 		if (this->jumpButtonPressed)
 		{
 			if (this->jumpBufferTime >= 0.2f)
@@ -180,25 +191,27 @@ namespace K
 			else
 			{
 				this->jumpBufferTime += K::Time::deltaTime();
-			}
-			if (this->jumps > 0) 
-			{
-				this->isJumping = true;
-				this->jumpTime = 0.0f;
-				this->jumps--;
-				this->jumpButtonPressed = false;
-				this->jumpBufferTime = 0.2f;
+				if (this->jumps > 0)
+				{
+					this->isJumping = true;
+					this->jumpTime = 0.0f;
+					this->jumps--;
+					this->jumpButtonPressed = false;
+					this->jumpBufferTime = 0.2f;
+				}
 			}
 		}
 		if (this->col->IsColliding() && this->jumpTime >= 0.5f)
 		{
 			this->isJumping = false;
 			this->jumps = this->maxJumps;
+			this->fallBufferTime = 0.0f;
 		}
 		if (this->isJumping) 
 		{
 			this->jumpTime += K::Time::deltaTime();
 			this->parent->GetTransform()->position->z += JumpByTime(this->jumpTime, 1.0f) * K::Time::deltaTime() * this->jumpHeight;
+			this->col->angleRight = 0.0f;
 			this->col->ResetVelocity();
 		}
 	}

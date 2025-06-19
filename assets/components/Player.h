@@ -20,6 +20,7 @@ namespace K
 		float decelerateTime = 0.0f;
 		float jumpTime = 0.0f;
 		float jumpBufferTime = 0.0f;
+		float fallBufferTime = 0.0f;
 
 		float previousDirection = 0.0f;
 		float previousSpeed = 0.0f;
