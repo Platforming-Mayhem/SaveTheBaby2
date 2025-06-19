@@ -38,6 +38,7 @@ namespace K
 		float angleRight = 0.0f;
 		float wallUp = 0.0f;
 		float wallRight = 0.0f;
+		K::Vector3 wallContactPoint;
 		K::Vector3 collisionResolution;
 		K::Collider* other = nullptr;
 		K::Collider* otherWall = nullptr;

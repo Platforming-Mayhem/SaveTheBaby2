@@ -78,7 +78,20 @@ namespace K
 
 	void Collider::CapsuleColliderStatic()
 	{
-
+		if (K::Physics::CanGetClosestPoint())
+		{
+			if (K::Physics::IsColliding(this->parent))
+			{
+				this->time = 0.0f;
+			}
+			else
+			{
+				*(this->parent->GetTransform()->position) += K::Vector3(0.0f, 0.0f, -this->time * K::Physics::GetFixedTimeStep() * K::Time::deltaTime());
+				this->time += (1 / K::Physics::GetFixedTimeStep()) * K::Time::deltaTime() * 60.0f * 2.0f;
+			}
+			this->collisionResolution = K::Physics::GetCollisionResolution(this);
+			//*this->parent->GetTransform()->position += this->collisionResolution;
+		}
 	}
 
 	void Collider::CapsuleCollider()

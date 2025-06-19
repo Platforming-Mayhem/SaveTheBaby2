@@ -368,6 +368,7 @@ namespace K
 					else
 					{
 						col->SetIsHittingWall(true);
+						col->wallContactPoint = J.position;
 						col->otherWall = J.other;
 						col->wallRight = -angle;
 						col->wallUp = angle1;
@@ -392,6 +393,7 @@ namespace K
 					else
 					{
 						col->SetIsHittingWall(true);
+						col->wallContactPoint = J.position;
 						col->otherWall = J.other;
 						col->wallRight = -angle;
 						col->wallUp = angle1;
@@ -424,6 +426,7 @@ namespace K
 					else
 					{
 						col->SetIsHittingWall(true);
+						col->wallContactPoint = J.position;
 						col->otherWall = J.other;
 						col->wallRight = -angle;
 						col->wallUp = angle1;
@@ -448,6 +451,7 @@ namespace K
 					else 
 					{
 						col->SetIsHittingWall(true);
+						col->wallContactPoint = J.position;
 						col->otherWall = J.other;
 						col->wallRight = -angle;
 						col->wallUp = angle1;
@@ -476,6 +480,7 @@ namespace K
 					offsetAmount += contactResolution;
 					col->other = J.other;
 					col->SetIsHittingWall(true);
+					col->wallContactPoint = J.position;
 					col->wallRight = -angle;
 					col->wallUp = angle1;
 					wallCount++;

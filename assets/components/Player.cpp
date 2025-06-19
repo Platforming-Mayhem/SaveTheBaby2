@@ -111,7 +111,7 @@ namespace K
 
 		if (this->moveDirection != 0.0f)
 		{
-			if (this->decelerateTime > 0.0f && this->decelerateTime <= this->decelerationSpeed)
+			if (this->decelerateTime > 0.0f && this->decelerateTime < this->decelerationSpeed)
 			{
 				this->decelerateTime += K::Time::deltaTime();
 				this->accelerateTime = 0.0f;
@@ -128,45 +128,35 @@ namespace K
 			this->decelerateTime += K::Time::deltaTime();
 		}
 
-		if (this->col->IsHittingWall())
+		if (this->col->IsHittingWall()) 
 		{
 			if (this->col->wallRight > 0.0f && this->moveDirection > 0.0f)
 			{
-				std::cout << "Stop Move Right" << std::endl;
-				this->wallStopper = 0.0f;
 				this->accelerateTime = 0.0f;
 				this->decelerateTime = this->decelerationSpeed;
+				std::cout << "Stop Move Right" << std::endl;
 			}
 			else if (this->col->wallRight < 0.0f && this->moveDirection < 0.0f)
 			{
-				std::cout << "Stop Move Left" << std::endl;
-				this->wallStopper = 0.0f;
 				this->accelerateTime = 0.0f;
 				this->decelerateTime = this->decelerationSpeed;
+				std::cout << "Stop Move Left" << std::endl;
 			}
-			else
-			{
-				this->wallStopper = 1.0f;
-			}
-		}
-		else
-		{
-			this->wallStopper = 1.0f;
 		}
 
 		//Player Accelerates
 		if (this->decelerateTime == 0.0f)
 		{
-			this->previousSpeed = SineAccelerateByTime(this->accelerateTime, 1.0f, 0.3f);
-			this->parent->GetTransform()->position->x += this->previousSpeed * K::Time::deltaTime() * this->movementSpeed * this->moveDirection * this->col->angleUp * this->wallStopper;
-			this->parent->GetTransform()->position->z += this->previousSpeed * K::Time::deltaTime() * this->movementSpeed * this->moveDirection * -this->col->angleRight * this->wallStopper;
+			this->previousSpeed = SineAccelerateByTime(this->accelerateTime, 1.0f, 0.0f);
+			this->parent->GetTransform()->position->x += this->previousSpeed * K::Time::deltaTime() * this->movementSpeed * this->moveDirection * this->col->angleUp;
+			this->parent->GetTransform()->position->z += this->previousSpeed * K::Time::deltaTime() * this->movementSpeed * this->moveDirection * -this->col->angleRight;
 		}
 		//Player Decelerates
 		else if (this->accelerateTime == 0.0f)
 		{
 			this->decelerationSpeed = this->previousSpeed * 0.3f;
-			this->parent->GetTransform()->position->x += SineDecelerateByTime(this->decelerateTime, this->decelerationSpeed) * this->previousSpeed * K::Time::deltaTime() * this->movementSpeed * this->previousDirection * this->col->angleUp * this->wallStopper;
-			this->parent->GetTransform()->position->z += SineDecelerateByTime(this->decelerateTime, this->decelerationSpeed) * this->previousSpeed * K::Time::deltaTime() * this->movementSpeed * this->previousDirection * -this->col->angleRight * this->wallStopper;
+			this->parent->GetTransform()->position->x += SineDecelerateByTime(this->decelerateTime, this->decelerationSpeed) * this->previousSpeed * K::Time::deltaTime() * this->movementSpeed * this->previousDirection * this->col->angleUp;
+			this->parent->GetTransform()->position->z += SineDecelerateByTime(this->decelerateTime, this->decelerationSpeed) * this->previousSpeed * K::Time::deltaTime() * this->movementSpeed * this->previousDirection * -this->col->angleRight;
 		}
 	}
 
