@@ -502,7 +502,7 @@ namespace K
 						wallCount++;
 					}
 				}
-				else if (J.position.x > xMin - (K::Time::deltaTime() * 4.0f) && J.position.x < xMax + (K::Time::deltaTime() * 4.0f) && J.position.z > yMin - (K::Time::deltaTime() * 4.0f) && J.position.z < yMax + (K::Time::deltaTime() * 4.0f))
+				/*else if (J.position.x > xMin - (K::Time::deltaTime() * 4.0f) && J.position.x < xMax + (K::Time::deltaTime() * 4.0f) && J.position.z > yMin - (K::Time::deltaTime() * 4.0f) && J.position.z < yMax + (K::Time::deltaTime() * 4.0f))
 				{
 					K::Vector3 normal = J.normal.normalise();
 					K::Vector3 up = K::Vector3(0.0f, 0.0f, 1.0f);
@@ -528,7 +528,7 @@ namespace K
 						col->wallUp = angle1;
 						wallCount++;
 					}
-				}
+				}*/
 			}
 		}
 		if (groundCount == 0) 
