@@ -166,14 +166,14 @@ namespace K
 		//Player Accelerates
 		if (this->decelerateTime == 0.0f)
 		{
-			this->previousSpeed = SineAccelerateByTime(this->accelerateTime, 1.0f, 0.3f);
+			this->previousSpeed = SineAccelerateByTime(this->accelerateTime, 1.4f, 0.5f);
 			this->parent->GetTransform()->position->x += this->previousSpeed * K::Time::deltaTime() * this->movementSpeed * this->moveDirection * this->col->angleUp;
 			this->parent->GetTransform()->position->z += this->previousSpeed * K::Time::deltaTime() * this->movementSpeed * this->moveDirection * -this->col->angleRight;
 		}
 		//Player Decelerates
 		else if (this->accelerateTime == 0.0f)
 		{
-			this->decelerationSpeed = this->previousSpeed * 0.1f;
+			this->decelerationSpeed = this->previousSpeed * 0.14f;
 			this->parent->GetTransform()->position->x += SineDecelerateByTime(this->decelerateTime, this->decelerationSpeed) * this->previousSpeed * K::Time::deltaTime() * this->movementSpeed * this->previousDirection * this->col->angleUp;
 			this->parent->GetTransform()->position->z += SineDecelerateByTime(this->decelerateTime, this->decelerationSpeed) * this->previousSpeed * K::Time::deltaTime() * this->movementSpeed * this->previousDirection * -this->col->angleRight;
 		}
