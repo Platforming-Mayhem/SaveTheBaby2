@@ -40,6 +40,8 @@ namespace K
 
 		float GetMovementSpeed();
 
+		void LedgeGrab();
+
 		void HorizontalMovement();
 
 		void VerticalMovement();

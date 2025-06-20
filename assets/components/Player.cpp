@@ -130,25 +130,25 @@ namespace K
 
 		if (this->col->IsHittingWall()) 
 		{
-			if (this->col->wallRight > 0.0f && this->moveDirection > 0.0f)
+			if (this->col->wallRight > 0.8f && this->moveDirection > 0.0f)
 			{
 				this->accelerateTime = -0.3f;
 				this->decelerateTime = 0.0f;
 				std::cout << "Stop Move Right: " << this->moveDirection << std::endl;
 			}
-			else if (this->col->wallRight > 0.0f && this->moveDirection < 0.0f)
+			else if (this->col->wallRight > 0.8f && this->moveDirection < 0.0f)
 			{
 				this->accelerateTime = 0.0f;
 				this->decelerateTime = 0.0f;
 				std::cout << "Move Left: " << this->moveDirection << std::endl;
 			}
-			if (this->col->wallRight < 0.0f && this->moveDirection < 0.0f)
+			if (this->col->wallRight < -0.8f && this->moveDirection < 0.0f)
 			{
 				this->accelerateTime = -0.3f;
 				this->decelerateTime = 0.0f;
 				std::cout << "Stop Move Left: " << this->moveDirection << std::endl;
 			}
-			else if (this->col->wallRight < 0.0f && this->moveDirection > 0.0f)
+			else if (this->col->wallRight < -0.8f && this->moveDirection > 0.0f)
 			{
 				this->accelerateTime = 0.0f;
 				this->decelerateTime = 0.0f;
@@ -177,6 +177,11 @@ namespace K
 			this->parent->GetTransform()->position->x += SineDecelerateByTime(this->decelerateTime, this->decelerationSpeed) * this->previousSpeed * K::Time::deltaTime() * this->movementSpeed * this->previousDirection * this->col->angleUp;
 			this->parent->GetTransform()->position->z += SineDecelerateByTime(this->decelerateTime, this->decelerationSpeed) * this->previousSpeed * K::Time::deltaTime() * this->movementSpeed * this->previousDirection * -this->col->angleRight;
 		}
+	}
+
+	void Player::LedgeGrab() 
+	{
+
 	}
 
 	void Player::VerticalMovement() 
@@ -233,6 +238,7 @@ namespace K
 			this->col->angleRight = 0.0f;
 			this->col->ResetVelocity();
 		}
+		LedgeGrab();
 	}
 
 	void Player::Update() 
