@@ -474,20 +474,60 @@ namespace K
 					K::Vector3 normal = J.normal.normalise();
 					float depth = col->GetRadius() - std::fabsf(col->GetPosition().x - J.position.x);
 
+					K::Vector3 contactResolution = K::Vector3(depth * normal.x, 0.0f, 0.0f);
+					offsetAmount += contactResolution;
+
 					K::Vector3 up = K::Vector3(0.0f, 0.0f, 1.0f);
 					K::Vector3 right = K::Vector3(1.0f, 0.0f, 0.0f);
 
 					float angle = K::Vector3::DotProduct(normal, right);
 					float angle1 = K::Vector3::DotProduct(normal, up);
 
-					K::Vector3 contactResolution = K::Vector3(depth * normal.x, 0.0f, 0.0f);
-					offsetAmount += contactResolution;
-					col->other = J.other;
-					col->SetIsHittingWall(true);
-					col->wallContactPoint = J.position;
-					col->wallRight = -angle;
-					col->wallUp = angle1;
-					wallCount++;
+					if (angle < 0.8f && angle > -0.8f && angle1 > 0.0f)
+					{
+						col->SetIsColliding(true);
+						col->groundContactPoint = J.position;
+						col->other = J.other;
+						col->angleRight = angle;
+						col->angleUp = angle1;
+						groundCount++;
+					}
+					else
+					{
+						col->SetIsHittingWall(true);
+						col->wallContactPoint = J.position;
+						col->otherWall = J.other;
+						col->wallRight = -angle;
+						col->wallUp = angle1;
+						wallCount++;
+					}
+				}
+				else if (J.position.x > xMin - (K::Time::deltaTime() * 4.0f) && J.position.x < xMax + (K::Time::deltaTime() * 4.0f) && J.position.z > yMin - (K::Time::deltaTime() * 4.0f) && J.position.z < yMax + (K::Time::deltaTime() * 4.0f))
+				{
+					K::Vector3 normal = J.normal.normalise();
+					K::Vector3 up = K::Vector3(0.0f, 0.0f, 1.0f);
+					K::Vector3 right = K::Vector3(1.0f, 0.0f, 0.0f);
+					float angle = K::Vector3::DotProduct(normal, right);
+					float angle1 = K::Vector3::DotProduct(normal, up);
+
+					if (angle < 0.8f && angle > -0.8f && angle1 > 0.0f)
+					{
+						col->SetIsColliding(true);
+						col->groundContactPoint = J.position;
+						col->other = J.other;
+						col->angleRight = angle;
+						col->angleUp = angle1;
+						groundCount++;
+					}
+					else
+					{
+						col->SetIsHittingWall(true);
+						col->wallContactPoint = J.position;
+						col->otherWall = J.other;
+						col->wallRight = -angle;
+						col->wallUp = angle1;
+						wallCount++;
+					}
 				}
 			}
 		}

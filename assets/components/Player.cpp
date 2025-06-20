@@ -133,26 +133,26 @@ namespace K
 			if (this->col->wallRight > 0.0f && this->moveDirection > 0.0f)
 			{
 				this->accelerateTime = -0.3f;
-				this->decelerateTime = this->decelerationSpeed;
-				std::cout << "Stop Move Right" << std::endl;
+				this->decelerateTime = 0.0f;
+				std::cout << "Stop Move Right: " << this->moveDirection << std::endl;
 			}
 			else if (this->col->wallRight > 0.0f && this->moveDirection < 0.0f)
 			{
 				this->accelerateTime = 0.0f;
 				this->decelerateTime = 0.0f;
-				std::cout << "Move Left" << std::endl;
+				std::cout << "Move Left: " << this->moveDirection << std::endl;
 			}
 			if (this->col->wallRight < 0.0f && this->moveDirection < 0.0f)
 			{
 				this->accelerateTime = -0.3f;
-				this->decelerateTime = this->decelerationSpeed;
-				std::cout << "Stop Move Left" << std::endl;
+				this->decelerateTime = 0.0f;
+				std::cout << "Stop Move Left: " << this->moveDirection << std::endl;
 			}
 			else if (this->col->wallRight < 0.0f && this->moveDirection > 0.0f)
 			{
 				this->accelerateTime = 0.0f;
 				this->decelerateTime = 0.0f;
-				std::cout << "Move Right" << std::endl;
+				std::cout << "Move Right: " << this->moveDirection << std::endl;
 			}
 		}
 		else 
