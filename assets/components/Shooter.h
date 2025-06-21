@@ -52,7 +52,7 @@ namespace K
 			else 
 			{
 				K::Collider* other = nullptr;
-				K::Vector3 closest = K::Physics::GetClosestPoint(this->GetLocation(), { K::Layer::LayerType::Enemy, K::Layer::LayerType::Ground }, &other);
+				K::Vector3 closest = K::Physics::GetClosestPoint(this->GetLocation(), { K::Layer::LayerType::Enemy, K::Layer::LayerType::Ground }, &other).position;
 				K::Vector3 displacement = (this->GetLocation() - closest) * K::Vector3(1.0f, 0.0f, 1.0f);
 				if (displacement.magnitude() <= this->radius) 
 				{

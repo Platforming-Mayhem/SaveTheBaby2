@@ -100,7 +100,7 @@ namespace K
 	bool Physics::HitCircle(K::Vector3 origin, float radius, std::vector<K::Layer> avoidLayer, K::Collider** hit) 
 	{
 		K::Collider* temp = nullptr;
-		K::Vector3 displacement = origin - Physics::GetClosestPoint(origin, avoidLayer, &temp) * K::Vector3(1.0f, 0.0f, 1.0f);
+		K::Vector3 displacement = origin - Physics::GetClosestPoint(origin, avoidLayer, &temp).position * K::Vector3(1.0f, 0.0f, 1.0f);
 		if (displacement.magnitude() <= radius) 
 		{
 			if (hit != nullptr)
@@ -483,24 +483,12 @@ namespace K
 					float angle = K::Vector3::DotProduct(normal, right);
 					float angle1 = K::Vector3::DotProduct(normal, up);
 
-					if (angle < 0.8f && angle > -0.8f && angle1 > 0.0f)
-					{
-						col->SetIsColliding(true);
-						col->groundContactPoint = J.position;
-						col->other = J.other;
-						col->angleRight = angle;
-						col->angleUp = angle1;
-						groundCount++;
-					}
-					else
-					{
-						col->SetIsHittingWall(true);
-						col->wallContactPoint = J.position;
-						col->otherWall = J.other;
-						col->wallRight = -angle;
-						col->wallUp = angle1;
-						wallCount++;
-					}
+					col->SetIsHittingWall(true);
+					col->wallContactPoint = J.position;
+					col->otherWall = J.other;
+					col->wallRight = -angle;
+					col->wallUp = angle1;
+					wallCount++;
 				}
 				/*else if (J.position.x > xMin - (K::Time::deltaTime() * 4.0f) && J.position.x < xMax + (K::Time::deltaTime() * 4.0f) && J.position.z > yMin - (K::Time::deltaTime() * 4.0f) && J.position.z < yMax + (K::Time::deltaTime() * 4.0f))
 				{
@@ -545,9 +533,9 @@ namespace K
 		return offsetAmount;
 	}
 
-	K::Vector3 Physics::GetClosestPoint(K::Vector3 position, std::vector<K::Layer> avoidLayer, K::Collider** hit)
+	K::ContactPoint Physics::GetClosestPoint(K::Vector3 position, std::vector<K::Layer> avoidLayer, K::Collider** hit)
 	{
-		K::Vector3 newPosition;
+		K::ContactPoint newContactPoint;
 		float distance = INFINITY;
 		for (K::ContactPoint contactPoint : K::Physics::GetClosestPoints(position, avoidLayer))
 		{
@@ -555,11 +543,11 @@ namespace K
 			if (PJ.magnitude() < distance)
 			{
 				distance = PJ.magnitude();
-				newPosition = contactPoint.position;
+				newContactPoint = contactPoint;
 				if (hit != nullptr)
 					*hit = contactPoint.other;
 			}
 		}
-		return newPosition;
+		return newContactPoint;
 	}
 }

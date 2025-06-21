@@ -6,6 +6,9 @@ namespace K
 	KC_API struct Line
 	{
 		K::Vector3 point[2];
+
+		Line() = default;
+
 		Line(K::Vector3 v1, K::Vector3 v2) 
 		{
 			this->point[0] = v1;

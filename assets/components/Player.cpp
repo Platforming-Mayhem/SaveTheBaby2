@@ -134,25 +134,25 @@ namespace K
 			{
 				this->accelerateTime = -0.3f;
 				this->decelerateTime = 0.0f;
-				std::cout << "Stop Move Right: " << this->moveDirection << std::endl;
+				//std::cout << "Stop Move Right: " << this->moveDirection << ":" << -this->col->angleRight << std::endl;
 			}
 			else if (this->col->wallRight > 0.7f && this->moveDirection < 0.0f)
 			{
 				this->accelerateTime = 0.0f;
 				this->decelerateTime = 0.0f;
-				std::cout << "Move Left: " << this->moveDirection << std::endl;
+				//std::cout << "Move Left: " << this->moveDirection << ":" << -this->col->angleRight << std::endl;
 			}
 			if (this->col->wallRight < -0.7f && this->moveDirection < 0.0f)
 			{
 				this->accelerateTime = -0.3f;
 				this->decelerateTime = 0.0f;
-				std::cout << "Stop Move Left: " << this->moveDirection << std::endl;
+				//std::cout << "Stop Move Left: " << this->moveDirection << ":" << -this->col->angleRight << std::endl;
 			}
 			else if (this->col->wallRight < -0.7f && this->moveDirection > 0.0f)
 			{
 				this->accelerateTime = 0.0f;
 				this->decelerateTime = 0.0f;
-				std::cout << "Move Right: " << this->moveDirection << std::endl;
+				//std::cout << "Move Right: " << this->moveDirection << ":" << -this->col->angleRight << std::endl;
 			}
 		}
 		else 
@@ -181,7 +181,10 @@ namespace K
 
 	void Player::LedgeGrab() 
 	{
-
+		if (this->col->IsHittingWall() && this->col->wallUp > -0.3f && this->col->wallUp <= 0.0f) 
+		{
+			
+		}
 	}
 
 	void Player::VerticalMovement() 
