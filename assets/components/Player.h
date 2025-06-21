@@ -25,9 +25,13 @@ namespace K
 		float previousDirection = 0.0f;
 		float previousSpeed = 0.0f;
 
+		float cornerX = 0.0f;
+		float cornerZ = 0.0f;
+
 		int jumps = 2;
 		int maxJumps = 2;
 
+		bool isGrabbing = false;
 		bool isJumping = false;
 		bool jumpButtonPressed = false;
 

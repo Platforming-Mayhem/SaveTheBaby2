@@ -181,9 +181,34 @@ namespace K
 
 	void Player::LedgeGrab() 
 	{
-		if (this->col->IsHittingWall() && this->col->wallUp > -0.3f && this->col->wallUp <= 0.0f) 
+		K::ContactPoint cP = K::Physics::GetClosestPoint(this->col->GetPosition() + K::Vector3(0.0f, 0.0f, (this->col->GetHeight() / 2.0f) + this->col->GetRadius()), { K::Layer::LayerType::Player });
+		if (cP.normal.magnitude() > 1.0f && this->col->IsHittingWall() && cP.normal.z > 0.0f) 
 		{
-			
+			this->isGrabbing = true;
+			this->cornerX = cP.position.x + this->col->GetRadius() * cP.normal.x;
+			this->cornerZ = cP.position.z - (this->col->GetHeight() / 2.0f) - this->col->GetRadius();
+		}
+		if (this->isGrabbing) 
+		{
+			if (InputManager::IsKeyPressed(GLFW_KEY_UP))
+			{
+				this->parent->GetTransform()->position->x = this->cornerX - (this->col->GetRadius() * 2.0f * cP.normal.x);
+				this->parent->GetTransform()->position->z = this->cornerZ + this->col->GetHeight() + (this->col->GetRadius() * 2.0f);
+				this->jumpTime = 0.5f;
+				this->isGrabbing = false;
+			}
+			else if (InputManager::IsKeyPressed(GLFW_KEY_DOWN)) 
+			{
+				this->jumpTime = 0.5f;
+				this->isGrabbing = false;
+			}
+			else 
+			{
+				K::Vector3 corner = K::Vector3(this->cornerX, 0.0f, this->cornerZ);
+				*this->parent->GetTransform()->position = corner;
+				this->jumps = 0;
+				this->col->ResetVelocity();
+			}
 		}
 	}
 
@@ -211,7 +236,7 @@ namespace K
 		}
 		if (this->jumpButtonPressed)
 		{
-			if (this->jumpBufferTime >= 0.2f)
+			if (this->jumpBufferTime >= 0.2f && !this->isGrabbing)
 			{
 				this->jumpButtonPressed = false;
 			}
