@@ -21,6 +21,8 @@ namespace K
 		float jumpTime = 0.5f;
 		float jumpBufferTime = 0.0f;
 		float fallBufferTime = 0.0f;
+		float grabTime = 0.0f;
+		float climbTime = 0.0f;
 
 		float previousDirection = 0.0f;
 		float previousSpeed = 0.0f;
@@ -31,8 +33,10 @@ namespace K
 		int jumps = 2;
 		int maxJumps = 2;
 
+		bool isClimbingUp = false;
 		bool isGrabbing = false;
 		bool isJumping = false;
+		bool canMoveHorizontally = true;
 		bool jumpButtonPressed = false;
 
 		K::Collider* col = nullptr;

@@ -163,26 +163,29 @@ namespace K
 			}
 		}
 
-		//Player Accelerates
-		if (this->decelerateTime == 0.0f)
+		if (this->canMoveHorizontally) 
 		{
-			this->previousSpeed = SineAccelerateByTime(this->accelerateTime, 1.4f, 0.5f);
-			this->parent->GetTransform()->position->x += this->previousSpeed * K::Time::deltaTime() * this->movementSpeed * this->moveDirection * this->col->angleUp;
-			this->parent->GetTransform()->position->z += this->previousSpeed * K::Time::deltaTime() * this->movementSpeed * this->moveDirection * -this->col->angleRight;
-		}
-		//Player Decelerates
-		else if (this->accelerateTime == 0.0f)
-		{
-			this->decelerationSpeed = this->previousSpeed * 0.14f;
-			this->parent->GetTransform()->position->x += SineDecelerateByTime(this->decelerateTime, this->decelerationSpeed) * this->previousSpeed * K::Time::deltaTime() * this->movementSpeed * this->previousDirection * this->col->angleUp;
-			this->parent->GetTransform()->position->z += SineDecelerateByTime(this->decelerateTime, this->decelerationSpeed) * this->previousSpeed * K::Time::deltaTime() * this->movementSpeed * this->previousDirection * -this->col->angleRight;
+			//Player Accelerates
+			if (this->decelerateTime == 0.0f)
+			{
+				this->previousSpeed = SineAccelerateByTime(this->accelerateTime, 1.4f, 0.5f);
+				this->parent->GetTransform()->position->x += this->previousSpeed * K::Time::deltaTime() * this->movementSpeed * this->moveDirection * this->col->angleUp;
+				this->parent->GetTransform()->position->z += this->previousSpeed * K::Time::deltaTime() * this->movementSpeed * this->moveDirection * -this->col->angleRight;
+			}
+			//Player Decelerates
+			else if (this->accelerateTime == 0.0f)
+			{
+				this->decelerationSpeed = this->previousSpeed * 0.14f;
+				this->parent->GetTransform()->position->x += SineDecelerateByTime(this->decelerateTime, this->decelerationSpeed) * this->previousSpeed * K::Time::deltaTime() * this->movementSpeed * this->previousDirection * this->col->angleUp;
+				this->parent->GetTransform()->position->z += SineDecelerateByTime(this->decelerateTime, this->decelerationSpeed) * this->previousSpeed * K::Time::deltaTime() * this->movementSpeed * this->previousDirection * -this->col->angleRight;
+			}
 		}
 	}
 
 	void Player::LedgeGrab() 
 	{
 		K::ContactPoint cP = K::Physics::GetClosestPoint(this->col->GetPosition() + K::Vector3(0.0f, 0.0f, (this->col->GetHeight() / 2.0f) + this->col->GetRadius()), { K::Layer::LayerType::Player });
-		if (cP.normal.magnitude() > 1.0f && this->col->IsHittingWall() && cP.normal.z > 0.0f) 
+		if (cP.normal.magnitude() > 1.0f && this->col->IsHittingWall() && cP.normal.z > 0.0f && !this->isClimbingUp) 
 		{
 			this->isGrabbing = true;
 			this->cornerX = cP.position.x + this->col->GetRadius() * cP.normal.x;
@@ -192,22 +195,43 @@ namespace K
 		{
 			if (InputManager::IsKeyPressed(GLFW_KEY_UP))
 			{
-				this->parent->GetTransform()->position->x = this->cornerX - (this->col->GetRadius() * 2.0f * cP.normal.x);
-				this->parent->GetTransform()->position->z = this->cornerZ + this->col->GetHeight() + (this->col->GetRadius() * 2.0f);
+				this->climbTime = 0.0f;
 				this->jumpTime = 0.5f;
+				this->isClimbingUp = true;
+				this->canMoveHorizontally = true;
 				this->isGrabbing = false;
 			}
 			else if (InputManager::IsKeyPressed(GLFW_KEY_DOWN)) 
 			{
 				this->jumpTime = 0.5f;
+				this->canMoveHorizontally = true;
 				this->isGrabbing = false;
 			}
 			else 
 			{
-				K::Vector3 corner = K::Vector3(this->cornerX, 0.0f, this->cornerZ);
-				*this->parent->GetTransform()->position = corner;
+				this->parent->GetTransform()->position->x = this->cornerX;
+				this->parent->GetTransform()->position->z = this->cornerZ;
 				this->jumps = 0;
+				this->canMoveHorizontally = false;
 				this->col->ResetVelocity();
+			}
+		}
+		if (this->isClimbingUp) 
+		{
+			if (this->climbTime < 1.0f) 
+			{
+				this->climbTime += K::Time::deltaTime() * 2.0f;
+				this->col->ResetVelocity();
+				this->parent->GetTransform()->position->x = this->cornerX;
+				this->parent->GetTransform()->position->z = this->cornerZ + ((this->climbTime * this->climbTime) * (this->col->GetHeight() + (this->col->GetRadius() * 2.0f)));
+				this->canMoveHorizontally = false;
+			}
+			else 
+			{
+				this->parent->GetTransform()->position->x = this->cornerX - (this->col->GetRadius() * 2.0f * cP.normal.x);
+				this->parent->GetTransform()->position->z = this->cornerZ + this->col->GetHeight() + (this->col->GetRadius() * 2.0f);
+				this->canMoveHorizontally = true;
+				this->isClimbingUp = false;
 			}
 		}
 	}
