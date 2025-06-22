@@ -54,7 +54,7 @@ namespace K
 			this->time = 1.0f;
 		}
 		destination.x += speed * K::Time::deltaTime() * this->moveSpeed;
-		destination.z = K::Physics::GetClosestPoint(*this->parent->GetTransform()->position + K::Vector3(30.0f, 0.0f, -10.0f), { K::Layer(K::Layer::LayerType::Enemy), K::Layer(K::Layer::LayerType::Player) }).z + 15.0f;
+		destination.z = K::Physics::GetClosestPoint(*this->parent->GetTransform()->position + K::Vector3(30.0f, 0.0f, -10.0f), { K::Layer(K::Layer::LayerType::Enemy), K::Layer(K::Layer::LayerType::Player) }).position.z + 15.0f;
 		*this->parent->GetTransform()->position = K::Vector3::Lerp(*this->parent->GetTransform()->position, this->destination, K::Time::deltaTime());
 #endif
 	}
