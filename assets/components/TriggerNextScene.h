@@ -9,6 +9,8 @@ namespace K
 	private:
 		K::Vector3 bounds[2];
 		K::Vector3 boundsModelMatrix[2];
+		bool byIndex = false;
+		int index = -1;
 
 		std::string properties;
 	public:

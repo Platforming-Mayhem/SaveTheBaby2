@@ -2,6 +2,8 @@
 
 namespace K 
 {
+	float Player::moveDirection = 0.0f;
+
 	REGISTER(Player);
 
 	Player::Player()
@@ -44,6 +46,11 @@ namespace K
 		if (this->parent->GetComponentOfType(typeid(K::Collider).name()) != nullptr)
 		{
 			this->col = (K::Collider*)this->parent->GetComponentOfType(typeid(K::Collider).name());
+		}
+
+		if (this->parent->GetComponentOfType(typeid(K::Mesh).name()) != nullptr)
+		{
+			this->mesh = (K::Mesh*)this->parent->GetComponentOfType(typeid(K::Mesh).name());
 		}
 
 		this->parent->layer = (int)K::Layer::LayerType::Player;
@@ -90,26 +97,26 @@ namespace K
 	{
 		if (InputManager::IsKeyPressedDown(GLFW_KEY_RIGHT))
 		{
-			this->moveDirection += 1.0f;
+			moveDirection += 1.0f;
+		}
+		else if (InputManager::IsKeyPressedDown(GLFW_KEY_LEFT))
+		{
+			moveDirection += -1.0f;
 		}
 		else if (InputManager::IsKeyReleased(GLFW_KEY_RIGHT))
 		{
-			this->moveDirection -= 1.0f;
+			moveDirection -= 1.0f;
 			this->accelerateTime = 0.0f;
 			this->decelerateTime += K::Time::deltaTime();
 		}
-		if (InputManager::IsKeyPressedDown(GLFW_KEY_LEFT))
-		{
-			this->moveDirection += -1.0f;
-		}
 		else if (InputManager::IsKeyReleased(GLFW_KEY_LEFT))
 		{
-			this->moveDirection -= -1.0f;
+			moveDirection -= -1.0f;
 			this->accelerateTime = 0.0f;
 			this->decelerateTime += K::Time::deltaTime();
 		}
 
-		if (this->moveDirection != 0.0f)
+		if (moveDirection != 0.0f)
 		{
 			if (this->decelerateTime > 0.0f && this->decelerateTime < this->decelerationSpeed)
 			{
@@ -130,25 +137,25 @@ namespace K
 
 		if (this->col->IsHittingWall()) 
 		{
-			if (this->col->wallRight > 0.7f && this->moveDirection > 0.0f)
+			if (this->col->wallRight > 0.7f && moveDirection > 0.0f)
 			{
 				this->accelerateTime = -0.3f;
 				this->decelerateTime = 0.0f;
 				//std::cout << "Stop Move Right: " << this->moveDirection << ":" << -this->col->angleRight << std::endl;
 			}
-			else if (this->col->wallRight > 0.7f && this->moveDirection < 0.0f)
+			else if (this->col->wallRight > 0.7f && moveDirection < 0.0f)
 			{
 				this->accelerateTime = 0.0f;
 				this->decelerateTime = 0.0f;
 				//std::cout << "Move Left: " << this->moveDirection << ":" << -this->col->angleRight << std::endl;
 			}
-			if (this->col->wallRight < -0.7f && this->moveDirection < 0.0f)
+			if (this->col->wallRight < -0.7f && moveDirection < 0.0f)
 			{
 				this->accelerateTime = -0.3f;
 				this->decelerateTime = 0.0f;
 				//std::cout << "Stop Move Left: " << this->moveDirection << ":" << -this->col->angleRight << std::endl;
 			}
-			else if (this->col->wallRight < -0.7f && this->moveDirection > 0.0f)
+			else if (this->col->wallRight < -0.7f && moveDirection > 0.0f)
 			{
 				this->accelerateTime = 0.0f;
 				this->decelerateTime = 0.0f;
@@ -169,15 +176,18 @@ namespace K
 			if (this->decelerateTime == 0.0f)
 			{
 				this->previousSpeed = SineAccelerateByTime(this->accelerateTime, 1.4f, 0.5f);
-				this->parent->GetTransform()->position->x += this->previousSpeed * K::Time::deltaTime() * this->movementSpeed * this->moveDirection * this->col->angleUp;
-				this->parent->GetTransform()->position->z += this->previousSpeed * K::Time::deltaTime() * this->movementSpeed * this->moveDirection * -this->col->angleRight;
+				this->mesh->SetColourTint(this->previousSpeed, 0.0f, 0.0f);
+				this->parent->GetTransform()->position->x += this->previousSpeed * K::Time::deltaTime() * this->movementSpeed * moveDirection * this->col->angleUp;
+				this->parent->GetTransform()->position->z += this->previousSpeed * K::Time::deltaTime() * this->movementSpeed * moveDirection * -this->col->angleRight;
 			}
 			//Player Decelerates
 			else if (this->accelerateTime == 0.0f)
 			{
 				this->decelerationSpeed = this->previousSpeed * 0.14f;
-				this->parent->GetTransform()->position->x += SineDecelerateByTime(this->decelerateTime, this->decelerationSpeed) * this->previousSpeed * K::Time::deltaTime() * this->movementSpeed * this->previousDirection * this->col->angleUp;
-				this->parent->GetTransform()->position->z += SineDecelerateByTime(this->decelerateTime, this->decelerationSpeed) * this->previousSpeed * K::Time::deltaTime() * this->movementSpeed * this->previousDirection * -this->col->angleRight;
+				float decelerationAmount = SineDecelerateByTime(this->decelerateTime, this->decelerationSpeed);
+				this->mesh->SetColourTint(decelerationAmount, 0.0f, 0.0f);
+				this->parent->GetTransform()->position->x += decelerationAmount * this->previousSpeed * K::Time::deltaTime() * this->movementSpeed * this->previousDirection * this->col->angleUp;
+				this->parent->GetTransform()->position->z += decelerationAmount * this->previousSpeed * K::Time::deltaTime() * this->movementSpeed * this->previousDirection * -this->col->angleRight;
 			}
 		}
 	}
@@ -301,9 +311,9 @@ namespace K
 
 	void Player::Unbind() 
 	{
-		if (this->moveDirection != 0.0f && this->decelerateTime == 0.0f) 
+		if (moveDirection != 0.0f && this->decelerateTime == 0.0f) 
 		{
-			this->previousDirection = this->moveDirection;
+			this->previousDirection = moveDirection;
 		}
 	}
 

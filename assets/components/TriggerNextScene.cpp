@@ -44,7 +44,13 @@ namespace K
 		K::Collider* temp = nullptr;
 		if (K::Physics::Hitbox(this->boundsModelMatrix[0], this->boundsModelMatrix[1], { K::Layer::LayerType::Enemy, K::Layer::LayerType::Ground }, &temp))
 		{
-			K::SceneManager::LoadNextScene();
+			if (InputManager::IsKeyPressed(GLFW_KEY_E)) 
+			{
+				if (this->byIndex)
+					K::SceneManager::LoadScene(this->index);
+				else
+					K::SceneManager::LoadNextScene();
+			}
 		}
 	}
 
@@ -54,6 +60,9 @@ namespace K
 		{
 			ImGui::DragFloat3("Bottom Left", &this->bounds[0].x);
 			ImGui::DragFloat3("Top Right", &this->bounds[1].x);
+			ImGui::Checkbox("By Index", &this->byIndex);
+			if (this->byIndex)
+				ImGui::DragInt("Index", &this->index);
 			this->VisualizeTriggerZone();
 		}
 	}
@@ -83,6 +92,19 @@ namespace K
 			case 5:
 				this->bounds[1].z = std::stof(temp);
 				break;
+			case 6:
+				if (temp == "true")
+				{
+					this->byIndex = true;
+				}
+				else if (temp == "false")
+				{
+					this->byIndex = false;
+				}
+				break;
+			case 7:
+				this->index = std::stoi(temp);
+				break;
 			}
 		}
 	}
@@ -94,7 +116,16 @@ namespace K
 		this->properties += std::to_string(this->bounds[0].z) + ",";
 		this->properties += std::to_string(this->bounds[1].x) + ",";
 		this->properties += std::to_string(this->bounds[1].y) + ",";
-		this->properties += std::to_string(this->bounds[1].z);
+		this->properties += std::to_string(this->bounds[1].z) + ",";
+		if (this->byIndex)
+		{
+			this->properties += "true,";
+		}
+		else
+		{
+			this->properties += "false,";
+		}
+		this->properties += std::to_string(this->index);
 		return this->properties.c_str();
 	}
 }

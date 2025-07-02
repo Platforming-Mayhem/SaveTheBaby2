@@ -1,3 +1,5 @@
 scenes\Watermark.JAWS
 scenes\Menu.JAWS
+scenes\LevelRoom.JAWS
 scenes\LevelOne.JAWS
+scenes\LevelTwo.JAWS
