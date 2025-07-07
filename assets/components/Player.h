@@ -43,6 +43,11 @@ namespace K
 		K::Collider* col = nullptr;
 		std::string properties;
 	public:
+
+		static int lastInteractedIndex;
+
+		static K::Vector3 spawnPoint;
+
 		Player();
 
 		~Player();
@@ -56,6 +61,8 @@ namespace K
 		void VerticalMovement();
 
 		void Init() override;
+
+		void RenderInit() override;
 
 		void Update() override;
 

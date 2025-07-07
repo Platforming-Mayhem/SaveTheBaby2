@@ -10,15 +10,20 @@ namespace K
 		K::Vector3 bounds[2];
 		K::Vector3 boundsModelMatrix[2];
 		bool byIndex = false;
+		static bool canPress;
+
 		int index = -1;
 
 		std::string properties;
 	public:
+
 		TriggerNextScene();
 
 		~TriggerNextScene();
 
 		void VisualizeTriggerZone();
+
+		void Init() override;
 
 		void Update() override;
 

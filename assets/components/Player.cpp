@@ -3,6 +3,8 @@
 namespace K 
 {
 	float Player::moveDirection = 0.0f;
+	int Player::lastInteractedIndex = -1;
+	K::Vector3 Player::spawnPoint = K::Vector3();
 
 	REGISTER(Player);
 
@@ -56,6 +58,16 @@ namespace K
 		this->parent->layer = (int)K::Layer::LayerType::Player;
 
 		this->col->ResetVelocity();
+	}
+
+	void Player::RenderInit() 
+	{
+		if (K::Player::lastInteractedIndex != -1) 
+		{
+			*this->parent->GetTransform()->position = K::Player::spawnPoint;
+			K::Player::lastInteractedIndex = -1;
+			K::Player::spawnPoint = K::Vector3();
+		}
 	}
 
 	void Player::UpdateEditor() 

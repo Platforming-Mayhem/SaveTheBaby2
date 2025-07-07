@@ -1,8 +1,11 @@
 #include "TriggerNextScene.h"
+#include "Player.h"
 
 namespace K 
 {
 	REGISTER(TriggerNextScene);
+
+	bool TriggerNextScene::canPress = true;
 
 	TriggerNextScene::TriggerNextScene()
 	{
@@ -37,6 +40,18 @@ namespace K
 		glUniform3f(this->parent->GetMaterial()->GetShader()->GetUniform("colorTint"), 1.0f, 1.0f, 1.0f);
 	}
 
+	void TriggerNextScene::Init() 
+	{
+		if (!this->byIndex)
+		{
+			this->index = K::SceneManager::currentScene->GetBuildIndex() + 1;
+		}
+		if (K::Player::lastInteractedIndex == this->index)
+		{
+			K::Player::spawnPoint = K::Vector3(*this->parent->GetTransform()->position);
+		}
+	}
+
 	void TriggerNextScene::Update() 
 	{
 		K::MultiplyMatrixVector(this->bounds[0], this->boundsModelMatrix[0], this->parent->GetTransform()->modelMatrix);
@@ -44,12 +59,24 @@ namespace K
 		K::Collider* temp = nullptr;
 		if (K::Physics::Hitbox(this->boundsModelMatrix[0], this->boundsModelMatrix[1], { K::Layer::LayerType::Enemy, K::Layer::LayerType::Ground }, &temp))
 		{
-			if (InputManager::IsKeyPressed(GLFW_KEY_E)) 
+			if (InputManager::IsKeyPressed(GLFW_KEY_E) && this->canPress)
 			{
-				if (this->byIndex)
+				int current = K::SceneManager::currentScene->GetBuildIndex();
+				if (this->byIndex) 
+				{
 					K::SceneManager::LoadScene(this->index);
-				else
+				}
+				else 
+				{
 					K::SceneManager::LoadNextScene();
+					this->index = current + 1;
+				}
+				K::Player::lastInteractedIndex = current;
+				this->canPress = false;
+			}
+			if (!InputManager::IsKeyPressed(GLFW_KEY_E))
+			{
+				this->canPress = true;
 			}
 		}
 	}
