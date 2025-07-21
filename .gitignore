@@ -26,6 +26,8 @@
 *.a
 *.lib
 
+*.exp
+
 # Executables
 *.exe
 *.out
@@ -38,6 +40,3 @@
 
 #Bin
 bin
-
-#Cmake
-assets/CMakeLists.txt
