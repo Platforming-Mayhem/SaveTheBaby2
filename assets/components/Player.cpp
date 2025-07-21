@@ -226,6 +226,7 @@ namespace K
 			else if (InputManager::IsKeyPressed(GLFW_KEY_DOWN)) 
 			{
 				this->jumpTime = 0.5f;
+				this->parent->GetTransform()->position->z = this->cornerZ - this->col->GetRadius();
 				this->canMoveHorizontally = true;
 				this->isGrabbing = false;
 			}
