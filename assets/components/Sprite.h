@@ -30,10 +30,6 @@ namespace K
 
 		void SetNormalTexture(const char* value);
 
-		void SetColorTexture(unsigned int resource);
-
-		void SetNormalTexture(unsigned int resource);
-
 		void SetTexture(K::Texture* newTexture, bool reScale = true);
 
 		void ResetFrame();

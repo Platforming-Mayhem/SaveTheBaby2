@@ -40,7 +40,7 @@ namespace K
 			this->sprite = (K::Sprite*)this->parent->GetComponentOfType(typeid(K::Sprite).name());
 		}
 		if (this->bulletTexture == nullptr)
-			this->bulletTexture = new K::Texture(WATERMARK_TEX);
+			this->bulletTexture = new K::Texture("textures/watermark.png");
 	}
 
 	void Shooter::Update()
@@ -209,7 +209,7 @@ namespace K
 			{
 				if (this->bulletTexture != nullptr)
 					delete this->bulletTexture;
-				this->bulletTexture = new K::Texture(WATERMARK_TEX);
+				this->bulletTexture = new K::Texture("textures/watermark.png");
 			}
 
 			this->RangeVisualisation();
