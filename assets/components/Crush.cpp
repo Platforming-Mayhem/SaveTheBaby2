@@ -21,12 +21,12 @@ namespace K
 
 	float Crush::EaseInPow(float value, int pow)
 	{
-		return std::clamp(std::powf(value, pow), 0.0f, 1.0f);
+		return std::clamp((float)std::pow(value, pow), 0.0f, 1.0f);
 	}
 
 	float Crush::EaseInOutQuad(float value) 
 	{
-		return value < 0.5f ? 2 * value * value : 1 - std::powf(-2.0f * value + 2.0f, 2.0f) / 2.0f;
+		return value < 0.5f ? 2 * value * value : 1 - (float)std::pow(-2.0f * value + 2.0f, 2.0f) / 2.0f;
 	}
 
 	void Crush::Update() 

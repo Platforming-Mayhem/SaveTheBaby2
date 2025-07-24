@@ -472,7 +472,7 @@ namespace K
 				if (J.position.x > xMin && J.position.x < xMax && J.position.z > yMin && J.position.z < yMax) 
 				{
 					K::Vector3 normal = J.normal.normalise();
-					float depth = col->GetRadius() - std::fabsf(col->GetPosition().x - J.position.x);
+					float depth = col->GetRadius() - (float)std::fabs(col->GetPosition().x - J.position.x);
 
 					K::Vector3 contactResolution = K::Vector3(depth * normal.x, 0.0f, 0.0f);
 					offsetAmount += contactResolution;
