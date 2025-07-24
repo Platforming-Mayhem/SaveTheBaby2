@@ -38,5 +38,8 @@
 *.JANIM
 *.BJAWS
 
+#Cmake
+assets/CMakeLists.txt
+
 #Bin
 bin
