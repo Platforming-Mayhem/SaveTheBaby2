@@ -91,7 +91,7 @@ namespace K
 
 	void Quit::UpdateEditor()
 	{
-		if (ImGui::CollapsingHeader(this->GetName()))
+		if (ImGui::CollapsingHeader(this->GetName().c_str()))
 		{
 			ImGui::ColorPicker3("Selected Colour Tint", this->selectedTint);
 			ImGui::ColorPicker3("Unselected Colour Tint", this->unSelectedTint);

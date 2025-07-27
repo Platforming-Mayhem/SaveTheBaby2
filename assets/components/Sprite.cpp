@@ -305,7 +305,7 @@ namespace K
 
 	void Sprite::UpdateEditor()
 	{
-		if (ImGui::CollapsingHeader("Sprite Settings"))
+		if (ImGui::CollapsingHeader(this->GetName().c_str()))
 		{
 			ImGui::Text("FPS: %i", this->renderTexture->GetFrameRate());
 			ImGui::Checkbox("has Normal Texture", &this->hasNormal);
