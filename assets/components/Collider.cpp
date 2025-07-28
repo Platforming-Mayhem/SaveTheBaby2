@@ -90,7 +90,7 @@ namespace K
 				this->time += K::Time::deltaTime() * 2.0f;
 			}
 			this->collisionResolution = K::Physics::GetCollisionResolution(this);
-			//*this->parent->GetTransform()->position += this->collisionResolution;
+			*this->parent->GetTransform()->position += this->collisionResolution;
 		}
 	}
 
@@ -369,7 +369,7 @@ namespace K
 		}
 	}
 
-	K::Vector3* Collider::ClosestPointLineCollider(K::Vector3 P) 
+	K::Vector3 Collider::ClosestPointLineCollider(K::Vector3 P) 
 	{
 		int closestIndex = 0;
 		float distance = INFINITY;
@@ -390,7 +390,7 @@ namespace K
 			}
 		}
 		K::Vector3 J = K::Vector3(this->PointOnLine(this->linePoints[closestIndex].point[0], this->linePoints[closestIndex].point[1], P).x, 0.0f, this->PointOnLine(this->linePoints[closestIndex].point[0], this->linePoints[closestIndex].point[1], P).y);
-		return &J;
+		return J;
 	}
 
 	K::Vector3 Collider::PointOnLine(K::Vector3 A, K::Vector3 B, K::Vector3 P)
@@ -413,27 +413,22 @@ namespace K
 		{
 			return B;
 		}
-		else if (U > 0.0f && V < 0.0f)
+		else
 		{
 			return J;
 		}
 	}
 
-	K::Vector3* Collider::GetNormal(K::Vector3 A, K::Vector3 B) 
+	K::Vector3 Collider::GetNormal(K::Vector3 A, K::Vector3 B) 
 	{
 		K::Vector3 N = K::Vector3(-(B.y - A.y), 0.0f, B.x - A.x);
 		N.normalise();
-		return &N;
+		return N;
 	}
 
-	K::Line* Collider::GetLine(int index) 
+	K::Vector3 Collider::GetOffset() 
 	{
-		return &this->linePointsModelMatrix[index];
-	}
-
-	K::Vector3* Collider::GetOffset() 
-	{
-		return &this->offset;
+		return this->offset;
 	}
 
 	K::Vector3 Collider::GetPosition() 
@@ -448,6 +443,11 @@ namespace K
 			pos += K::Vector3(-this->offset.x, 0.0f, this->offset.z);
 		}
 		return pos;
+	}
+
+	K::Line* Collider::GetLine(int index) 
+	{
+		return &this->linePointsModelMatrix[index];
 	}
 
 	int Collider::GetNumberOfPoints() 

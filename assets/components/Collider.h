@@ -89,17 +89,17 @@ namespace K
 
 		void LineEditor();
 
-		K::Vector3* GetNormal(K::Vector3 A, K::Vector3 B);
+		K::Vector3 GetNormal(K::Vector3 A, K::Vector3 B);
 
 		K::Vector3 PointOnLine(K::Vector3 A, K::Vector3 B, K::Vector3 P);
 
-		K::Vector3* ClosestPointLineCollider(K::Vector3 P);
+		K::Vector3 ClosestPointLineCollider(K::Vector3 P);
 
-		K::Line* GetLine(int index);
-
-		K::Vector3* GetOffset();
+		K::Vector3 GetOffset();
 
 		K::Vector3 GetPosition();
+
+		K::Line* GetLine(int index);
 
 		int GetNumberOfPoints();
 
