@@ -83,7 +83,7 @@ namespace K
 
 	void TriggerNextScene::UpdateEditor()
 	{
-		if (ImGui::CollapsingHeader(this->GetName().c_str()))
+		if (ImGui::CollapsingHeader(this->GetName()))
 		{
 			ImGui::DragFloat3("Bottom Left", &this->bounds[0].x);
 			ImGui::DragFloat3("Top Right", &this->bounds[1].x);

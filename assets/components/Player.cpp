@@ -16,6 +16,7 @@ namespace K
 	Player::~Player() 
 	{
 		this->col = nullptr;
+		this->mesh = nullptr;
 	}
 
 	const char* Player::GetPropertyValues()
@@ -45,17 +46,10 @@ namespace K
 
 	void Player::Init() 
 	{
-		if (this->parent->GetComponentOfType(typeid(K::Collider).name()) != nullptr)
-		{
-			this->col = (K::Collider*)this->parent->GetComponentOfType(typeid(K::Collider).name());
-		}
-
-		if (this->parent->GetComponentOfType(typeid(K::Mesh).name()) != nullptr)
-		{
-			this->mesh = (K::Mesh*)this->parent->GetComponentOfType(typeid(K::Mesh).name());
-		}
-
 		this->parent->layer = (int)K::Layer::LayerType::Player;
+		
+		this->col = (K::Collider*)this->parent->GetComponentOfType(GetTypeName<K::Collider>());
+		this->mesh = (K::Mesh*)this->parent->GetComponentOfType(GetTypeName<K::Mesh>());
 
 		this->col->ResetVelocity();
 	}

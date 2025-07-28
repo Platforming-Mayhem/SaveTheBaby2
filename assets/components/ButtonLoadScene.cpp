@@ -14,7 +14,7 @@ namespace K
 
 	void ButtonLoadScene::Init() 
 	{
-		this->mesh = (K::Mesh*)this->parent->GetComponentOfType(typeid(K::Mesh).name());
+		this->mesh = (K::Mesh*)this->parent->GetComponentOfType(GetTypeName<K::Mesh>());
 	}
 
 	void ButtonLoadScene::Update() 

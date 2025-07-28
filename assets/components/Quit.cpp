@@ -14,7 +14,9 @@ namespace K
 
 	void Quit::Init()
 	{
-		this->mesh = (K::Mesh*)this->parent->GetComponentOfType(typeid(K::Mesh).name());
+		this->mesh = (K::Mesh*)this->parent->GetComponentOfType(GetTypeName<K::Mesh>());
+		if(this->mesh == nullptr)
+			std::cout << "Cannot find Mesh" << std::endl;
 	}
 
 	void Quit::Update() 
@@ -91,7 +93,7 @@ namespace K
 
 	void Quit::UpdateEditor()
 	{
-		if (ImGui::CollapsingHeader(this->GetName().c_str()))
+		if (ImGui::CollapsingHeader(this->GetName()))
 		{
 			ImGui::ColorPicker3("Selected Colour Tint", this->selectedTint);
 			ImGui::ColorPicker3("Unselected Colour Tint", this->unSelectedTint);

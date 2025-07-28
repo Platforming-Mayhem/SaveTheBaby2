@@ -27,18 +27,11 @@ namespace K
 	void Shooter::Init()
 	{
 		this->parent->layer = (int)K::Layer::LayerType::Enemy;
-		if (this->parent->GetComponentOfType(typeid(K::Collider).name()) != nullptr)
-		{
-			this->col = (K::Collider*)this->parent->GetComponentOfType(typeid(K::Collider).name());
-		}
-		if (this->parent->GetComponentOfType(typeid(K::Animator).name()) != nullptr)
-		{
-			this->anim = (K::Animator*)this->parent->GetComponentOfType(typeid(K::Animator).name());
-		}
-		if (this->parent->GetComponentOfType(typeid(K::Sprite).name()) != nullptr)
-		{
-			this->sprite = (K::Sprite*)this->parent->GetComponentOfType(typeid(K::Sprite).name());
-		}
+
+		this->col = (K::Collider*)this->parent->GetComponentOfType(GetTypeName<K::Collider>());
+		this->anim = (K::Animator*)this->parent->GetComponentOfType(GetTypeName<K::Animator>());
+		this->sprite = (K::Sprite*)this->parent->GetComponentOfType(GetTypeName<K::Sprite>());
+		
 		if (this->bulletTexture == nullptr)
 			this->bulletTexture = new K::Texture("textures/watermark.png");
 	}
