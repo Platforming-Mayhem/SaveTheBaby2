@@ -250,7 +250,7 @@ namespace K
 					{
 						K::Vector3 J = Physics::colliders[i]->PointOnLine(Physics::colliders[i]->GetLine(j)->point[0], Physics::colliders[i]->GetLine(j)->point[1], position);
 						K::Vector3 J2 = K::Vector3(J.x, 0.0f, J.y);
-						K::Vector3 Normal = *Physics::colliders[i]->GetNormal(Physics::colliders[i]->GetLine(j)->point[0], Physics::colliders[i]->GetLine(j)->point[1]);
+						K::Vector3 Normal = Physics::colliders[i]->GetNormal(Physics::colliders[i]->GetLine(j)->point[0], Physics::colliders[i]->GetLine(j)->point[1]);
 						points.push_back(K::ContactPoint(J2, Normal, Physics::colliders[i]));
 					}
 				}
