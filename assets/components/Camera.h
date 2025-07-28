@@ -6,13 +6,13 @@ namespace K
 	KC_API class Camera : public K::Component
 	{
 		bool isEditorCamActive = false;
-		bool isActive = false;
+		bool isActive = true;
 
 		float nearPlane = 0.9f;
 		float farPlane = 1000.0f;
 		float FOV = 60.0f;
-		float orthoSize = 1.0f;
-		float movementSpeed = 10.0f;
+		float orthoSize = 18.0f;
+		float movementSpeed = 18.0f;
 		float rotationSpeed = 100.0f;
 		float backgroundColour[4];
 
