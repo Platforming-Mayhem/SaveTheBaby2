@@ -1,3 +1,4 @@
+Light,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,1,1,1,-1,class K::Light,1.610000,0.810000,0.880000,
 BEAN,803,6,58,-3,0,0,0,19,1,17,6,58,-3,0,0,0,19,1,17,-1,class K::Mesh,1.000000,1.000000,1.000000,true,shaders/3D.shader,class K::Sprite,textures/rx2peT.gif,true,0.013889,1.000000,0.013889,textures/aa574640b0f3e2c22a4798233212e35d.gif,true,
 BEAN0,1570,-29,21,-9,0,0,0,19,-11,16,-29,21,-9,0,0,0,19,-11,16,-1,class K::Mesh,1.000000,1.000000,1.000000,true,shaders/3D.shader,class K::Sprite,textures/digitalen-arabina.gif,true,0.013889,1.000000,0.013889,textures/MrBeanPNGPic.png,true,
 BEAN7,2424,6,58,-3,0,0,0,19,1,17,6,58,-3,0,0,0,19,1,17,-1,class K::Mesh,1.000000,1.000000,1.000000,true,shaders/3D.shader,class K::Sprite,textures/rx2peT.gif,true,0.013889,1.000000,0.013889,textures/aa574640b0f3e2c22a4798233212e35d.gif,true,
@@ -7,4 +8,3 @@ BEAN1,16065,9,93,-9,0,0,0,19,-11,16,9,93,-9,0,0,0,19,-11,16,-1,class K::Mesh,1.0
 BEAN2,20350,7,29,14,0,0,0,19,1,7,7,29,14,0,0,0,19,1,7,-1,class K::Mesh,1.000000,1.000000,1.000000,true,shaders/3D.shader,class K::Sprite,textures/aa574640b0f3e2c22a4798233212e35d.gif,true,0.013889,1.000000,0.013889,textures/BeanPoster.png,true,
 BEAN1,23729,-29,29,14,0,0,0,19,1,7,-29,29,14,0,0,0,19,1,7,-1,class K::Mesh,1.000000,1.000000,1.000000,true,shaders/3D.shader,class K::Sprite,textures/unnamed.gif,true,0.013889,1.000000,0.013889,textures/138-1382384_download-png-mr-bean-face.png,true,
 BEAN6,31252,6,58,-3,0,0,0,19,1,17,6,58,-3,0,0,0,19,1,17,-1,class K::Mesh,1.000000,1.000000,1.000000,true,shaders/3D.shader,class K::Sprite,textures/rx2peT.gif,true,0.013889,1.000000,0.013889,textures/BeanNormal.png,true,
-Light,661269597,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,1,1,1,-1,class K::Light,2.430000,1.760000,1.560000,
