@@ -21,7 +21,7 @@ namespace K
 
 	const char* Sprite::GetPropertyValues()
 	{
-		if (this->texture->GetFilePath() == "101") 
+		if (this->texture->GetFilePath() == "textures/watermark.png") 
 		{
 			this->properties = "";
 		}
@@ -41,7 +41,7 @@ namespace K
 		{
 			this->properties += ",false";
 		}
-		if (this->normalTexture->GetFilePath() == "101")
+		if (this->normalTexture->GetFilePath() == "textures/watermark.png")
 		{
 			this->properties += ",";
 		}
