@@ -26,7 +26,9 @@ namespace K
 
 	void FollowPlayer::Update() 
 	{
-		*this->parent->GetTransform()->position = *this->playerPosition - K::Vector3(0.0f, 10.0f, 0.0f) + this->offset;
+		float blend = std::powf(0.5f, K::Time::deltaTime() * 16.0f);
+		K::Vector3 target = *this->playerPosition - K::Vector3(0.0f, 10.0f, 0.0f) + this->offset;
+		*this->parent->GetTransform()->position = K::Vector3::Lerp(target, *this->parent->GetTransform()->position, blend);
 	}
 
 	void FollowPlayer::UpdateEditor()
