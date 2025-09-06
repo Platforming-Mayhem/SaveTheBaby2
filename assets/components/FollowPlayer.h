@@ -3,29 +3,22 @@
 
 namespace K 
 {
-	KC_API class Move : public K::Component
+	class KC_API FollowPlayer : public K::Component
 	{
 	private:
-		float moveSpeed = 1.0f;
-		float time = 0.0f;
-		K::Vector3 destination;
+		K::Vector3 offset = K::Vector3();
+		K::Vector3* playerPosition;
 		std::string properties;
 	public:
-		Move();
+		FollowPlayer();
 
-		~Move();
-
-		float EaseInQuart(float x);
+		~FollowPlayer();
 
 		void Init() override;
 
 		void Update() override;
 
 		void UpdateEditor() override;
-
-		void Bind() override;
-
-		void Unbind()  override;
 
 		void SetPropertyValues(const char* value, int valueIndex) override;
 
