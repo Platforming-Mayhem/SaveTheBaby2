@@ -181,21 +181,21 @@ namespace K
 			//Player Accelerates
 			if (this->decelerateTime == 0.0f)
 			{
-				this->previousSpeed = SineAccelerateByTime(this->accelerateTime, 1.4f, 0.5f);
+				float newTime = this->accelerateTime + K::Time::deltaTime();
+				this->previousSpeed = (SineAccelerateByTime(this->accelerateTime, 1.4f, 0.5f) + SineAccelerateByTime(newTime, 1.4f, 0.5f)) / 2.0f;
 				this->mesh->SetColourTint(this->previousSpeed, 0.0f, 0.0f);
 				this->parent->GetTransform()->position->x += this->previousSpeed * K::Time::deltaTime() * this->movementSpeed * moveDirection * this->col->angleUp;
 				this->parent->GetTransform()->position->z += this->previousSpeed * K::Time::deltaTime() * this->movementSpeed * moveDirection * -this->col->angleRight;
-				this->previousSpeed = SineAccelerateByTime(this->accelerateTime, 1.4f, 0.5f);
 			}
 			//Player Decelerates
 			else if (this->accelerateTime == 0.0f)
 			{
 				this->decelerationSpeed = this->previousSpeed * 0.14f;
-				float decelerationAmount = SineDecelerateByTime(this->decelerateTime, this->decelerationSpeed);
+				float newTime = this->decelerateTime + K::Time::deltaTime();
+				float decelerationAmount = (SineDecelerateByTime(this->decelerateTime, this->decelerationSpeed) + SineDecelerateByTime(newTime, this->decelerationSpeed)) / 2.0f;
 				this->mesh->SetColourTint(decelerationAmount, 0.0f, 0.0f);
 				this->parent->GetTransform()->position->x += decelerationAmount * this->previousSpeed * K::Time::deltaTime() * this->movementSpeed * this->previousDirection * this->col->angleUp;
 				this->parent->GetTransform()->position->z += decelerationAmount * this->previousSpeed * K::Time::deltaTime() * this->movementSpeed * this->previousDirection * -this->col->angleRight;
-				this->decelerationSpeed = this->previousSpeed * 0.14f;
 			}
 		}
 	}
