@@ -30,8 +30,8 @@ namespace K
 		float cornerX = 0.0f;
 		float cornerZ = 0.0f;
 
-		int jumps = 2;
-		int maxJumps = 2;
+		int jumps = 1;
+		int maxJumps = 1;
 
 		bool isClimbingUp = false;
 		bool isGrabbing = false;
