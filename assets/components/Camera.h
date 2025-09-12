@@ -8,7 +8,7 @@ namespace K
 		bool isEditorCamActive = false;
 		bool isActive = true;
 
-		float nearPlane = 0.9f;
+		float nearPlane = 0.1f;
 		float farPlane = 1000.0f;
 		float FOV = 60.0f;
 		float orthoSize = 18.0f;

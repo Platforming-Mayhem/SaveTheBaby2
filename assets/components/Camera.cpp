@@ -76,6 +76,8 @@ namespace K
 	{
 		if (this->isActive)
 		{
+			glViewport(0, 0, this->window->width, this->window->height);
+
 			this->SetProjectionMatrix();
 			//View Matrix
 			if (this->isEditorCamActive)
@@ -85,6 +87,7 @@ namespace K
 			}
 			else 
 			{
+				this->parent->PassTransformationMatrix();
 				this->viewMatrix = K::QuickInverse(this->parent->GetTransform()->modelMatrix);
 			}
 			if (this->parent->parent != nullptr)
@@ -100,26 +103,11 @@ namespace K
 				this->viewMatrix = K::Matrix4x4::Matrix_MultiplyMatrix(this->viewMatrix, invertedScalingMatrix);
 			}
 
-			glViewport(0, 0, this->window->width, this->window->height);
-
 			K::Editor::cameraPosition = this->GetPositionPointer();
 
-			K::Editor::projectionMatrix = &this->projectionMatrix;
+			K::Editor::projectionMatrix = this->projectionMatrix;
 
-			K::Editor::viewMatrix = &this->viewMatrix;
-
-			for (auto& matInfo : K::materialManager.materials) 
-			{
-				K::Material* mat = (K::Material*)matInfo.second.dependenciesPointers[0];
-
-				glUseProgram(mat->GetShader()->shader);
-
-				glUniformMatrix4fv(mat->GetShader()->GetUniform("viewMatrix"), 1, GL_FALSE, &this->viewMatrix.m[0][0]);
-
-				glUniformMatrix4fv(mat->GetShader()->GetUniform("projectionMatrix"), 1, GL_FALSE, &this->projectionMatrix.m[0][0]);
-
-				glUniform3f(mat->GetShader()->GetUniform("fogColour"), this->backgroundColour[0], this->backgroundColour[1], this->backgroundColour[2]);
-			}
+			K::Editor::viewMatrix = this->viewMatrix;
 		}
 	}
 
@@ -174,9 +162,8 @@ namespace K
 
 	void Camera::RenderBind() 
 	{
-		glClearColor(this->backgroundColour[0], this->backgroundColour[1], this->backgroundColour[2], this->backgroundColour[3]);
-
-		this->CameraMatrix();
+		if(this->isActive)
+			glClearColor(this->backgroundColour[0], this->backgroundColour[1], this->backgroundColour[2], this->backgroundColour[3]);
 	}
 
 	K::Matrix4x4 Camera::GetProjectionMatrix() 
@@ -289,7 +276,9 @@ namespace K
 
 	void Camera::Unbind()
 	{
-		
+		if(this->parent != K::Editor::GetCurrentScene()->GetGameObjects().rbegin()->second)
+			this->parent->SetIndex(K::Editor::GetCurrentScene()->GetGameObjects().rbegin()->first + 1);
+		this->CameraMatrix();
 	}
 
 	void Camera::Render()
