@@ -145,24 +145,24 @@ namespace K
 		{
 			if (this->col->wallRight > 0.7f && moveDirection > 0.0f)
 			{
-				this->canMoveHorizontally = false;
+				this->accelerateTime = -0.5f;
+				this->decelerateTime = 0.0f;
 				//std::cout << "Stop Move Right: " << this->moveDirection << ":" << -this->col->angleRight << std::endl;
 			}
 			else if (this->col->wallRight > 0.7f && moveDirection < 0.0f)
 			{
-				this->canMoveHorizontally = true;
 				this->accelerateTime = 0.0f;
 				this->decelerateTime = 0.0f;
 				//std::cout << "Move Left: " << this->moveDirection << ":" << -this->col->angleRight << std::endl;
 			}
 			if (this->col->wallRight < -0.7f && moveDirection < 0.0f)
 			{
-				this->canMoveHorizontally = false;
+				this->accelerateTime = -0.5f;
+				this->decelerateTime = 0.0f;
 				//std::cout << "Stop Move Left: " << this->moveDirection << ":" << -this->col->angleRight << std::endl;
 			}
 			else if (this->col->wallRight < -0.7f && moveDirection > 0.0f)
 			{
-				this->canMoveHorizontally = true;
 				this->accelerateTime = 0.0f;
 				this->decelerateTime = 0.0f;
 				//std::cout << "Move Right: " << this->moveDirection << ":" << -this->col->angleRight << std::endl;
