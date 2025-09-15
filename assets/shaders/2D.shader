@@ -80,6 +80,6 @@ void main()
 	if(canDepth)
 	{
 		float depthRaw = gl_FragCoord.z * 2.0 - 1.0;
-		colour.rgb = mix(colour.rgb, fogColour,LinearizeDepth(depthRaw) / 2.0);
+		colour.rgb = mix(colour.rgb, fogColour,clamp(LinearizeDepth(depthRaw) / 2.0, 0.0, 1.0));
 	}
 }
