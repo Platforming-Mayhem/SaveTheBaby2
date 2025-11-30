@@ -74,8 +74,9 @@ void main()
 	colour.rgb *= colorTint;
 	if(hasNormal)
 	{
-		float lighting = dot(normalize(texture(texture1, TexCoord).rgb * 2.0 - 1.0), normalize(lightDirection));
-		colour.rgb *= lighting;
+		float lighting = dot(normalize(Normal), normalize(lightDirection));
+		float normalMap = dot(normalize(texture(texture1, TexCoord).rgb * 2.0 - 1.0), normalize(lightDirection));
+		colour.rgb *= lighting + normalMap;
 	}
 	if(canDepth)
 	{
