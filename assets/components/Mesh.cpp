@@ -30,7 +30,7 @@ namespace K
 	bool Mesh::LoadModelsAssimp(std::string file)
 	{
 		Assimp::Importer importer;
-		const aiScene* scene = importer.ReadFile(file, aiProcess_Triangulate);
+		const aiScene* scene = importer.ReadFile(ASSET_DIR + file, aiProcess_Triangulate);
 		if (scene->HasMeshes())
 		{
 			vertices.clear();
@@ -153,7 +153,8 @@ namespace K
 					nfdresult_t result = NFD_OpenDialogU8(&location, NULL, NULL, NULL);
 					if (result == NFD_OKAY)
 					{
-						this->LoadModelsAssimp(location);
+						this->mesh = std::filesystem::relative(location, ASSET_DIR).generic_string();
+						this->LoadModelsAssimp(this->mesh);
 
 						glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->EBO);
 						glBufferData(GL_ELEMENT_ARRAY_BUFFER, this->indices.size() * sizeof(int), &this->indices[0], GL_DYNAMIC_DRAW);
@@ -235,6 +236,13 @@ namespace K
 					this->parent->SetMaterial(new K::Material(this->shader));
 				}
 				break;
+			case 5:
+				if (temp != "")
+				{
+					this->mesh = temp;
+					this->LoadModelsAssimp(this->mesh);
+				}
+				break;
 			}
 		}
 	}
@@ -252,7 +260,8 @@ namespace K
 		{
 			this->properties += "false,";
 		}
-		this->properties += this->shader;
+		this->properties += this->shader + ",";
+		this->properties += this->mesh;
 		return this->properties.c_str();
 	}
 }
