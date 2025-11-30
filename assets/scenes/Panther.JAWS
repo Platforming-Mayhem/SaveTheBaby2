@@ -1,3 +1,3 @@
-Panther,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,1,1,1,-1,class K::Mesh,1.000000,1.000000,1.000000,false,shaders/2D.shader,models/Panther.fbx,class K::Sprite,textures/White.png,false,textures/Panther_standardSurface1_Normal.png,true,
+Panther,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,1,1,1,-1,class K::Mesh,1.000000,1.000000,1.000000,false,shaders/2D.shader,models/Panther.fbx,class K::Sprite,textures/Panther_standardSurface1_BaseColor.png,false,textures/Panther_standardSurface1_Normal.png,true,
 Light,2,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,1,1,1,-1,class K::Light,1.000000,1.000000,0.000000,
 Camera,3,496,54,550,0,41,0,1,1,1,496,54,550,0,41,0,1,1,1,-1,class K::Camera,0.900000,1000.000000,12.000000,1.000000,10.000000,100.000000,true,0,1.000000,1.000000,1.000000,1.000000,
