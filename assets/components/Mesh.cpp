@@ -45,12 +45,18 @@ namespace K
 					vertex.y = mesh->mVertices[i].y;
 					vertex.z = mesh->mVertices[i].z;
 					Vector3 normal;
-					normal.x = mesh->mNormals[i].x;
-					normal.y = mesh->mNormals[i].y;
-					normal.z = mesh->mNormals[i].z;
+					if (mesh->HasNormals()) 
+					{
+						normal.x = mesh->mNormals[i].x;
+						normal.y = mesh->mNormals[i].y;
+						normal.z = mesh->mNormals[i].z;
+					}
 					Vector2 texCoord;
-					texCoord.x = (&mesh->mTextureCoords[0][i])->x;
-					texCoord.y = (&mesh->mTextureCoords[0][i])->y;
+					if (mesh->HasTextureCoords(0)) 
+					{
+						texCoord.x = (&mesh->mTextureCoords[0][i])->x;
+						texCoord.y = (&mesh->mTextureCoords[0][i])->y;
+					}
 					K::Vertex vert(vertex, texCoord, normal);
 
 					vertices.push_back(vert);
