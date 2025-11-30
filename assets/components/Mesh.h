@@ -112,6 +112,8 @@ namespace K
 
 		void SetShader(std::string newShader);
 
+		bool LoadModelsAssimp(std::string file);
+
 		void RenderInit() override;
 
 		void Init() override;

@@ -27,6 +27,46 @@ namespace K
 		this->shader = newShader;
 	}
 
+	bool Mesh::LoadModelsAssimp(std::string file)
+	{
+		Assimp::Importer importer;
+		const aiScene* scene = importer.ReadFile(file, aiProcess_Triangulate);
+		if (scene->HasMeshes())
+		{
+			vertices.clear();
+			indices.clear();
+			for (int j = 0; j < (scene->mNumMeshes); j++)
+			{
+				aiMesh* mesh = scene->mMeshes[j];
+				for (int i = 0; i < mesh->mNumVertices; i++)
+				{
+					Vector3 vertex;
+					vertex.x = mesh->mVertices[i].x;
+					vertex.y = mesh->mVertices[i].y;
+					vertex.z = mesh->mVertices[i].z;
+					Vector3 normal;
+					normal.x = mesh->mNormals[i].x;
+					normal.y = mesh->mNormals[i].y;
+					normal.z = mesh->mNormals[i].z;
+					Vector2 texCoord;
+					texCoord.x = (&mesh->mTextureCoords[0][i])->x;
+					texCoord.y = (&mesh->mTextureCoords[0][i])->y;
+					K::Vertex vert(vertex, texCoord, normal);
+
+					vertices.push_back(vert);
+				}
+				for (int i = 0; i < mesh->mNumFaces; i++) 
+				{
+					for (int j = 0; j < mesh->mFaces[i].mNumIndices; j++) 
+					{
+						indices.push_back(mesh->mFaces[i].mIndices[j]);
+					}
+				}
+			}
+		}
+		return scene->HasMeshes();
+	}
+
 	void Mesh::RenderInit() 
 	{
 		if (this->shader == "") 
@@ -105,6 +145,35 @@ namespace K
 			ImGui::Text("Indices: %i", this->indices.size());
 			ImGui::Checkbox("Can Depth", &this->canDepth);
 			ImGui::ColorPicker3("Colour Tint", this->colourTint);
+			if (ImGui::Button("Load Model")) 
+			{
+				char* location;
+				if (NFD_Init())
+				{
+					nfdresult_t result = NFD_OpenDialogU8(&location, NULL, NULL, NULL);
+					if (result == NFD_OKAY)
+					{
+						this->LoadModelsAssimp(location);
+
+						glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->EBO);
+						glBufferData(GL_ELEMENT_ARRAY_BUFFER, this->indices.size() * sizeof(int), &this->indices[0], GL_DYNAMIC_DRAW);
+
+						glBindBuffer(GL_ARRAY_BUFFER, this->VBO);
+						glBufferData(GL_ARRAY_BUFFER, this->vertices.size() * sizeof(K::Vertex), &this->vertices[0], GL_DYNAMIC_DRAW);
+
+						NFD_FreePathU8(location);
+					}
+					else if (result == NFD_CANCEL)
+					{
+						
+					}
+					else
+					{
+						printf("Error: %s\n", NFD_GetError());
+					}
+					NFD_Quit();
+				}
+			}
 		}
 		if (ImGui::CollapsingHeader("Material Settings")) 
 		{
