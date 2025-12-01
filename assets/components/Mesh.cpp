@@ -35,6 +35,9 @@ namespace K
 		{
 			vertices.clear();
 			indices.clear();
+
+			unsigned int offset_faces = 0;
+
 			for (unsigned int i = 0; i < scene->mNumMeshes; i++)
 			{
 				aiMesh* mesh = scene->mMeshes[i];
@@ -43,7 +46,7 @@ namespace K
 				{
 					aiFace face = mesh->mFaces[k];
 					for (unsigned int l = 0; l < face.mNumIndices; l++)
-						indices.push_back(face.mIndices[l]);
+						indices.push_back(face.mIndices[l] + offset_faces);
 				}
 
 				for (unsigned int j = 0; j < mesh->mNumVertices; j++)
@@ -69,6 +72,8 @@ namespace K
 
 					vertices.push_back(vert);
 				}
+
+				offset_faces += mesh->mNumVertices;
 			}
 		}
 		return scene->HasMeshes();
