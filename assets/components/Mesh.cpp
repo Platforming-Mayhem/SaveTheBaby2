@@ -35,38 +35,39 @@ namespace K
 		{
 			vertices.clear();
 			indices.clear();
-			for (int j = 0; j < (scene->mNumMeshes); j++)
+			for (unsigned int i = 0; i < scene->mNumMeshes; i++)
 			{
-				aiMesh* mesh = scene->mMeshes[j];
-				for (int i = 0; i < mesh->mNumVertices; i++)
+				aiMesh* mesh = scene->mMeshes[i];
+
+				for (unsigned int k = 0; k < mesh->mNumFaces; k++)
+				{
+					aiFace face = mesh->mFaces[k];
+					for (unsigned int l = 0; l < face.mNumIndices; l++)
+						indices.push_back(face.mIndices[l]);
+				}
+
+				for (unsigned int j = 0; j < mesh->mNumVertices; j++)
 				{
 					Vector3 vertex;
-					vertex.x = mesh->mVertices[i].x;
-					vertex.y = mesh->mVertices[i].y;
-					vertex.z = mesh->mVertices[i].z;
+					vertex.x = mesh->mVertices[j].x;
+					vertex.y = mesh->mVertices[j].y;
+					vertex.z = mesh->mVertices[j].z;
 					Vector3 normal;
 					if (mesh->HasNormals()) 
 					{
-						normal.x = mesh->mNormals[i].x;
-						normal.y = mesh->mNormals[i].y;
-						normal.z = mesh->mNormals[i].z;
+						normal.x = mesh->mNormals[j].x;
+						normal.y = mesh->mNormals[j].y;
+						normal.z = mesh->mNormals[j].z;
 					}
 					Vector2 texCoord;
 					if (mesh->HasTextureCoords(0)) 
 					{
-						texCoord.x = (&mesh->mTextureCoords[0][i])->x;
-						texCoord.y = (&mesh->mTextureCoords[0][i])->y;
+						texCoord.x = mesh->mTextureCoords[0][j].x;
+						texCoord.y = mesh->mTextureCoords[0][j].y;
 					}
 					K::Vertex vert(vertex, texCoord, normal);
 
 					vertices.push_back(vert);
-				}
-				for (int i = 0; i < mesh->mNumFaces; i++) 
-				{
-					for (int j = 0; j < mesh->mFaces[i].mNumIndices; j++) 
-					{
-						indices.push_back(mesh->mFaces[i].mIndices[j]);
-					}
 				}
 			}
 		}
@@ -151,35 +152,30 @@ namespace K
 			ImGui::Text("Indices: %i", this->indices.size());
 			ImGui::Checkbox("Can Depth", &this->canDepth);
 			ImGui::ColorPicker3("Colour Tint", this->colourTint);
-			if (ImGui::Button("Load Model")) 
+
+			if (this->mesh.empty()) 
 			{
-				char* location;
-				if (NFD_Init())
+				ImGui::Text("No Mesh Data -- Using Default Quad");
+			}
+			else 
+			{
+				ImGui::Text(this->mesh.c_str());
+			}
+			if (ImGui::BeginDragDropTarget())
+			{
+				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("_MODEL"))
 				{
-					nfdresult_t result = NFD_OpenDialogU8(&location, NULL, NULL, NULL);
-					if (result == NFD_OKAY)
-					{
-						this->mesh = std::filesystem::relative(location, ASSET_DIR).generic_string();
-						this->LoadModelsAssimp(this->mesh);
+					const char* file = (const char*)payload->Data;
+					this->mesh = file;
+					this->LoadModelsAssimp(this->mesh);
 
-						glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->EBO);
-						glBufferData(GL_ELEMENT_ARRAY_BUFFER, this->indices.size() * sizeof(int), &this->indices[0], GL_DYNAMIC_DRAW);
+					glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->EBO);
+					glBufferData(GL_ELEMENT_ARRAY_BUFFER, this->indices.size() * sizeof(int), &this->indices[0], GL_DYNAMIC_DRAW);
 
-						glBindBuffer(GL_ARRAY_BUFFER, this->VBO);
-						glBufferData(GL_ARRAY_BUFFER, this->vertices.size() * sizeof(K::Vertex), &this->vertices[0], GL_DYNAMIC_DRAW);
-
-						NFD_FreePathU8(location);
-					}
-					else if (result == NFD_CANCEL)
-					{
-						
-					}
-					else
-					{
-						printf("Error: %s\n", NFD_GetError());
-					}
-					NFD_Quit();
+					glBindBuffer(GL_ARRAY_BUFFER, this->VBO);
+					glBufferData(GL_ARRAY_BUFFER, this->vertices.size() * sizeof(K::Vertex), &this->vertices[0], GL_DYNAMIC_DRAW);
 				}
+				ImGui::EndDragDropTarget();
 			}
 		}
 		if (ImGui::CollapsingHeader("Material Settings")) 
