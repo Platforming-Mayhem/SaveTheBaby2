@@ -1,5 +1,6 @@
 #include "Collider.h"
 #include "PhysicsEngine.h"
+#include "Mesh.h"
 
 namespace K 
 {
@@ -122,10 +123,61 @@ namespace K
 		this->ResetVelocity();
 	}
 
+	struct closestToZero 
+	{
+		bool operator() (const K::Vector3& vec1, const K::Vector3& vec2)
+		{
+			return (std::fabsf(vec1.z) < std::fabsf(vec2.z));
+		}
+	};
+
 	void Collider::UpdateEditor()
 	{
 		if (ImGui::CollapsingHeader("Collider Settings")) 
 		{
+			if (ImGui::Button("Generate 2D Collider From Mesh")) 
+			{
+				K::Mesh* mesh = (K::Mesh*)this->parent->GetComponentOfType(GetTypeName<K::Mesh>());
+				if (mesh != nullptr) 
+				{
+					std::vector<K::Vector3> positions;
+					for (auto vertex : mesh->vertices) 
+					{
+						K::Vector3 colliderPosition = K::Vector3(vertex.position.x, vertex.position.y, 0.0f);
+						bool isAlreadyInArray = false;
+						for (auto pos : positions) 
+						{
+							if (pos == colliderPosition)
+							{
+								isAlreadyInArray = true;
+								break;
+							}
+						}
+						if (!isAlreadyInArray) 
+						{
+							positions.push_back(colliderPosition);
+						}
+					}
+					std::sort(positions.begin(), positions.end(), closestToZero());
+					for (int i = 0; i < positions.size(); i++)
+					{
+						if (i - 1 < 0) 
+						{
+							this->linePoints.push_back(K::Line(positions[i], positions[0]));
+							this->linePointsModelMatrix.push_back(K::Line(positions[i], positions[0]));
+						}
+						else 
+						{
+							this->linePoints.push_back(K::Line(positions[i], positions[i-1]));
+							this->linePointsModelMatrix.push_back(K::Line(positions[i], positions[i-1]));
+						}
+					}
+				}
+				else 
+				{
+					ImGui::TextColored(ImVec4(255.0f, 0.0f, 0.0f, 255.0f), "Mesh Component Not Found");
+				}
+			}
 			ImGui::Checkbox("Is Static", &this->isStatic);
 			switch (this->colliderType)
 			{
