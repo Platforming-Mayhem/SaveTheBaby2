@@ -128,6 +128,8 @@ namespace K
 		K::Mesh* mesh = (K::Mesh*)this->parent->GetComponentOfType(GetTypeName<K::Mesh>());
 		if (mesh != nullptr)
 		{
+			int count = 0;
+			K::Vector3 previousPosition;
 			for (int i = 0; i < mesh->indices.size() / 3; i++)
 			{
 				int index1 = mesh->indices[(i * 3)];
@@ -141,7 +143,60 @@ namespace K
 				float val3 = vertex3.y * vertex1.y;
 				if (val1 < 0.0f || val2 < 0.0f || val3 < 0.0f) 
 				{
-					
+					K::Vector3 direction = (vertex2 - vertex1).normalise();
+					float t = -vertex1.y / direction.y;
+					if (t > 0.0f && t < (vertex2 - vertex1).magnitude())
+					{
+						K::Vector3 position = vertex1 + direction * t;
+						if (count > 0) 
+						{
+							K::Line line = K::Line(K::Vector3(previousPosition.x, previousPosition.z, 0.0f), K::Vector3(position.x, position.z, 0.0f));
+							this->linePoints.push_back(line);
+							this->linePointsModelMatrix.push_back(line);
+							count = 0;
+						}
+						else 
+						{
+							previousPosition = position;
+							count++;
+						}
+					}
+					direction = (vertex3 - vertex2).normalise();
+					t = -vertex2.y / direction.y;
+					if (t > 0.0f && t < (vertex3 - vertex2).magnitude())
+					{
+						K::Vector3 position = vertex2 + direction * t;
+						if (count > 0)
+						{
+							K::Line line = K::Line(K::Vector3(previousPosition.x, previousPosition.z, 0.0f), K::Vector3(position.x, position.z, 0.0f));
+							this->linePoints.push_back(line);
+							this->linePointsModelMatrix.push_back(line);
+							count = 0;
+						}
+						else
+						{
+							previousPosition = position;
+							count++;
+						}
+					}
+					direction = (vertex1 - vertex3).normalise();
+					t = -vertex3.y / direction.y;
+					if (t > 0.0f && t < (vertex1 - vertex3).magnitude())
+					{
+						K::Vector3 position = vertex3 + direction * t;
+						if (count > 0)
+						{
+							K::Line line = K::Line(K::Vector3(previousPosition.x, previousPosition.z, 0.0f), K::Vector3(position.x, position.z, 0.0f));
+							this->linePoints.push_back(line);
+							this->linePointsModelMatrix.push_back(line);
+							count = 0;
+						}
+						else
+						{
+							previousPosition = position;
+							count++;
+						}
+					}
 				}
 			}
 			return true;
