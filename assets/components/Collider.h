@@ -87,6 +87,8 @@ namespace K
 
 		void SetIsHittingWall(bool value);
 
+		bool GenerateColliderFromMesh();
+
 		void LineEditor();
 
 		K::Vector3 GetNormal(K::Vector3 A, K::Vector3 B);

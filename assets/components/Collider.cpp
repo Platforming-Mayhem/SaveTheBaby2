@@ -123,13 +123,34 @@ namespace K
 		this->ResetVelocity();
 	}
 
-	struct closestToZero 
+	bool Collider::GenerateColliderFromMesh() 
 	{
-		bool operator() (const K::Vector3& vec1, const K::Vector3& vec2)
+		K::Mesh* mesh = (K::Mesh*)this->parent->GetComponentOfType(GetTypeName<K::Mesh>());
+		if (mesh != nullptr)
 		{
-			return (std::fabsf(vec1.z) < std::fabsf(vec2.z));
+			for (int i = 0; i < mesh->indices.size() / 3; i++)
+			{
+				int index1 = mesh->indices[(i * 3)];
+				int index2 = mesh->indices[(i * 3) + 1];
+				int index3 = mesh->indices[(i * 3) + 2];
+				K::Vector3 vertex1 = mesh->vertices[index1].position;
+				K::Vector3 vertex2 = mesh->vertices[index2].position;
+				K::Vector3 vertex3 = mesh->vertices[index3].position;
+				float val1 = vertex1.y * vertex2.y;
+				float val2 = vertex2.y * vertex3.y;
+				float val3 = vertex3.y * vertex1.y;
+				if (val1 < 0.0f || val2 < 0.0f || val3 < 0.0f) 
+				{
+					
+				}
+			}
+			return true;
 		}
-	};
+		else
+		{
+			return false;
+		}
+	}
 
 	void Collider::UpdateEditor()
 	{
@@ -137,43 +158,7 @@ namespace K
 		{
 			if (ImGui::Button("Generate 2D Collider From Mesh")) 
 			{
-				K::Mesh* mesh = (K::Mesh*)this->parent->GetComponentOfType(GetTypeName<K::Mesh>());
-				if (mesh != nullptr) 
-				{
-					std::vector<K::Vector3> positions;
-					for (auto vertex : mesh->vertices) 
-					{
-						K::Vector3 colliderPosition = K::Vector3(vertex.position.x, vertex.position.y, 0.0f);
-						bool isAlreadyInArray = false;
-						for (auto pos : positions) 
-						{
-							if (pos == colliderPosition)
-							{
-								isAlreadyInArray = true;
-								break;
-							}
-						}
-						if (!isAlreadyInArray) 
-						{
-							positions.push_back(colliderPosition);
-						}
-					}
-					std::sort(positions.begin(), positions.end(), closestToZero());
-					for (int i = 0; i < positions.size(); i++)
-					{
-						if (i - 1 < 0) 
-						{
-							this->linePoints.push_back(K::Line(positions[i], positions[0]));
-							this->linePointsModelMatrix.push_back(K::Line(positions[i], positions[0]));
-						}
-						else 
-						{
-							this->linePoints.push_back(K::Line(positions[i], positions[i-1]));
-							this->linePointsModelMatrix.push_back(K::Line(positions[i], positions[i-1]));
-						}
-					}
-				}
-				else 
+				if (!GenerateColliderFromMesh()) 
 				{
 					ImGui::TextColored(ImVec4(255.0f, 0.0f, 0.0f, 255.0f), "Mesh Component Not Found");
 				}
