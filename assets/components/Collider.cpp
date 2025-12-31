@@ -128,6 +128,8 @@ namespace K
 		K::Mesh* mesh = (K::Mesh*)this->parent->GetComponentOfType(GetTypeName<K::Mesh>());
 		if (mesh != nullptr)
 		{
+			this->linePoints.clear();
+			this->linePointsModelMatrix.clear();
 			int count = 0;
 			K::Vector3 previousPosition;
 			for (int i = 0; i < mesh->indices.size() / 3; i++)
