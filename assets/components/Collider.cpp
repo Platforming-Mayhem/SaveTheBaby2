@@ -132,14 +132,20 @@ namespace K
 			this->linePointsModelMatrix.clear();
 			int count = 0;
 			K::Vector3 previousPosition;
+			K::Matrix4x4 modelMatrix = this->parent->GetTransform()->modelMatrix;
+			K::Matrix4x4 inverseModelMatrix = K::QuickInverse(modelMatrix);
 			for (int i = 0; i < mesh->indices.size() / 3; i++)
 			{
 				int index1 = mesh->indices[(i * 3)];
 				int index2 = mesh->indices[(i * 3) + 1];
 				int index3 = mesh->indices[(i * 3) + 2];
-				K::Vector3 vertex1 = mesh->vertices[index1].position;
-				K::Vector3 vertex2 = mesh->vertices[index2].position;
-				K::Vector3 vertex3 = mesh->vertices[index3].position;
+				K::Vector3 ogvertex1 = mesh->vertices[index1].position;
+				K::Vector3 ogvertex2 = mesh->vertices[index2].position;
+				K::Vector3 ogvertex3 = mesh->vertices[index3].position;
+				K::Vector3 vertex1, vertex2, vertex3;
+				K::MultiplyMatrixVector(ogvertex1, vertex1, modelMatrix);
+				K::MultiplyMatrixVector(ogvertex2, vertex2, modelMatrix);
+				K::MultiplyMatrixVector(ogvertex3, vertex3, modelMatrix);
 				float val1 = vertex1.y * vertex2.y;
 				float val2 = vertex2.y * vertex3.y;
 				float val3 = vertex3.y * vertex1.y;
@@ -152,11 +158,27 @@ namespace K
 						K::Vector3 position = vertex1 + direction * t;
 						if (count > 0) 
 						{
-							K::Line line = K::Line(K::Vector3(previousPosition.x, previousPosition.z, 0.0f), K::Vector3(position.x, position.z, 0.0f));
-							K::Vector3 normal = GetNormal(line.point[0], line.point[1]);
-							if (K::Vector3::DotProduct(mesh->vertices[index1].normal, normal) < 0.0f)
+							K::Line line = K::Line(previousPosition, position);
+							K::Vector3 point1 = K::Vector3(line.point[0].x, line.point[0].z, 0.0f);
+							K::Vector3 point2 = K::Vector3(line.point[1].x, line.point[1].z, 0.0f);
+							K::Vector3 normal = GetNormal(point1, point2).normalise();
+							K::Vector3 rotatedNormal;
+							K::Matrix4x4 rotationMatrix = K::Quaternion::Euler(this->parent->GetTransform()->rotation).QuaternionToMatrix();
+							K::MultiplyMatrixVector(mesh->vertices[index1].normal, rotatedNormal, rotationMatrix);
+							K::Vector3 modelNormal = K::Vector3(rotatedNormal.x, 0.0f, rotatedNormal.z).normalise();
+							if (K::Vector3::DotProduct(modelNormal, normal) < 0.0f)
 							{
-								line = K::Line(K::Vector3(position.x, position.z, 0.0f), K::Vector3(previousPosition.x, previousPosition.z, 0.0f));
+								K::Vector3 newPos, newPrePos;
+								K::MultiplyMatrixVector(position, newPos, inverseModelMatrix);
+								K::MultiplyMatrixVector(previousPosition, newPrePos, inverseModelMatrix);
+								line = K::Line(newPos, newPrePos);
+							}
+							else
+							{
+								K::Vector3 newPos, newPrePos;
+								K::MultiplyMatrixVector(position, newPos, inverseModelMatrix);
+								K::MultiplyMatrixVector(previousPosition, newPrePos, inverseModelMatrix);
+								line = K::Line(newPrePos, newPos);
 							}
 							this->linePoints.push_back(line);
 							this->linePointsModelMatrix.push_back(line);
@@ -175,11 +197,27 @@ namespace K
 						K::Vector3 position = vertex2 + direction * t;
 						if (count > 0)
 						{
-							K::Line line = K::Line(K::Vector3(previousPosition.x, previousPosition.z, 0.0f), K::Vector3(position.x, position.z, 0.0f));
-							K::Vector3 normal = GetNormal(line.point[0], line.point[1]);
-							if (K::Vector3::DotProduct(mesh->vertices[index1].normal, normal) < 0.0f)
+							K::Line line = K::Line(previousPosition, position);
+							K::Vector3 point1 = K::Vector3(line.point[0].x, line.point[0].z, 0.0f);
+							K::Vector3 point2 = K::Vector3(line.point[1].x, line.point[1].z, 0.0f);
+							K::Vector3 normal = GetNormal(point1, point2).normalise();
+							K::Vector3 rotatedNormal;
+							K::Matrix4x4 rotationMatrix = K::Quaternion::Euler(this->parent->GetTransform()->rotation).QuaternionToMatrix();
+							K::MultiplyMatrixVector(mesh->vertices[index2].normal, rotatedNormal, rotationMatrix);
+							K::Vector3 modelNormal = K::Vector3(rotatedNormal.x, 0.0f, rotatedNormal.z).normalise();
+							if (K::Vector3::DotProduct(modelNormal, normal) < 0.0f)
 							{
-								line = K::Line(K::Vector3(position.x, position.z, 0.0f), K::Vector3(previousPosition.x, previousPosition.z, 0.0f));
+								K::Vector3 newPos, newPrePos;
+								K::MultiplyMatrixVector(position, newPos, inverseModelMatrix);
+								K::MultiplyMatrixVector(previousPosition, newPrePos, inverseModelMatrix);
+								line = K::Line(newPos, newPrePos);
+							}
+							else
+							{
+								K::Vector3 newPos, newPrePos;
+								K::MultiplyMatrixVector(position, newPos, inverseModelMatrix);
+								K::MultiplyMatrixVector(previousPosition, newPrePos, inverseModelMatrix);
+								line = K::Line(newPrePos, newPos);
 							}
 							this->linePoints.push_back(line);
 							this->linePointsModelMatrix.push_back(line);
@@ -198,11 +236,27 @@ namespace K
 						K::Vector3 position = vertex3 + direction * t;
 						if (count > 0)
 						{
-							K::Line line = K::Line(K::Vector3(previousPosition.x, previousPosition.z, 0.0f), K::Vector3(position.x, position.z, 0.0f));
-							K::Vector3 normal = GetNormal(line.point[0], line.point[1]);
-							if (K::Vector3::DotProduct(mesh->vertices[index1].normal, normal) < 0.0f)
+							K::Line line = K::Line(previousPosition, position);
+							K::Vector3 point1 = K::Vector3(line.point[0].x, line.point[0].z, 0.0f);
+							K::Vector3 point2 = K::Vector3(line.point[1].x, line.point[1].z, 0.0f);
+							K::Vector3 normal = GetNormal(point1, point2).normalise();
+							K::Vector3 rotatedNormal;
+							K::Matrix4x4 rotationMatrix = K::Quaternion::Euler(this->parent->GetTransform()->rotation).QuaternionToMatrix();
+							K::MultiplyMatrixVector(mesh->vertices[index3].normal, rotatedNormal, rotationMatrix);
+							K::Vector3 modelNormal = K::Vector3(rotatedNormal.x, 0.0f, rotatedNormal.z).normalise();
+							if (K::Vector3::DotProduct(modelNormal, normal) < 0.0f)
 							{
-								line = K::Line(K::Vector3(position.x, position.z, 0.0f), K::Vector3(previousPosition.x, previousPosition.z, 0.0f));
+								K::Vector3 newPos, newPrePos;
+								K::MultiplyMatrixVector(position, newPos, inverseModelMatrix);
+								K::MultiplyMatrixVector(previousPosition, newPrePos, inverseModelMatrix);
+								line = K::Line(newPos, newPrePos);
+							}
+							else 
+							{
+								K::Vector3 newPos, newPrePos;
+								K::MultiplyMatrixVector(position, newPos, inverseModelMatrix);
+								K::MultiplyMatrixVector(previousPosition, newPrePos, inverseModelMatrix);
+								line = K::Line(newPrePos, newPos);
 							}
 							this->linePoints.push_back(line);
 							this->linePointsModelMatrix.push_back(line);
@@ -216,6 +270,7 @@ namespace K
 					}
 				}
 			}
+			this->selectedLine = this->linePoints.size() - 1;
 			return true;
 		}
 		else
@@ -470,8 +525,16 @@ namespace K
 		{
 			K::Vector3 points[2];
 			K::Vector3 beforeModelMatrix[2];
-			beforeModelMatrix[0] = K::Vector3(this->linePoints[i].point[0].x, 0.0f, this->linePoints[i].point[0].y);
-			beforeModelMatrix[1] = K::Vector3(this->linePoints[i].point[1].x, 0.0f, this->linePoints[i].point[1].y);
+			if (this->linePoints[i].point[0].z == 0.0f && this->linePoints[i].point[1].z == 0.0f) 
+			{
+				beforeModelMatrix[0] = K::Vector3(this->linePoints[i].point[0].x, 0.0f, this->linePoints[i].point[0].y);
+				beforeModelMatrix[1] = K::Vector3(this->linePoints[i].point[1].x, 0.0f, this->linePoints[i].point[1].y);
+			}
+			else 
+			{
+				beforeModelMatrix[0] = this->linePoints[i].point[0];
+				beforeModelMatrix[1] = this->linePoints[i].point[1];
+			}
 			K::MultiplyMatrixVector(beforeModelMatrix[0], points[0], this->parent->GetTransform()->modelMatrix);
 			K::MultiplyMatrixVector(beforeModelMatrix[1], points[1], this->parent->GetTransform()->modelMatrix);
 			this->linePointsModelMatrix[i] = K::Line(K::Vector3(points[0].x, points[0].z, 0.0f), K::Vector3(points[1].x, points[1].z, 0.0f));
