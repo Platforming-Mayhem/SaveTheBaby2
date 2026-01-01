@@ -153,6 +153,11 @@ namespace K
 						if (count > 0) 
 						{
 							K::Line line = K::Line(K::Vector3(previousPosition.x, previousPosition.z, 0.0f), K::Vector3(position.x, position.z, 0.0f));
+							K::Vector3 normal = GetNormal(line.point[0], line.point[1]);
+							if (K::Vector3::DotProduct(mesh->vertices[index1].normal, normal) < 0.0f)
+							{
+								line = K::Line(K::Vector3(position.x, position.z, 0.0f), K::Vector3(previousPosition.x, previousPosition.z, 0.0f));
+							}
 							this->linePoints.push_back(line);
 							this->linePointsModelMatrix.push_back(line);
 							count = 0;
@@ -171,6 +176,11 @@ namespace K
 						if (count > 0)
 						{
 							K::Line line = K::Line(K::Vector3(previousPosition.x, previousPosition.z, 0.0f), K::Vector3(position.x, position.z, 0.0f));
+							K::Vector3 normal = GetNormal(line.point[0], line.point[1]);
+							if (K::Vector3::DotProduct(mesh->vertices[index1].normal, normal) < 0.0f)
+							{
+								line = K::Line(K::Vector3(position.x, position.z, 0.0f), K::Vector3(previousPosition.x, previousPosition.z, 0.0f));
+							}
 							this->linePoints.push_back(line);
 							this->linePointsModelMatrix.push_back(line);
 							count = 0;
@@ -189,6 +199,11 @@ namespace K
 						if (count > 0)
 						{
 							K::Line line = K::Line(K::Vector3(previousPosition.x, previousPosition.z, 0.0f), K::Vector3(position.x, position.z, 0.0f));
+							K::Vector3 normal = GetNormal(line.point[0], line.point[1]);
+							if (K::Vector3::DotProduct(mesh->vertices[index1].normal, normal) < 0.0f)
+							{
+								line = K::Line(K::Vector3(position.x, position.z, 0.0f), K::Vector3(previousPosition.x, previousPosition.z, 0.0f));
+							}
 							this->linePoints.push_back(line);
 							this->linePointsModelMatrix.push_back(line);
 							count = 0;
