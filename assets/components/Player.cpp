@@ -202,12 +202,14 @@ namespace K
 
 	void Player::LedgeGrab() 
 	{
-		K::ContactPoint cP = K::Physics::GetClosestPoint(this->col->GetPosition() + K::Vector3(0.0f, 0.0f, (this->col->GetHeight() / 2.0f) + this->col->GetRadius()), { K::Layer::LayerType::Player });
-		if (cP.normal.magnitude() > 1.0f && this->col->IsHittingWall() && cP.normal.z > 0.0f && !this->isClimbingUp) 
+		K::ContactPoint contactPoint = K::Physics::GetClosestPoint(this->col->GetPosition() + K::Vector3(0.0f, 0.0f, (this->col->GetHeight() / 2.0f) + this->col->GetRadius()), { K::Layer::LayerType::Player });
+		K::Vector3 playerNewPos = K::Vector3(contactPoint.position.x + this->col->GetRadius() * contactPoint.normal.x, 0.0f, contactPoint.position.z - (this->col->GetHeight() / 2.0f) - this->col->GetRadius());
+		K::ContactPoint contactPoint2 = K::Physics::GetClosestPoint(playerNewPos, { K::Layer::LayerType::Player });
+		if (contactPoint.normal.magnitude() > 1.0f && contactPoint2.normal.magnitude() > 1.0f && this->col->IsHittingWall() && contactPoint.normal.z > 0.0f && !this->isClimbingUp)
 		{
 			this->isGrabbing = true;
-			this->cornerX = cP.position.x + this->col->GetRadius() * cP.normal.x;
-			this->cornerZ = cP.position.z - (this->col->GetHeight() / 2.0f) - this->col->GetRadius();
+			this->cornerX = contactPoint.position.x + this->col->GetRadius() * contactPoint.normal.x;
+			this->cornerZ = contactPoint.position.z - (this->col->GetHeight() / 2.0f) - this->col->GetRadius();
 		}
 		if (this->isGrabbing) 
 		{
@@ -247,7 +249,7 @@ namespace K
 			}
 			else 
 			{
-				this->parent->GetTransform()->position->x = this->cornerX - (this->col->GetRadius() * 2.0f * cP.normal.x);
+				this->parent->GetTransform()->position->x = this->cornerX - (this->col->GetRadius() * 2.0f * contactPoint.normal.x);
 				this->parent->GetTransform()->position->z = this->cornerZ + this->col->GetHeight() + (this->col->GetRadius() * 2.0f);
 				this->canMoveHorizontally = true;
 				this->isClimbingUp = false;
