@@ -203,9 +203,7 @@ namespace K
 	void Player::LedgeGrab() 
 	{
 		K::ContactPoint contactPoint = K::Physics::GetClosestPoint(this->col->GetPosition() + K::Vector3(0.0f, 0.0f, (this->col->GetHeight() / 2.0f) + this->col->GetRadius()), { K::Layer::LayerType::Player });
-		K::Vector3 playerNewPos = K::Vector3(contactPoint.position.x + this->col->GetRadius() * contactPoint.normal.x, 0.0f, contactPoint.position.z - (this->col->GetHeight() / 2.0f) - this->col->GetRadius());
-		K::ContactPoint contactPoint2 = K::Physics::GetClosestPoint(playerNewPos, { K::Layer::LayerType::Player });
-		if (contactPoint.normal.magnitude() > 1.0f && contactPoint2.normal.magnitude() > 1.0f && this->col->IsHittingWall() && contactPoint.normal.z > 0.0f && !this->isClimbingUp)
+		if (contactPoint.normal.magnitude() > 1.0f && this->col->IsHittingWall() && contactPoint.normal.z > 0.0f && !this->isClimbingUp)
 		{
 			this->isGrabbing = true;
 			this->cornerX = contactPoint.position.x + this->col->GetRadius() * contactPoint.normal.x;
