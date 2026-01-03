@@ -130,8 +130,6 @@ namespace K
 		{
 			this->linePoints.clear();
 			this->linePointsModelMatrix.clear();
-			int count = 0;
-			K::Vector3 previousPosition;
 			K::Matrix4x4 modelMatrix = this->parent->GetTransform()->modelMatrix;
 			K::Matrix4x4 inverseModelMatrix = K::QuickInverse(modelMatrix);
 			for (int i = 0; i < mesh->indices.size() / 3; i++)
@@ -149,124 +147,93 @@ namespace K
 				float val1 = vertex1.y * vertex2.y;
 				float val2 = vertex2.y * vertex3.y;
 				float val3 = vertex3.y * vertex1.y;
-				if (val1 < 0.0f || val2 < 0.0f || val3 < 0.0f) 
+				K::Vector3 points[2];
+				K::Vector3 direction;
+				int count = 0;
+				float t;
+				if (val1 <= 0.0f || val2 <= 0.0f || val3 <= 0.0f) 
 				{
-					K::Vector3 direction = (vertex2 - vertex1).normalise();
-					float t = -vertex1.y / direction.y;
-					if (t > 0.0f && t < (vertex2 - vertex1).magnitude())
+					int yzerocount = 0;
+					direction = (vertex2 - vertex1).normalise();
+					if (vertex1.y != 0.0f)
 					{
-						K::Vector3 position = vertex1 + direction * t;
-						if (count > 0) 
+						t = -vertex1.y / direction.y;
+						if (t > 0.0f && t < (vertex2 - vertex1).magnitude())
 						{
-							K::Line line = K::Line(previousPosition, position);
-							K::Vector3 point1 = K::Vector3(line.point[0].x, line.point[0].z, 0.0f);
-							K::Vector3 point2 = K::Vector3(line.point[1].x, line.point[1].z, 0.0f);
-							K::Vector3 normal = GetNormal(point1, point2).normalise();
-							K::Vector3 rotatedNormal;
-							K::Matrix4x4 rotationMatrix = K::Quaternion::Euler(this->parent->GetTransform()->rotation).QuaternionToMatrix();
-							K::MultiplyMatrixVector(mesh->vertices[index1].normal, rotatedNormal, rotationMatrix);
-							K::Vector3 modelNormal = K::Vector3(rotatedNormal.x, 0.0f, rotatedNormal.z).normalise();
-							if (K::Vector3::DotProduct(modelNormal, normal) < 0.0f)
-							{
-								K::Vector3 newPos, newPrePos;
-								K::MultiplyMatrixVector(position, newPos, inverseModelMatrix);
-								K::MultiplyMatrixVector(previousPosition, newPrePos, inverseModelMatrix);
-								line = K::Line(newPos, newPrePos);
-							}
-							else
-							{
-								K::Vector3 newPos, newPrePos;
-								K::MultiplyMatrixVector(position, newPos, inverseModelMatrix);
-								K::MultiplyMatrixVector(previousPosition, newPrePos, inverseModelMatrix);
-								line = K::Line(newPrePos, newPos);
-							}
-							this->linePoints.push_back(line);
-							this->linePointsModelMatrix.push_back(line);
-							count = 0;
-						}
-						else 
-						{
-							previousPosition = position;
+							K::Vector3 position = vertex1 + direction * t;
+							points[count] = position;
 							count++;
 						}
 					}
+					else 
+					{
+						points[yzerocount] = vertex1;
+						yzerocount++;
+					}
+
 					direction = (vertex3 - vertex2).normalise();
-					t = -vertex2.y / direction.y;
-					if (t > 0.0f && t < (vertex3 - vertex2).magnitude())
+					if (vertex2.y != 0.0f)
 					{
-						K::Vector3 position = vertex2 + direction * t;
-						if (count > 0)
+						t = -vertex2.y / direction.y;
+						if (t > 0.0f && t < (vertex3 - vertex2).magnitude())
 						{
-							K::Line line = K::Line(previousPosition, position);
-							K::Vector3 point1 = K::Vector3(line.point[0].x, line.point[0].z, 0.0f);
-							K::Vector3 point2 = K::Vector3(line.point[1].x, line.point[1].z, 0.0f);
-							K::Vector3 normal = GetNormal(point1, point2).normalise();
-							K::Vector3 rotatedNormal;
-							K::Matrix4x4 rotationMatrix = K::Quaternion::Euler(this->parent->GetTransform()->rotation).QuaternionToMatrix();
-							K::MultiplyMatrixVector(mesh->vertices[index2].normal, rotatedNormal, rotationMatrix);
-							K::Vector3 modelNormal = K::Vector3(rotatedNormal.x, 0.0f, rotatedNormal.z).normalise();
-							if (K::Vector3::DotProduct(modelNormal, normal) < 0.0f)
-							{
-								K::Vector3 newPos, newPrePos;
-								K::MultiplyMatrixVector(position, newPos, inverseModelMatrix);
-								K::MultiplyMatrixVector(previousPosition, newPrePos, inverseModelMatrix);
-								line = K::Line(newPos, newPrePos);
-							}
-							else
-							{
-								K::Vector3 newPos, newPrePos;
-								K::MultiplyMatrixVector(position, newPos, inverseModelMatrix);
-								K::MultiplyMatrixVector(previousPosition, newPrePos, inverseModelMatrix);
-								line = K::Line(newPrePos, newPos);
-							}
-							this->linePoints.push_back(line);
-							this->linePointsModelMatrix.push_back(line);
-							count = 0;
-						}
-						else
-						{
-							previousPosition = position;
+							K::Vector3 position = vertex2 + direction * t;
+							points[count] = position;
 							count++;
 						}
 					}
-					direction = (vertex1 - vertex3).normalise();
-					t = -vertex3.y / direction.y;
-					if (t > 0.0f && t < (vertex1 - vertex3).magnitude())
+					else
 					{
-						K::Vector3 position = vertex3 + direction * t;
-						if (count > 0)
+						points[yzerocount] = vertex2;
+						yzerocount++;
+					}
+
+					direction = (vertex1 - vertex3).normalise();
+					if (vertex3.y != 0.0f)
+					{
+						t = -vertex3.y / direction.y;
+						if (t > 0.0f && t < (vertex1 - vertex3).magnitude())
 						{
-							K::Line line = K::Line(previousPosition, position);
-							K::Vector3 point1 = K::Vector3(line.point[0].x, line.point[0].z, 0.0f);
-							K::Vector3 point2 = K::Vector3(line.point[1].x, line.point[1].z, 0.0f);
-							K::Vector3 normal = GetNormal(point1, point2).normalise();
-							K::Vector3 rotatedNormal;
-							K::Matrix4x4 rotationMatrix = K::Quaternion::Euler(this->parent->GetTransform()->rotation).QuaternionToMatrix();
-							K::MultiplyMatrixVector(mesh->vertices[index3].normal, rotatedNormal, rotationMatrix);
-							K::Vector3 modelNormal = K::Vector3(rotatedNormal.x, 0.0f, rotatedNormal.z).normalise();
-							if (K::Vector3::DotProduct(modelNormal, normal) < 0.0f)
-							{
-								K::Vector3 newPos, newPrePos;
-								K::MultiplyMatrixVector(position, newPos, inverseModelMatrix);
-								K::MultiplyMatrixVector(previousPosition, newPrePos, inverseModelMatrix);
-								line = K::Line(newPos, newPrePos);
-							}
-							else 
-							{
-								K::Vector3 newPos, newPrePos;
-								K::MultiplyMatrixVector(position, newPos, inverseModelMatrix);
-								K::MultiplyMatrixVector(previousPosition, newPrePos, inverseModelMatrix);
-								line = K::Line(newPrePos, newPos);
-							}
-							this->linePoints.push_back(line);
-							this->linePointsModelMatrix.push_back(line);
-							count = 0;
+							K::Vector3 position = vertex3 + direction * t;
+							points[count] = position;
+							count++;
+						}
+					}
+					else
+					{
+						points[yzerocount] = vertex3;
+						yzerocount++;
+					}
+
+					if(yzerocount > count)
+						count = yzerocount;
+
+					if (count > 1) 
+					{
+						K::Vector3 triangleNormal = (mesh->vertices[index1].normal + mesh->vertices[index2].normal + mesh->vertices[index3].normal) / 3.0f;
+						K::Vector3 rotatedNormal;
+						K::Matrix4x4 rotationMatrix = K::Quaternion::Euler(this->parent->GetTransform()->rotation).QuaternionToMatrix();
+						K::MultiplyMatrixVector(triangleNormal, rotatedNormal, rotationMatrix);
+						K::Vector3 calculatedNormal = GetNormal(K::Vector3(points[0].x, points[0].z, 0.0f), K::Vector3(points[1].x, points[1].z, 0.0f));
+						float dotProduct = K::Vector3::DotProduct(rotatedNormal, calculatedNormal);
+
+						K::Vector3 pointA, pointB;
+						K::MultiplyMatrixVector(points[0], pointA, inverseModelMatrix);
+						K::MultiplyMatrixVector(points[1], pointB, inverseModelMatrix);
+
+						K::Line line;
+
+						if (dotProduct > 0.0f)
+						{
+							line = K::Line(pointA, pointB);
 						}
 						else
 						{
-							previousPosition = position;
-							count++;
+							line = K::Line(pointB, pointA);
 						}
+
+						this->linePoints.push_back(line);
+						this->linePointsModelMatrix.push_back(line);
 					}
 				}
 			}
@@ -371,8 +338,10 @@ namespace K
 
 			ImGui::DragFloat("X1:", &this->linePoints[this->selectedLine].point[0].x);
 			ImGui::DragFloat("Y1:", &this->linePoints[this->selectedLine].point[0].y);
+			ImGui::DragFloat("Z1:", &this->linePoints[this->selectedLine].point[0].z);
 			ImGui::DragFloat("X2:", &this->linePoints[this->selectedLine].point[1].x);
 			ImGui::DragFloat("Y2:", &this->linePoints[this->selectedLine].point[1].y);
+			ImGui::DragFloat("Z2:", &this->linePoints[this->selectedLine].point[1].z);
 			if (ImGui::Button("Delete Line")) 
 			{
 				this->linePoints.erase(this->linePoints.begin() + this->selectedLine);
@@ -701,39 +670,29 @@ namespace K
 		
 	}
 
-	int pointNumber = 0;
+	int axisNumber = 0;
+	int pointIndex = 0;
 
 	void Collider::SetPoints(const char* value)
 	{
 		float temp = std::stof(value);
-		pointNumber++;
-		if (pointNumber % 2 == 0) 
+		if (axisNumber % 6 == 0)
 		{
-			//EVEN
-			if (pointNumber % 4 == 0) 
-			{
-				this->linePoints[this->selectedLine].point[1].y = temp;
-			}
-			else 
-			{
-				this->linePoints[this->selectedLine].point[0].y = temp;
-			}
+			this->linePoints.push_back(K::Line(K::Vector3(), K::Vector3()));
+			this->linePointsModelMatrix.push_back(K::Line(K::Vector3(), K::Vector3()));
+			this->selectedLine = this->linePoints.size() - 1;
+			axisNumber = 0;
+			pointIndex = 0;
+			(&this->linePoints[this->selectedLine].point[pointIndex].x)[axisNumber - (pointIndex * 3)] = temp;
 		}
 		else 
 		{
-			//ODD
-			if ((pointNumber - 1) % 4 == 0) 
-			{
-				this->linePoints.push_back(K::Line(K::Vector3(), K::Vector3()));
-				this->linePointsModelMatrix.push_back(K::Line(K::Vector3(), K::Vector3()));
-				this->selectedLine = this->linePoints.size() - 1;
-				//Set Value
-				this->linePoints[this->selectedLine].point[0].x = temp;
-			}
-			else 
-			{
-				this->linePoints[this->selectedLine].point[1].x = temp;
-			}
+			(&this->linePoints[this->selectedLine].point[pointIndex].x)[axisNumber - (pointIndex * 3)] = temp;
+		}
+		axisNumber++;
+		if (axisNumber % 3 == 0 && axisNumber > 0)
+		{
+			pointIndex++;
 		}
 	}
 
@@ -837,8 +796,10 @@ namespace K
 			{
 				this->properties += "," + std::to_string(l.point[0].x);
 				this->properties += "," + std::to_string(l.point[0].y);
+				this->properties += "," + std::to_string(l.point[0].z);
 				this->properties += "," + std::to_string(l.point[1].x);
 				this->properties += "," + std::to_string(l.point[1].y);
+				this->properties += "," + std::to_string(l.point[1].z);
 			}
 		}
 		else if (this->colliderType == ColliderType::Capsule) 
