@@ -153,62 +153,43 @@ namespace K
 				float t;
 				if (val1 <= 0.0f || val2 <= 0.0f || val3 <= 0.0f) 
 				{
-					int yzerocount = 0;
 					direction = (vertex2 - vertex1).normalise();
-					if (vertex1.y != 0.0f)
-					{
+					if (direction.y != 0.0f || vertex1.y != 0.0f)
 						t = -vertex1.y / direction.y;
-						if (t > 0.0f && t < (vertex2 - vertex1).magnitude())
-						{
-							K::Vector3 position = vertex1 + direction * t;
-							points[count] = position;
-							count++;
-						}
-					}
-					else 
+					else
+						t = 0.0f;
+					if (t >= 0.0f && t < (vertex2 - vertex1).magnitude() && count < 2)
 					{
-						points[yzerocount] = vertex1;
-						yzerocount++;
+						K::Vector3 position = vertex1 + direction * t;
+						points[count] = position;
+						count++;
 					}
 
 					direction = (vertex3 - vertex2).normalise();
-					if (vertex2.y != 0.0f)
-					{
+					if (direction.y != 0.0f || vertex2.y != 0.0f)
 						t = -vertex2.y / direction.y;
-						if (t > 0.0f && t < (vertex3 - vertex2).magnitude())
-						{
-							K::Vector3 position = vertex2 + direction * t;
-							points[count] = position;
-							count++;
-						}
-					}
 					else
+						t = 0.0f;
+					if (t >= 0.0f && t < (vertex3 - vertex2).magnitude() && count < 2)
 					{
-						points[yzerocount] = vertex2;
-						yzerocount++;
+						K::Vector3 position = vertex2 + direction * t;
+						points[count] = position;
+						count++;
 					}
 
 					direction = (vertex1 - vertex3).normalise();
-					if (vertex3.y != 0.0f)
-					{
+					if (direction.y != 0.0f || vertex3.y != 0.0f)
 						t = -vertex3.y / direction.y;
-						if (t > 0.0f && t < (vertex1 - vertex3).magnitude())
-						{
-							K::Vector3 position = vertex3 + direction * t;
-							points[count] = position;
-							count++;
-						}
-					}
 					else
+						t = 0.0f;
+					if (t >= 0.0f && t < (vertex1 - vertex3).magnitude() && count < 2)
 					{
-						points[yzerocount] = vertex3;
-						yzerocount++;
+						K::Vector3 position = vertex3 + direction * t;
+						points[count] = position;
+						count++;
 					}
 
-					if(yzerocount > count)
-						count = yzerocount;
-
-					if (count > 1) 
+					if (count == 2) 
 					{
 						K::Vector3 triangleNormal = (mesh->vertices[index1].normal + mesh->vertices[index2].normal + mesh->vertices[index3].normal) / 3.0f;
 						K::Vector3 rotatedNormal;
