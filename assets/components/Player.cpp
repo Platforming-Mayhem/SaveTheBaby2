@@ -141,27 +141,27 @@ namespace K
 			this->decelerateTime += K::Time::deltaTime();
 		}
 
-		if (this->col->IsHittingWall()) 
+		if (this->col->IsHittingWall() && std::fabsf(this->col->wallUp) < 0.2f)
 		{
-			if (this->col->wallRight > 0.7f && moveDirection > 0.0f)
+			if (this->col->wallRight > 0.8f && moveDirection > 0.0f)
 			{
 				this->accelerateTime = -0.5f;
 				this->decelerateTime = 0.0f;
 				//std::cout << "Stop Move Right: " << this->moveDirection << ":" << -this->col->angleRight << std::endl;
 			}
-			else if (this->col->wallRight > 0.7f && moveDirection < 0.0f)
+			else if (this->col->wallRight > 0.8f && moveDirection < 0.0f)
 			{
 				this->accelerateTime = 0.0f;
 				this->decelerateTime = 0.0f;
 				//std::cout << "Move Left: " << this->moveDirection << ":" << -this->col->angleRight << std::endl;
 			}
-			if (this->col->wallRight < -0.7f && moveDirection < 0.0f)
+			if (this->col->wallRight < -0.8f && moveDirection < 0.0f)
 			{
 				this->accelerateTime = -0.5f;
 				this->decelerateTime = 0.0f;
 				//std::cout << "Stop Move Left: " << this->moveDirection << ":" << -this->col->angleRight << std::endl;
 			}
-			else if (this->col->wallRight < -0.7f && moveDirection > 0.0f)
+			else if (this->col->wallRight < -0.8f && moveDirection > 0.0f)
 			{
 				this->accelerateTime = 0.0f;
 				this->decelerateTime = 0.0f;
@@ -316,14 +316,15 @@ namespace K
 	{
 		HorizontalMovement();
 		VerticalMovement();
-	}
-
-	void Player::Unbind() 
-	{
 		if (moveDirection != 0.0f && this->decelerateTime == 0.0f) 
 		{
 			this->previousDirection = moveDirection;
 		}
+	}
+
+	void Player::Unbind() 
+	{
+		
 	}
 
 	void Player::Bind() 
