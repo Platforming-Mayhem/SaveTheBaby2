@@ -550,6 +550,7 @@ namespace K
 			else if (PJ.magnitude() == distance) 
 			{
 				newContactPoint.normal += contactPoint.normal;
+				newContactPoint.normal = newContactPoint.normal.normalise();
 			}
 		}
 		return newContactPoint;
