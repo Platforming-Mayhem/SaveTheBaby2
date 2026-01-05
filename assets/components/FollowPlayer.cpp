@@ -26,7 +26,7 @@ namespace K
 
 	void FollowPlayer::Update() 
 	{
-		K::Vector3 target = *this->playerPosition - K::Vector3(0.0f, 10.0f, 0.0f) + this->offset;
+		K::Vector3 target = *this->playerPosition + this->offset;
 		*this->parent->GetTransform()->position = target;
 	}
 
