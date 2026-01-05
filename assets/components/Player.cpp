@@ -206,8 +206,8 @@ namespace K
 		if (contactPoint.normal.magnitude() > 1.0f && this->col->IsHittingWall() && !this->col->IsColliding() && contactPoint.normal.z > 0.0f && !this->isClimbingUp && contactPoint.position.z > this->col->GetPosition().z + (this->col->GetHeight() / 2.0f))
 		{
 			this->isGrabbing = true;
-			this->cornerX = contactPoint.position.x + this->col->GetRadius() * contactPoint.normal.x;
-			this->cornerZ = contactPoint.position.z - (this->col->GetHeight() / 2.0f) - this->col->GetRadius();
+			this->cornerX = contactPoint.position.x - this->col->GetOffset().x + this->col->GetRadius() * contactPoint.normal.x;
+			this->cornerZ = contactPoint.position.z - (this->col->GetHeight() / 2.0f) - this->col->GetRadius() - this->col->GetOffset().z;
 		}
 		if (this->isGrabbing) 
 		{
