@@ -265,8 +265,12 @@ namespace K
 			else 
 			{
 				K::ContactPoint contactPoint2 = K::Physics::GetClosestPoint(K::Vector3(this->col->GetPosition().x, 0.0f, this->col->GetPosition().z), {K::Layer::LayerType::Player});
-				this->parent->GetTransform()->position->x = contactPoint2.position.x - this->col->GetRadius() * contactPoint2.normal.x;
-				this->parent->GetTransform()->position->z = contactPoint2.position.z + this->col->GetHeight() + (this->col->GetRadius() * 2.0f);
+				float distance = contactPoint2.position.z - this->col->GetPosition().z;
+				if (distance < 0.0f)
+					this->parent->GetTransform()->position->z = contactPoint2.position.z + this->col->GetHeight() + (this->col->GetRadius() * 2.0f);
+				else
+					this->parent->GetTransform()->position->z = contactPoint2.position.z;
+				this->parent->GetTransform()->position->x = contactPoint2.position.x;
 				this->canMoveHorizontally = true;
 				this->isClimbingUp = false;
 			}
