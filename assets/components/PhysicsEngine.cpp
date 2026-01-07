@@ -323,6 +323,7 @@ namespace K
 					if (angle < 0.8f && angle > -0.8f && angle1 > 0.0f)
 					{
 						col->SetIsColliding(true);
+						J.other->SetIsColliding(true);
 						col->other = J.other;
 						col->angleRight = angle;
 						col->angleUp = angle1;
@@ -331,6 +332,7 @@ namespace K
 					else
 					{
 						col->SetIsHittingWall(true);
+						J.other->SetIsHittingWall(true);
 						col->wallRight = -angle;
 						col->wallUp = angle1;
 						wallCount++;
@@ -360,6 +362,7 @@ namespace K
 					if (angle < 0.8f && angle > -0.8f && angle1 > 0.0f)
 					{
 						col->SetIsColliding(true);
+						J.other->SetIsColliding(true);
 						col->groundContactPoint = J.position;
 						col->other = J.other;
 						col->angleRight = angle;
@@ -369,6 +372,7 @@ namespace K
 					else
 					{
 						col->SetIsHittingWall(true);
+						J.other->SetIsHittingWall(true);
 						col->wallContactPoint = J.position;
 						col->otherWall = J.other;
 						col->wallRight = -angle;
@@ -386,6 +390,7 @@ namespace K
 					if (angle < 0.8f && angle > -0.8f && angle1 > 0.0f)
 					{
 						col->SetIsColliding(true);
+						J.other->SetIsColliding(true);
 						col->groundContactPoint = J.position;
 						col->other = J.other;
 						col->angleRight = angle;
@@ -395,6 +400,7 @@ namespace K
 					else
 					{
 						col->SetIsHittingWall(true);
+						J.other->SetIsHittingWall(true);
 						col->wallContactPoint = J.position;
 						col->otherWall = J.other;
 						col->wallRight = -angle;
@@ -420,6 +426,7 @@ namespace K
 					if (angle < 0.8f && angle > -0.8f && angle1 > 0.0f)
 					{
 						col->SetIsColliding(true);
+						J.other->SetIsColliding(true);
 						col->groundContactPoint = J.position;
 						col->other = J.other;
 						col->angleRight = angle;
@@ -429,6 +436,7 @@ namespace K
 					else
 					{
 						col->SetIsHittingWall(true);
+						J.other->SetIsHittingWall(true);
 						col->wallContactPoint = J.position;
 						col->otherWall = J.other;
 						col->wallRight = -angle;
@@ -446,6 +454,7 @@ namespace K
 					if (angle < 0.8f && angle > -0.8f && angle1 > 0.0f)
 					{
 						col->SetIsColliding(true);
+						J.other->SetIsColliding(true);
 						col->groundContactPoint = J.position;
 						col->other = J.other;
 						col->angleRight = angle;
@@ -455,6 +464,7 @@ namespace K
 					else 
 					{
 						col->SetIsHittingWall(true);
+						J.other->SetIsHittingWall(true);
 						col->wallContactPoint = J.position;
 						col->otherWall = J.other;
 						col->wallRight = -angle;
@@ -484,6 +494,7 @@ namespace K
 					float angle1 = K::Vector3::DotProduct(normal, up);
 
 					col->SetIsHittingWall(true);
+					J.other->SetIsHittingWall(true);
 					col->wallContactPoint = J.position;
 					col->otherWall = J.other;
 					col->wallRight = -angle;
@@ -501,6 +512,7 @@ namespace K
 					if (angle < 0.8f && angle > -0.8f && angle1 > 0.0f)
 					{
 						col->SetIsColliding(true);
+						J.other->SetIsColliding(true);
 						col->groundContactPoint = J.position;
 						col->other = J.other;
 						col->angleRight = angle;
@@ -510,6 +522,7 @@ namespace K
 					else
 					{
 						col->SetIsHittingWall(true);
+						J.other->SetIsHittingWall(true);
 						col->wallContactPoint = J.position;
 						col->otherWall = J.other;
 						col->wallRight = -angle;
@@ -522,11 +535,20 @@ namespace K
 		if (groundCount == 0) 
 		{
 			col->SetIsColliding(false);
-			col->other = nullptr;
+			if (col->other != nullptr) 
+			{
+				col->other->SetIsColliding(false);
+				col->other = nullptr;
+			}
 		}
 		if (wallCount == 0) 
 		{
 			col->SetIsHittingWall(false);
+			if (col->otherWall != nullptr) 
+			{
+				col->otherWall->SetIsHittingWall(false);
+				col->otherWall = nullptr;
+			}
 			col->wallRight = 0.0f;
 			col->wallUp = 0.0f;
 		}
