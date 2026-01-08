@@ -32,7 +32,7 @@ namespace K
 			{
 				if (this->foundKey) 
 				{
-					K::Editor::Delete(this->parent);
+					K::SceneManager::LoadNextScene();
 				}
 			}
 		}
