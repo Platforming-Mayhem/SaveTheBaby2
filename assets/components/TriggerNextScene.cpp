@@ -5,8 +5,6 @@ namespace K
 {
 	REGISTER(TriggerNextScene);
 
-	bool TriggerNextScene::canPress = true;
-
 	TriggerNextScene::TriggerNextScene()
 	{
 		this->bounds[0] = K::Vector3();
@@ -59,25 +57,17 @@ namespace K
 		K::Collider* temp = nullptr;
 		if (K::Physics::Hitbox(this->boundsModelMatrix[0], this->boundsModelMatrix[1], { K::Layer::LayerType::Enemy, K::Layer::LayerType::Ground }, &temp))
 		{
-			if (InputManager::IsKeyPressed(GLFW_KEY_E) && this->canPress)
+			int current = K::SceneManager::currentScene->GetBuildIndex();
+			if (this->byIndex)
 			{
-				int current = K::SceneManager::currentScene->GetBuildIndex();
-				if (this->byIndex) 
-				{
-					K::SceneManager::LoadScene(this->index);
-				}
-				else 
-				{
-					K::SceneManager::LoadNextScene();
-					this->index = current + 1;
-				}
-				K::Player::lastInteractedIndex = current;
-				this->canPress = false;
+				K::SceneManager::LoadScene(this->index);
 			}
-			if (!InputManager::IsKeyPressed(GLFW_KEY_E))
+			else
 			{
-				this->canPress = true;
+				K::SceneManager::LoadNextScene();
+				this->index = current + 1;
 			}
+			K::Player::lastInteractedIndex = current;
 		}
 	}
 
