@@ -20,13 +20,15 @@ namespace K
 
 	void TriggerNextScene::VisualizeTriggerZone()
 	{
+		K::Material mat = K::Material("shaders/2D.shader");
+		glUseProgram(mat.GetShader()->shader);
 		glClear(GL_DEPTH_BUFFER_BIT);
-		glUniform1i(this->parent->GetMaterial()->GetShader()->GetUniform("canChromaKey"), false);
-		glUniform1i(this->parent->GetMaterial()->GetShader()->GetUniform("hasTexture"), false);
-		glUniform3f(this->parent->GetMaterial()->GetShader()->GetUniform("colorTint"), 0.0f, 1.0f, 0.0f);
+		glUniform1i(mat.GetShader()->GetUniform("canChromaKey"), false);
+		glUniform1i(mat.GetShader()->GetUniform("hasTexture"), false);
+		glUniform3f(mat.GetShader()->GetUniform("colorTint"), 0.0f, 1.0f, 0.0f);
 		K::Transform temp = K::Transform(new K::Vector3(), new K::Vector3(), new K::Vector3(1.0f, 1.0f, 1.0f));
 		temp.PassModelMatrix();
-		glUniformMatrix4fv(this->parent->GetMaterial()->GetShader()->GetUniform("modelMatrix"), 1, GL_FALSE, &temp.modelMatrix.m[0][0]);
+		glUniformMatrix4fv(mat.GetShader()->GetUniform("modelMatrix"), 1, GL_FALSE, &temp.modelMatrix.m[0][0]);
 
 		glBegin(GL_LINE_LOOP);
 		glVertex3f(this->boundsModelMatrix[0].x, this->boundsModelMatrix[0].y, this->boundsModelMatrix[0].z);
@@ -35,7 +37,7 @@ namespace K
 		glVertex3f(this->boundsModelMatrix[1].x, this->boundsModelMatrix[1].y, this->boundsModelMatrix[0].z);
 		glEnd();
 
-		glUniform3f(this->parent->GetMaterial()->GetShader()->GetUniform("colorTint"), 1.0f, 1.0f, 1.0f);
+		glUniform3f(mat.GetShader()->GetUniform("colorTint"), 1.0f, 1.0f, 1.0f);
 	}
 
 	void TriggerNextScene::Init() 
