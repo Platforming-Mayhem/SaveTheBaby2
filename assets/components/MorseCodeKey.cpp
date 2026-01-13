@@ -66,11 +66,24 @@ namespace K
 	MorseCodeKey::MorseCodeKey()
 	{
 		beepAudio = new K::Audio(600.0f, 0.2f);
+		clueAudio = new K::Audio(600.0f, 0.2f);
 	}
 
 	MorseCodeKey::~MorseCodeKey()
 	{
 		delete beepAudio;
+		delete clueAudio;
+	}
+
+	void MorseCodeKey::Init() 
+	{
+		for (auto gIndex : this->gIndices)
+		{
+			K::GameObject* temp = K::Editor::GetCurrentScene()->GetGameObjects().at(gIndex);
+			K::Lock* lock = (K::Lock*)temp->GetComponentOfType(GetTypeName<K::Lock>());
+			this->locks.insert({ lock, temp });
+			this->affectedLocks.insert({ lock, true });
+		}
 	}
 
 	char MorseCodeKey::ConvertMorseCodeCharacterToASCII(std::string morseCodeChar)
@@ -90,17 +103,90 @@ namespace K
 		std::string val;
 		for (auto letter : text) 
 		{
-			val += morseCodeEncoder.at(letter);
+			val += morseCodeEncoder.at(std::toupper(letter));
 			val += ' ';
 		}
 		return val;
 	}
 
-	int iterator = 0;
+	bool MorseCodeKey::PlayMorseDuration(float duration)
+	{
+		if (this->playDuration < duration - K::Time::deltaTime())
+		{
+			this->playDuration += K::Time::deltaTime();
+			this->clueAudio->Play(false);
+			return true;
+		}
+		else 
+		{
+			this->clueAudio->Stop();
+			this->playDuration = 0.0f;
+			return false;
+		}
+	}
 
-	void MorseCodeKey::MorseCodeToAudio(std::string text)
+	bool MorseCodeKey::PlayMorseWaitDuration(float duration)
+	{
+		if (this->waitDuration < duration - K::Time::deltaTime())
+		{
+			this->waitDuration += K::Time::deltaTime();
+			this->clueAudio->Stop();
+			return true;
+		}
+		else
+		{
+			this->waitDuration = 0.0f;
+			return false;
+		}
+	}
+
+	int iterator = 0;
+	bool wait = false;
+
+	void MorseCodeKey::TextToMorseAudio(std::string text)
 	{
 		std::string morseCode = TextToMorseCode(text);
+		if (iterator < morseCode.size()) 
+		{
+			if (!wait) 
+			{
+				switch (morseCode[iterator])
+				{
+				case '.':
+					if (!PlayMorseDuration(0.1f))
+					{
+						wait = true;
+					}
+					break;
+				case '-':
+					if (!PlayMorseDuration(0.3f))
+					{
+						wait = true;
+					}
+					break;
+				case ' ':
+					if (!PlayMorseWaitDuration(0.3f))
+					{
+						wait = true;
+					}
+					break;
+				case '/':
+					if (!PlayMorseWaitDuration(0.7f))
+					{
+						wait = true;
+					}
+					break;
+				}
+			}
+			if (wait) 
+			{
+				if (!PlayMorseWaitDuration(0.1f))
+				{
+					iterator++;
+					wait = false;
+				}
+			}
+		}
 	}
 
 	void MorseCodeKey::VisualizeTriggerZone()
@@ -132,7 +218,16 @@ namespace K
 		K::Collider* temp = nullptr;
 		if (K::Physics::Hitbox(this->boundsModelMatrix[0], this->boundsModelMatrix[1], { K::Layer::LayerType::Enemy, K::Layer::LayerType::Ground }, &temp))
 		{
+			TextToMorseAudio("Life And Death");
 			this->pressed = InputManager::IsKeyPressed(GLFW_KEY_UP);
+		}
+		else 
+		{
+			iterator = 0;
+			wait = false;
+			clueAudio->Stop();
+			this->waitDuration = 0.0f;
+			this->playDuration = 0.0f;
 		}
 		if (this->pressed) 
 		{
@@ -142,13 +237,18 @@ namespace K
 		}
 		else 
 		{
-			if (this->durationDeltaTime <= 0.1f && this->durationDeltaTime > 0.0f)
+			if (this->durationDeltaTime > 0.0f) 
 			{
-				this->morseCodeLetter += ".";
-			}
-			else if (this->durationDeltaTime >= 0.3f && this->durationDeltaTime > 0.0f)
-			{
-				this->morseCodeLetter += "-";
+				if (this->durationDeltaTime <= 0.1f)
+				{
+					this->morseCodeLetter += ".";
+					this->durationDeltaTime = 0.0f;
+				}
+				else
+				{
+					this->morseCodeLetter += "-";
+					this->durationDeltaTime = 0.0f;
+				}
 			}
 			if (this->noInputDuration >= 0.3f && this->morseCodeLetter != "")
 			{
@@ -158,12 +258,18 @@ namespace K
 			}
 			if (this->noInputDuration >= 0.7f && this->word != "")
 			{
-				std::cout << this->word << std::endl;
+				std::transform(this->key.begin(), this->key.end(), this->key.begin(), ::toupper);
+				if (this->word == this->key) 
+				{
+					for (auto lock : this->locks)
+					{
+						lock.first->SetKey(true);
+					}
+				}
 				this->word = "";
 				this->noInputDuration = 0.0f;
 			}
 			this->noInputDuration += K::Time::deltaTime();
-			this->durationDeltaTime = 0.0f;
 			beepAudio->Stop();
 		}
 	}
@@ -175,7 +281,31 @@ namespace K
 			ImGui::Checkbox("Pressed", &this->pressed);
 			ImGui::DragFloat3("Bottom Left", &this->bounds[0].x);
 			ImGui::DragFloat3("Top Right", &this->bounds[1].x);
+			ImGui::InputText("Key", &this->key);
 			this->VisualizeTriggerZone();
+			if (ImGui::Button("Get all active locks"))
+			{
+				for (auto gameObject : K::Editor::GetCurrentScene()->GetGameObjects())
+				{
+					K::Lock* lock = (K::Lock*)gameObject.second->GetComponentOfType(GetTypeName<K::Lock>());
+					if (lock != nullptr)
+					{
+						locks.insert({ lock, gameObject.second });
+						affectedLocks.insert({ lock, false });
+					}
+				}
+			}
+			if (!locks.empty())
+			{
+				if (ImGui::BeginListBox("Locks"))
+				{
+					for (auto lock : locks)
+					{
+						ImGui::Checkbox(lock.second->GetName(), (bool*)(&affectedLocks.at(lock.first)));
+					}
+					ImGui::EndListBox();
+				}
+			}
 		}
 	}
 
@@ -204,6 +334,14 @@ namespace K
 			case 5:
 				this->bounds[1].z = std::stof(temp);
 				break;
+			case 6:
+				this->key = temp;
+				break;
+			}
+			if (valueIndex > 6) 
+			{
+				std::string temp = value;
+				this->gIndices.push_back(std::stoi(temp));
 			}
 		}
 	}
@@ -215,7 +353,16 @@ namespace K
 		this->properties += std::to_string(this->bounds[0].z) + ",";
 		this->properties += std::to_string(this->bounds[1].x) + ",";
 		this->properties += std::to_string(this->bounds[1].y) + ",";
-		this->properties += std::to_string(this->bounds[1].z);
+		this->properties += std::to_string(this->bounds[1].z) + ",";
+		this->properties += this->key + ",";
+		for (auto affectedLock : this->affectedLocks)
+		{
+			if ((bool)affectedLock.second)
+			{
+				this->properties += std::to_string(locks.at(affectedLock.first)->GetIndex()) + ",";
+			}
+		}
+		this->properties.erase(this->properties.size() - 1);
 		return this->properties.c_str();
 	}
 }
