@@ -3,3 +3,4 @@ scenes/Menu.JAWS
 scenes/LevelOne.JAWS
 scenes/LevelTwo.JAWS
 scenes/LevelThree.JAWS
+scenes/LevelFour.JAWS
