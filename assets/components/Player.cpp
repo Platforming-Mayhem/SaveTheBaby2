@@ -141,7 +141,7 @@ namespace K
 			this->decelerateTime += K::Time::deltaTime();
 		}
 
-		if (this->col->IsHittingWall() && std::fabsf(this->col->wallUp) < 0.2f)
+		if (this->col->IsHittingWall() && std::fabs(this->col->wallUp) < 0.2f)
 		{
 			if (this->col->wallRight > 0.8f && moveDirection > 0.0f)
 			{
