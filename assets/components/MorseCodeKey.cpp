@@ -88,7 +88,7 @@ namespace K
 
 	char MorseCodeKey::ConvertMorseCodeCharacterToASCII(std::string morseCodeChar)
 	{
-		if (morseCodeChar.size() <= 4) 
+		if (morseCodeDecoder.find(morseCodeChar) != morseCodeDecoder.end())
 		{
 			return morseCodeDecoder.at(morseCodeChar);
 		}
@@ -259,6 +259,7 @@ namespace K
 			if (this->noInputDuration >= 0.7f && this->word != "")
 			{
 				std::transform(this->key.begin(), this->key.end(), this->key.begin(), ::toupper);
+				std::cout << this->word << std::endl;
 				if (this->word == this->key) 
 				{
 					for (auto lock : this->locks)
