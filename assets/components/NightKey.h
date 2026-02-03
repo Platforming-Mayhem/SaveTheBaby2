@@ -12,6 +12,8 @@ namespace K
 
 		~NightKey();
 
+		void Init() override;
+
 		void Update() override;
 
 		void UpdateEditor() override;
