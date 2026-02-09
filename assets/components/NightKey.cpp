@@ -26,11 +26,12 @@ namespace K
 		tm local_tm = *localtime(&tt);
 		mktime( &local_tm );
 		float d = local_tm.tm_yday;
-		float conversion = 180.0f / std::numbers::pi;
-		float sunDeclination = -23.45 * cos((360.0f/365.0f) * (d*10.0f) * (1.0f / conversion));
-		latitude = 50.722f;
-		sunDeclination = -19.0f;
-		float h = std::acos((std::cos(90.833 * (1.0f / conversion))-std::sin(latitude * (1.0f / conversion))*std::sin(sunDeclination * (1.0f / conversion))) / (std::cos(latitude * (1.0f / conversion))*std::cos(sunDeclination * (1.0f / conversion))));
+		float conversion = std::numbers::pi / 180.0f;
+		float sunDeclination = 23.45 * std::sin((360.0f/365.0f) * (d+284.0f) * conversion);
+		float fractionalYear = ((2 * std::numbers::pi) / 365.0f) * (d - 1);
+		float EoT = 229.18f*(0.000075+0.001868*std::cos(fractionalYear))
+		std::cout << latitude << ":" << sunDeclination << std::endl;
+		float h = std::acos(-std::tan(latitude * conversion)*std::tan(sunDeclination * conversion)) * (1.0f / conversion) / 15.0f;
 		std::cout << h << std::endl;
 	}
 
