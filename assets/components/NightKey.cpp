@@ -62,7 +62,7 @@ namespace K
 
 	void NightKey::Init()
 	{
-		std::cout << DaysSince2000() << std::endl;
+		
 	}
 
 	void NightKey::Update() 
