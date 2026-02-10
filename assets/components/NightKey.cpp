@@ -14,24 +14,55 @@ namespace K
 		
 	}
 
+	float NightKey::ReturnSign(float value)
+	{
+		if(value > 0.0f)
+		{
+			return 1.0f;
+		}
+		else if(value < 0.0f)
+		{
+			return -1.0f;
+		}
+		else
+		{
+			return 0.0f;
+		}
+	}
+
+	float NightKey::CurrentDateToJulianDate()
+	{
+		auto currentDate = std::chrono::system_clock::now();
+		//std::gmtime(currentDate);
+		time_t tt = std::chrono::system_clock::to_time_t(currentDate);
+		tm utc_tm = *gmtime(&tt);
+		int year = utc_tm.tm_year + 1900;
+		int month = utc_tm.tm_mon + 1;
+		int day = utc_tm.tm_mday;
+		float ut = utc_tm.tm_hour + (utc_tm.tm_min / 60.0f);
+		float sign = ReturnSign((100 * year)+month-190002.5);
+		std::cout << std::format("{0}.{1}.{2}", day, month, year) << std::endl;
+		float julianDate = (367.0f * year) - ((7.0f/4.0f) * (year + ((month + 9)/12.0f))) + ((275.0f * month)/9.0f) + day + 1721013.5f - (0.5f * sign) + (ut / 24.0f) + 0.5f + 2.0f;
+		return julianDate;
+	}
+
+	float NightKey::DaysSince2000()
+	{
+		float Jdate = CurrentDateToJulianDate();
+		float n = Jdate - 2451545.0f + 0.0008;
+		return n;
+	}
+
+	float NightKey::CalculateMeanSolarTime(float longitude)
+	{
+		float n = DaysSince2000();
+		float meanSolarTime = n - (longitude / 360.0f);
+		return meanSolarTime;
+	}
+
 	void NightKey::Init()
 	{
-		char mystring[100];
-		FILE* file = popen("curl http://ip-api.com/json\?fields\=lat --silent | jq '.lat'", "r");
-		std::fgets(mystring , 100 , file);
-		pclose(file);
-		float latitude = std::stof(mystring);
-		auto currentDate = std::chrono::system_clock::now();
-		time_t tt = std::chrono::system_clock::to_time_t(currentDate);
-		tm local_tm = *localtime(&tt);
-		mktime( &local_tm );
-		float d = local_tm.tm_yday;
-		float conversion = 180.0f / std::numbers::pi;
-		float sunDeclination = -23.45 * cos((360.0f/365.0f) * (d*10.0f) * (1.0f / conversion));
-		latitude = 50.722f;
-		sunDeclination = -19.0f;
-		float h = std::acos((std::cos(90.833 * (1.0f / conversion))-std::sin(latitude * (1.0f / conversion))*std::sin(sunDeclination * (1.0f / conversion))) / (std::cos(latitude * (1.0f / conversion))*std::cos(sunDeclination * (1.0f / conversion))));
-		std::cout << h << std::endl;
+		std::cout << DaysSince2000() << std::endl;
 	}
 
 	void NightKey::Update() 

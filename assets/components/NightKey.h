@@ -12,6 +12,14 @@ namespace K
 
 		~NightKey();
 
+		float CurrentDateToJulianDate();
+
+		float DaysSince2000();
+
+		float ReturnSign(float value);
+
+		float CalculateMeanSolarTime(float longitude);
+
 		void Init() override;
 
 		void Update() override;
