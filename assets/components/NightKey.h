@@ -20,6 +20,22 @@ namespace K
 
 		float CalculateMeanSolarTime(float longitude);
 
+		float CalculateSolarMeanAnomaly(float longitude);
+
+		float CalculateEquationOfCenter(float longitude);
+
+		float CalculateEclipticLongitude(float longitude);
+
+		float CalculateSolarTransit(float longitude);
+		
+		float CalculateSunDeclination(float latitude, float longitude);
+
+		float CalculateHourAngle(float latitude, float longitude);
+
+		float CalculateSunset(float latitude, float longitude);
+
+		float CalculateJTimeToUTC(float latitude, float longitude);
+
 		void Init() override;
 
 		void Update() override;
