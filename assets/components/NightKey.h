@@ -12,29 +12,29 @@ namespace K
 
 		~NightKey();
 
-		float CurrentDateToJulianDate();
-
-		float DaysSince2000();
-
 		float ReturnSign(float value);
 
-		float CalculateMeanSolarTime(float longitude);
+		double CurrentDateToJulianDate();
 
-		float CalculateSolarMeanAnomaly(float longitude);
+		double DaysSince2000();
 
-		float CalculateEquationOfCenter(float longitude);
+		double CalculateMeanSolarTime(double longitude);
 
-		float CalculateEclipticLongitude(float longitude);
+		double CalculateSolarMeanAnomaly(double longitude);
 
-		float CalculateSolarTransit(float longitude);
+		double CalculateEquationOfCenter(double longitude);
+
+		double CalculateEclipticLongitude(double longitude);
+
+		double CalculateSolarTransit(double longitude);
 		
-		float CalculateSunDeclination(float latitude, float longitude);
+		double CalculateSunDeclination(double latitude, double longitude);
 
-		float CalculateHourAngle(float latitude, float longitude);
+		double CalculateHourAngle(double latitude, double longitude);
 
-		float CalculateSunset(float latitude, float longitude);
+		double CalculateSunset(double latitude, double longitude);
 
-		float CalculateJTimeToUTC(float latitude, float longitude);
+		double CalculateJTimeToUTC(double latitude, double longitude);
 
 		void Init() override;
 

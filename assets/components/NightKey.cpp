@@ -30,110 +30,115 @@ namespace K
 		}
 	}
 
-	float NightKey::CurrentDateToJulianDate()
+	double NightKey::CurrentDateToJulianDate()
 	{
 		auto currentDate = std::chrono::system_clock::now();
 		//std::gmtime(currentDate);
-		float julianDate = std::chrono::duration_cast<std::chrono::seconds>(currentDate.time_since_epoch()).count() / 86400.0f + 2440587.5f;
+		double julianDate = std::chrono::duration_cast<std::chrono::seconds>(currentDate.time_since_epoch()).count() / 86400.0 + 2440587.5;
 		return julianDate;
 	}
 
-	float NightKey::DaysSince2000()
+	double NightKey::DaysSince2000()
 	{
-		float Jdate = CurrentDateToJulianDate();
-		float n = Jdate - (2451545.0f + 0.0009f) + 69.184f / 86400.0f;
+		double Jdate = CurrentDateToJulianDate();
+		double n = Jdate - (2451545.0 + 0.0009) + 69.184 / 86400.0;
 		return ceil(n);
 	}
 
-	float NightKey::CalculateMeanSolarTime(float longitude)
+	double NightKey::CalculateMeanSolarTime(double longitude)
 	{
-		float n = DaysSince2000();
-		float meanSolarTime = n + 0.0009 - longitude / 360.0f;
+		double n = DaysSince2000();
+		double meanSolarTime = n + 0.0009 - longitude / 360.0;
 		return meanSolarTime;
 	}
 
-	float NightKey::CalculateSolarMeanAnomaly(float longitude) 
+	double NightKey::CalculateSolarMeanAnomaly(double longitude)
 	{
-		float jStar = CalculateMeanSolarTime(longitude);
-		float m = fmod(357.5291f + 0.98560028f * jStar, 360.0f);
+		double jStar = CalculateMeanSolarTime(longitude);
+		double m = fmod(357.5291 + 0.98560028 * jStar, 360.0);
 		return m;
 	}
 
-	float NightKey::CalculateEquationOfCenter(float longitude) 
+	double NightKey::CalculateEquationOfCenter(double longitude)
 	{
-		float m = CalculateSolarMeanAnomaly(longitude);
-		float conversion = std::numbers::pi / 180.0f;
-		float mRad = m * conversion;
-		float c = 1.9148f * sin(mRad) + 0.02f * sin(2.0f * mRad) + 0.0003f * sin(3.0f * mRad);
+		double m = CalculateSolarMeanAnomaly(longitude);
+		double conversion = std::numbers::pi / 180.0;
+		double mRad = m * conversion;
+		double c = 1.9148 * sin(mRad) + 0.02 * sin(2.0 * mRad) + 0.0003 * sin(3.0 * mRad);
 		return c;
 	}
 
-	float NightKey::CalculateEclipticLongitude(float longitude) 
+	double NightKey::CalculateEclipticLongitude(double longitude)
 	{
-		float m = CalculateSolarMeanAnomaly(longitude);
-		float c = CalculateEquationOfCenter(longitude);
-		float lamda = fmod(m + c + 180.0f + 102.9372f, 360.0f);
+		double m = CalculateSolarMeanAnomaly(longitude);
+		double c = CalculateEquationOfCenter(longitude);
+		double lamda = fmod(m + c + 180.0 + 102.9372, 360.0);
 		return lamda;
 	}
 
-	float NightKey::CalculateSolarTransit(float longitude) 
+	double NightKey::CalculateSolarTransit(double longitude)
 	{
-		float jStar = CalculateMeanSolarTime(longitude);
-		float m = CalculateSolarMeanAnomaly(longitude);
-		float conversion = std::numbers::pi / 180.0f;
-		float mRad = m * conversion;
-		float lamda = CalculateEclipticLongitude(longitude);
-		float lamdaRad = lamda * conversion;
-		float jTransit = 2451545.0f + jStar + 0.0053f * sin(mRad) - 0.0069f * sin(2.0f * lamdaRad);
+		double jStar = CalculateMeanSolarTime(longitude);
+		double m = CalculateSolarMeanAnomaly(longitude);
+		double conversion = std::numbers::pi / 180.0;
+		double mRad = m * conversion;
+		double lamda = CalculateEclipticLongitude(longitude);
+		double lamdaRad = lamda * conversion;
+		double jTransit = 2451545.0 + jStar + 0.0053 * sin(mRad) - 0.0069 * sin(2.0 * lamdaRad);
 		return jTransit;
 	}
 
-	float NightKey::CalculateSunDeclination(float latitude, float longitude) 
+	double NightKey::CalculateSunDeclination(double latitude, double longitude)
 	{
-		float conversion = std::numbers::pi / 180.0f;
-		float lamda = CalculateEclipticLongitude(longitude);
-		float lamdaRad = lamda * conversion;
-		float sin_d = sin(lamdaRad) * sin(23.4397 * conversion);
-		float cos_d = cos(asin(sin_d));
-		float sigma = asin((sin((-0.833 - 2.076 * sqrt(0.0f) / 60.0) * conversion) - sin(latitude * conversion) * sin_d) / (cos(latitude * conversion) * cos_d)) / conversion;
+		double conversion = std::numbers::pi / 180.0;
+		double lamda = CalculateEclipticLongitude(longitude);
+		double lamdaRad = lamda * conversion;
+		double sigma = asin(sin(lamdaRad) * sin(23.4397f * conversion)) / conversion;
 		return sigma;
 	}
 
-	float NightKey::CalculateHourAngle(float latitude, float longitude) 
+	double NightKey::CalculateHourAngle(double latitude, double longitude)
 	{
-		float conversion = std::numbers::pi / 180.0f;
-		float sigma = CalculateSunDeclination(latitude, longitude);
-		float sigmaRad = sigma * conversion;
-		float thetaRad = latitude * conversion;
-		float w0 = acos((sin(-0.833f * conversion) - sin(thetaRad) * sin(sigmaRad)) / (cos(thetaRad) * cos(sigmaRad))) / conversion;
-		return w0;
+		double conversion = std::numbers::pi / 180.0;
+		double sigma = CalculateSunDeclination(latitude, longitude);
+		double sigmaRad = sigma * conversion;
+		double thetaRad = latitude * conversion;
+		double altitudeAngleRad = -0.833 * conversion;
+		double w0 = (sin(altitudeAngleRad) - sin(thetaRad) * sin(sigmaRad)) / (cos(thetaRad) * cos(sigmaRad));
+		return acos(w0) / conversion;
 	}
 
-	float NightKey::CalculateSunset(float latitude, float longitude)
+	double NightKey::CalculateSunset(double latitude, double longitude)
 	{
-		float jTransit = CalculateSolarTransit(longitude);
-		float w0 = CalculateHourAngle(latitude, longitude);
-		float jSet = jTransit + w0 / 360.0f;
-		float m = CalculateSolarMeanAnomaly(longitude);
-		float jStar = CalculateMeanSolarTime(longitude);
-		float lamda = CalculateEclipticLongitude(longitude);
-		std::cout << std::setprecision(20) << "M:" << m << std::endl;
+		double jTransit = CalculateSolarTransit(longitude);
+		double w0 = CalculateHourAngle(latitude, longitude);
+		double jSet = jTransit + w0 / 360.0;
+		double m = CalculateSolarMeanAnomaly(longitude);
+		double c = CalculateEquationOfCenter(longitude);
+		double jStar = CalculateMeanSolarTime(longitude);
+		double lamda = CalculateEclipticLongitude(longitude);
+		double sigma = CalculateSunDeclination(latitude, longitude);
+		/*std::cout << std::setprecision(20) << std::fixed << "M:" << m << std::endl;
+		std::cout << "S:" << sigma << std::endl;
+		std::cout << "C:" << c << std::endl;
 		std::cout << "J*:" << jStar << std::endl;
 		std::cout << "L:" << lamda << std::endl;
-		std::cout << "JTransit:" << jTransit << std::endl;
+		std::cout << "w0:" << w0 << std::endl;
+		std::cout << "JTransit:" << (jTransit - 2440587.5) * 86400 << std::endl;*/
 		return jSet;
 	}
 
-	float NightKey::CalculateJTimeToUTC(float latitude, float longitude) 
+	double NightKey::CalculateJTimeToUTC(double latitude, double longitude)
 	{
-		float jSet = CalculateSunset(latitude, longitude);
-		std::cout << "J_Set:" << (jSet - 2440587.5f) * 86400.0f << std::endl;
+		double jSet = (CalculateSunset(latitude, longitude) - 2440587.5) * 86400.0;
+		time_t time = jSet;
+		std::cout << "J_Set:" << std::ctime(&time) << std::endl;
 		return jSet;
 	}
 
 	void NightKey::Init()
 	{
-		CalculateJTimeToUTC(50.72f, -1.8667f);
+		CalculateJTimeToUTC(50.72, -1.8667);
 	}
 
 	void NightKey::Update() 
