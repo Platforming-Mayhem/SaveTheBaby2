@@ -33,9 +33,8 @@ namespace K
 	double NightKey::CurrentDateToJulianDate()
 	{
 		auto currentDate = std::chrono::system_clock::now();
-		//std::gmtime(currentDate);
-		double julianDate = std::chrono::duration_cast<std::chrono::seconds>(currentDate.time_since_epoch()).count() / 86400.0 + 2440587.5;
-		return julianDate;
+		double yesterdayJulianDate = (std::chrono::duration_cast<std::chrono::seconds>(currentDate.time_since_epoch()).count() - 86400) / 86400.0 + 2440587.5;
+		return yesterdayJulianDate;
 	}
 
 	double NightKey::DaysSince2000()
@@ -138,6 +137,7 @@ namespace K
 
 	void NightKey::Init()
 	{
+    	//std::cout << std::chrono::current_zone()->name() << '\n';
 		CalculateJTimeToUTC(50.72, -1.8667);
 	}
 
