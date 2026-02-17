@@ -33,7 +33,7 @@ namespace K
 	double NightKey::CurrentDateToJulianDate()
 	{
 		auto currentDate = std::chrono::system_clock::now();
-		double yesterdayJulianDate = (std::chrono::duration_cast<std::chrono::seconds>(currentDate.time_since_epoch()).count() - 86400) / 86400.0 + 2440587.5;
+		double yesterdayJulianDate = (std::chrono::duration_cast<std::chrono::seconds>(currentDate.time_since_epoch()).count() - (86400 / 2)) / 86400.0 + 2440587.5;
 		return yesterdayJulianDate;
 	}
 
