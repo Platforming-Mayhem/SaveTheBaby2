@@ -24,6 +24,11 @@ namespace K
 		this->foundKey = found;
 	}
 
+	bool Lock::GetKey()
+	{
+		return this->foundKey;
+	}
+
 	void Lock::Update()
 	{
 		if (this->col != nullptr) 

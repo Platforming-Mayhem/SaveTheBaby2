@@ -127,30 +127,109 @@ namespace K
 		return jSet;
 	}
 
-	double NightKey::CalculateJTimeToUTC(double latitude, double longitude)
+	double NightKey::CalculateSunrise(double latitude, double longitude)
+	{
+		double jTransit = CalculateSolarTransit(longitude);
+		double w0 = CalculateHourAngle(latitude, longitude);
+		double jRise = jTransit - w0 / 360.0;
+		double m = CalculateSolarMeanAnomaly(longitude);
+		double c = CalculateEquationOfCenter(longitude);
+		double jStar = CalculateMeanSolarTime(longitude);
+		double lamda = CalculateEclipticLongitude(longitude);
+		double sigma = CalculateSunDeclination(latitude, longitude);
+		return jRise;
+	}
+
+	tm* NightKey::CalculateSunsetToGMT(double latitude, double longitude)
 	{
 		double jSet = (CalculateSunset(latitude, longitude) - 2440587.5) * 86400.0;
 		time_t time = jSet;
-		std::cout << "J_Set:" << std::ctime(&time) << std::endl;
-		return jSet;
+		tm* now = localtime(&time);
+		return now;
+	}
+
+	tm* NightKey::CalculateSunriseToGMT(double latitude, double longitude)
+	{
+		double jRise = (CalculateSunrise(latitude, longitude) - 2440587.5) * 86400.0;
+		time_t time = jRise;
+		tm* now = localtime(&time);
+		return now;
+	}
+
+	tm* NightKey::GetCurrentTime()
+	{
+		time_t currentDate = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+		tm* now = localtime(&currentDate);
+		return now;
 	}
 
 	void NightKey::Init()
 	{
     	//std::cout << std::chrono::current_zone()->name() << '\n';
-		CalculateJTimeToUTC(50.72, -1.8667);
+		tm* sunrise = CalculateSunriseToGMT(50.72, -1.8667);
+		jRise = sunrise->tm_hour + (sunrise->tm_min / 60.0);
+		tm* sunset = CalculateSunsetToGMT(50.72, -1.8667);
+		jSet = sunset->tm_hour + (sunset->tm_min / 60.0);
+		for (auto gIndex : this->gIndices) 
+		{
+			K::GameObject* temp = K::Editor::GetCurrentScene()->GetGameObjects().at(gIndex);
+			K::Lock* lock = (K::Lock*)temp->GetComponentOfType(GetTypeName<K::Lock>());
+			this->locks.insert({ lock, temp });
+			this->affectedLocks.insert({lock, true});
+		}
 	}
 
 	void NightKey::Update() 
 	{
-		
+		tm* now = GetCurrentTime();
+		float nowTime = now->tm_hour + (now->tm_min / 60.0);
+		if(jSet - nowTime > 0.0f && nowTime - jRise > 0.0f)
+		{
+			//Day Time
+			for (auto lock : this->locks) 
+			{
+				if(lock.first->GetKey())
+					lock.first->SetKey(false);
+			}
+		}
+		else
+		{
+			//Night Time
+			for (auto lock : this->locks) 
+			{
+				if(!lock.first->GetKey())
+					lock.first->SetKey(true);
+			}
+		}
 	}
 
 	void NightKey::UpdateEditor()
 	{
 		if (ImGui::CollapsingHeader(this->GetName()))
 		{
-
+			if (ImGui::Button("Get all active locks")) 
+			{
+				for (auto gameObject : K::Editor::GetCurrentScene()->GetGameObjects()) 
+				{
+					K::Lock* lock = (K::Lock*)gameObject.second->GetComponentOfType(GetTypeName<K::Lock>());
+					if (lock != nullptr)
+					{
+						locks.insert({ lock, gameObject.second });
+						affectedLocks.insert({ lock, false });
+					}
+				}
+			}
+			if (!locks.empty()) 
+			{
+				if (ImGui::BeginListBox("Locks"))
+				{
+					for (auto lock : locks)
+					{
+						ImGui::Checkbox(lock.second->GetName(), (bool*)(& affectedLocks.at(lock.first)));
+					}
+					ImGui::EndListBox();
+				}
+			}
 		}
 	}
 
@@ -159,16 +238,21 @@ namespace K
 		if (value[0] != '\0' && value != nullptr)
 		{
 			std::string temp = value;
-			switch (valueIndex)
-			{
-			case 0:
-				break;
-			}
+			this->gIndices.push_back(std::stoi(temp));
 		}
 	}
 
 	const char* NightKey::GetPropertyValues()
 	{
+		this->properties.clear();
+		for (auto affectedLock : this->affectedLocks) 
+		{
+			if ((bool)affectedLock.second) 
+			{
+				this->properties += std::to_string(locks.at(affectedLock.first)->GetIndex()) + ",";
+			}
+		}
+		this->properties.erase(this->properties.size() - 1);
 		return this->properties.c_str();
 	}
 }

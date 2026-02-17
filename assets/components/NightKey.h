@@ -1,11 +1,18 @@
 #pragma once
 #include <K_Engine.h>
+#include "Lock.h"
 
 namespace K 
 {
 	class KC_API NightKey : public K::Component
 	{
 	private:
+		std::vector<int> gIndices;
+		std::map<K::Lock*, char> affectedLocks;
+		std::map<K::Lock*, K::GameObject*> locks;
+
+		float jRise, jSet;
+
 		std::string properties;
 	public:
 		NightKey();
@@ -34,7 +41,13 @@ namespace K
 
 		double CalculateSunset(double latitude, double longitude);
 
-		double CalculateJTimeToUTC(double latitude, double longitude);
+		double CalculateSunrise(double latitude, double longitude);
+
+		tm* CalculateSunsetToGMT(double latitude, double longitude);
+		
+		tm* CalculateSunriseToGMT(double latitude, double longitude);
+
+		tm* GetCurrentTime();
 
 		void Init() override;
 
