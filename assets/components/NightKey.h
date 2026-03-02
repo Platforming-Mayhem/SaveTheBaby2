@@ -4,12 +4,24 @@
 
 namespace K 
 {
+	struct Coordinate
+	{
+		float latitude, longitude;
+
+		Coordinate(float lat, float lng)
+		{
+			this->latitude = lat;
+			this->longitude = lng;
+		}
+	};
+
 	class KC_API NightKey : public K::Component
 	{
 	private:
 		std::vector<int> gIndices;
 		std::map<K::Lock*, char> affectedLocks;
 		std::map<K::Lock*, K::GameObject*> locks;
+		std::map<std::string, Coordinate> locations;
 
 		float jRise, jSet;
 
@@ -48,6 +60,8 @@ namespace K
 		tm* CalculateSunriseToGMT(double latitude, double longitude);
 
 		tm* GetCurrentTime();
+
+		void UpdateLookUpTable();
 
 		void Init() override;
 

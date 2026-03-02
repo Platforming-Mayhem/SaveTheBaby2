@@ -1,3 +1,7 @@
+//#if _DEBUG
+//#define CPPHTTPLIB_OPENSSL_SUPPORT
+//#include "httplib.h"
+//#endif
 #include "NightKey.h"
 
 namespace K 
@@ -163,12 +167,97 @@ namespace K
 		return now;
 	}
 
+	void NightKey::UpdateLookUpTable()
+	{
+		std::ofstream outFile(ASSET_DIR + "LatLonLookup.txt", std::ios::app);
+		for (auto& tz : std::chrono::get_tzdb().zones)
+		{
+			std::string area = std::string(tz.name().data());
+			std::string areaNoCountry;
+			if (area.find('/') != std::string::npos)
+			{
+				areaNoCountry = area.substr(area.find('/') + 1);
+			}
+			else
+			{
+				areaNoCountry = area;
+			}
+			if (!this->locations.contains(area))
+			{
+				/*std::string search = "/geoproxy?q=" + areaNoCountry;
+				httplib::Client cli("https://www.gps-coordinates.net");
+				if (auto res = cli.Get(search))
+				{
+					std::string body = res->body;
+					float latVal = 0.0f, lngVal = 0.0f;
+					body.erase(0, body.find("geometry"));
+					if (body.find("lat") != std::string::npos)
+					{
+						std::string latitude = body.substr(body.find("lat") + 5, 9);
+						latVal = std::stof(latitude);
+						if (body.find("lng") != std::string::npos)
+						{
+							std::string longitude = body.substr(body.find("lng") + 5, 9);
+							lngVal = std::stof(longitude);
+							outFile << tz.name() << " " << latVal << " " << lngVal << '\n';
+							std::cout << "https://www.gps-coordinates.net" + search << std::endl;
+							std::cout << res->status << std::endl;
+						}
+					}
+				}
+				else
+				{
+					std::cout << httplib::to_string(res.error()) << std::endl;
+				}*/
+			}
+		}
+		outFile.close();
+	}
+
 	void NightKey::Init()
 	{
-    	//std::cout << std::chrono::current_zone()->name() << '\n';
-		tm* sunrise = CalculateSunriseToGMT(50.72, -1.8667);
+		std::ifstream readFile;
+		readFile.open(ASSET_DIR + "LatLonLookup.txt");
+		if (readFile)
+		{
+			std::string line;
+			while (std::getline(readFile, line)) 
+			{
+				std::string region;
+				float lat, lng;
+				region = line.substr(0, line.find(' '));
+				line.erase(0, line.find(' ') + 1);
+				lat = std::stof(line.substr(0, line.find(' ')));
+				line.erase(0, line.find(' ') + 1);
+				lng = std::stof(line.substr(0, line.find('\n')));
+				this->locations.insert({region, Coordinate(lat, lng)});
+			}
+		}
+		readFile.close();
+		float lat, lng;
+		std::string currentLocation(std::chrono::current_zone()->name());
+		if (this->locations.empty()) 
+		{
+			lat = 0.0f;
+			lng = 0.0f;
+		}
+		else 
+		{
+			if (this->locations.contains(currentLocation))
+			{
+				lat = this->locations.at(currentLocation).latitude;
+				lng = this->locations.at(currentLocation).longitude;
+			}
+			else
+			{
+				lat = 0.0f;
+				lng = 0.0f;
+			}
+		}
+		tm* sunrise = CalculateSunriseToGMT(lat, lng);
 		jRise = sunrise->tm_hour + (sunrise->tm_min / 60.0);
-		tm* sunset = CalculateSunsetToGMT(50.72, -1.8667);
+		std::cout << currentLocation << " " << sunrise->tm_hour << ":" << sunrise->tm_min << std::endl;
+		tm* sunset = CalculateSunsetToGMT(lat, lng);
 		jSet = sunset->tm_hour + (sunset->tm_min / 60.0);
 		for (auto gIndex : this->gIndices) 
 		{
@@ -177,6 +266,7 @@ namespace K
 			this->locks.insert({ lock, temp });
 			this->affectedLocks.insert({lock, true});
 		}
+		std::cout << currentLocation << " " << sunset->tm_hour << ":" << sunset->tm_min << std::endl;
 	}
 
 	void NightKey::Update() 
@@ -207,6 +297,10 @@ namespace K
 	{
 		if (ImGui::CollapsingHeader(this->GetName()))
 		{
+			if (ImGui::Button("Update LUT")) 
+			{
+				UpdateLookUpTable();
+			}
 			if (ImGui::Button("Get all active locks")) 
 			{
 				for (auto gameObject : K::Editor::GetCurrentScene()->GetGameObjects()) 
