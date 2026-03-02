@@ -105,7 +105,7 @@ namespace K
 			}
 			else
 			{
-				*(this->parent->GetTransform()->position) += K::Vector3(0.0f, 0.0f, -this->time * 2.0f);
+				*(this->parent->GetTransform()->position) += K::Vector3(0.0f, 0.0f, -this->time / 7.0f);
 				this->time += K::Time::deltaTime() * 2.0f;
 			}
 			this->collisionResolution = K::Physics::GetCollisionResolution(this);
