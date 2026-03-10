@@ -116,11 +116,12 @@ namespace K
 	void Collider::Init()
 	{
 		K::Physics::Attach(this);
+		this->ResetVelocity();
 	}
 
 	void Collider::RenderInit() 
 	{
-		this->ResetVelocity();
+		
 	}
 
 	bool Collider::GenerateColliderFromMesh() 

@@ -50,8 +50,6 @@ namespace K
 		
 		this->col = (K::Collider*)this->parent->GetComponentOfType(GetTypeName<K::Collider>());
 		this->mesh = (K::Mesh*)this->parent->GetComponentOfType(GetTypeName<K::Mesh>());
-
-		this->col->ResetVelocity();
 	}
 
 	void Player::RenderInit() 
