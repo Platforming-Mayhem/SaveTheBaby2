@@ -1,4 +1,5 @@
 #pragma once
+#include <strstream>
 #include <K_Engine.h>
 
 namespace K 
@@ -113,7 +114,7 @@ namespace K
 
 		void SetShader(std::string newShader);
 
-		bool LoadModelsAssimp(std::string file);
+		bool LoadOBJModel(std::string file);
 
 		void RenderInit() override;
 

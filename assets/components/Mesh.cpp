@@ -27,56 +27,37 @@ namespace K
 		this->shader = newShader;
 	}
 
-	bool Mesh::LoadModelsAssimp(std::string file)
+	bool Mesh::LoadOBJModel(std::string file)
 	{
-		Assimp::Importer importer;
-		const aiScene* scene = importer.ReadFile(ASSET_DIR + file, aiProcess_Triangulate);
-		if (scene->HasMeshes())
+		std::ifstream newMesh(file);
+		if (!newMesh.is_open())
+			return false;
+		std::vector<Vector3> verts;
+		while (!newMesh.eof())
 		{
-			vertices.clear();
-			indices.clear();
+			char currentLine[128];
 
-			unsigned int offset_faces = 0;
+			newMesh.getline(currentLine, 128);
 
-			for (unsigned int i = 0; i < scene->mNumMeshes; i++)
+			std::strstream s;
+			s << currentLine;
+
+			char junkCharacter;
+
+			if (currentLine[0] == 'v' && currentLine[1] != 'n')
 			{
-				aiMesh* mesh = scene->mMeshes[i];
-
-				for (unsigned int k = 0; k < mesh->mNumFaces; k++)
-				{
-					aiFace face = mesh->mFaces[k];
-					for (unsigned int l = 0; l < face.mNumIndices; l++)
-						indices.push_back(face.mIndices[l] + offset_faces);
-				}
-
-				for (unsigned int j = 0; j < mesh->mNumVertices; j++)
-				{
-					Vector3 vertex;
-					vertex.x = mesh->mVertices[j].x;
-					vertex.y = mesh->mVertices[j].y;
-					vertex.z = mesh->mVertices[j].z;
-					Vector3 normal;
-					if (mesh->HasNormals()) 
-					{
-						normal.x = mesh->mNormals[j].x;
-						normal.y = mesh->mNormals[j].y;
-						normal.z = mesh->mNormals[j].z;
-					}
-					Vector2 texCoord;
-					if (mesh->HasTextureCoords(0)) 
-					{
-						texCoord.x = mesh->mTextureCoords[0][j].x;
-						texCoord.y = mesh->mTextureCoords[0][j].y;
-					}
-					K::Vertex vert(vertex, texCoord, normal);
-
-					vertices.push_back(vert);
-				}
-
-				offset_faces += mesh->mNumVertices;
+				Vector3 v;
+				s >> junkCharacter >> v.x >> v.y >> v.z;
+				verts.push_back(v);
+			}
+			else if (currentLine[0] == 'f')
+			{
+				int i[3];
+				s >> junkCharacter >> i[0] >> i[1] >> i[2];
+				tris.push_back({ verts[i[0] - 1], verts[i[1] - 1], verts[i[2] - 1] });
 			}
 		}
-		return scene->HasMeshes();
+		return true;
 	}
 
 	void Mesh::RenderInit() 
@@ -172,7 +153,7 @@ namespace K
 				{
 					const char* file = (const char*)payload->Data;
 					this->mesh = file;
-					this->LoadModelsAssimp(this->mesh);
+					this->LoadOBJModel(this->mesh);
 
 					glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->EBO);
 					glBufferData(GL_ELEMENT_ARRAY_BUFFER, this->indices.size() * sizeof(int), &this->indices[0], GL_DYNAMIC_DRAW);
@@ -247,7 +228,7 @@ namespace K
 				if (temp != "")
 				{
 					this->mesh = temp;
-					this->LoadModelsAssimp(this->mesh);
+					this->LoadOBJModel(this->mesh);
 				}
 				break;
 			}

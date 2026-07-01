@@ -5,7 +5,6 @@
 *.slo
 *.lo
 *.o
-*.obj
 
 # Precompiled Headers
 *.gch
@@ -39,6 +38,7 @@
 *.BJAWS
 
 #Cmake
+assets/bin
 assets/CMakeLists.txt
 
 #Bin
