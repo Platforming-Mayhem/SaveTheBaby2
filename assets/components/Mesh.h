@@ -1,5 +1,4 @@
 #pragma once
-#include <strstream>
 #include <K_Engine.h>
 
 namespace K 

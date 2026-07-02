@@ -29,32 +29,126 @@ namespace K
 
 	bool Mesh::LoadOBJModel(std::string file)
 	{
-		std::ifstream newMesh(file);
+		std::ifstream newMesh(ASSET_DIR + file);
+		int index = 0;
+		std::vector<K::Vector3> positions;
+		std::vector<K::Vector3> normals;
+		std::vector<K::Vector2> uvs;
 		if (!newMesh.is_open())
 			return false;
-		std::vector<Vector3> verts;
-		while (!newMesh.eof())
+		else
+			vertices.clear();
+			indices.clear();
+		
+		for (std::string currentLine; std::getline(newMesh, currentLine); )
 		{
-			char currentLine[128];
-
-			newMesh.getline(currentLine, 128);
-
-			std::strstream s;
-			s << currentLine;
-
-			char junkCharacter;
-
-			if (currentLine[0] == 'v' && currentLine[1] != 'n')
+			if (currentLine.find("v ") != std::string::npos)
 			{
-				Vector3 v;
-				s >> junkCharacter >> v.x >> v.y >> v.z;
-				verts.push_back(v);
+				currentLine.erase(currentLine.begin(), currentLine.begin() + 2);
+
+				std::size_t xPos = currentLine.find(" ");
+				std::string x = currentLine.substr(0, xPos);
+				currentLine.erase(currentLine.begin(), currentLine.begin() + x.length() + 1);
+
+				std::size_t yPos = currentLine.find(" ");
+				std::string y = currentLine.substr(0, yPos);
+				currentLine.erase(currentLine.begin(), currentLine.begin() + y.length() + 1);
+
+				std::size_t zPos = currentLine.find(" ");
+				std::string z = currentLine.substr(0, zPos);
+
+				K::Vector3 vertex;
+
+				vertex.x = std::stof(x);
+				vertex.y = std::stof(y);
+				vertex.z = std::stof(z);
+
+				positions.push_back(vertex);
 			}
-			else if (currentLine[0] == 'f')
+			else if (currentLine.find("vn ") != std::string::npos)
 			{
-				int i[3];
-				s >> junkCharacter >> i[0] >> i[1] >> i[2];
-				tris.push_back({ verts[i[0] - 1], verts[i[1] - 1], verts[i[2] - 1] });
+				currentLine.erase(currentLine.begin(), currentLine.begin() + 3);
+
+				std::size_t xPos = currentLine.find(" ");
+				std::string x = currentLine.substr(0, xPos);
+				currentLine.erase(currentLine.begin(), currentLine.begin() + x.length() + 1);
+
+				std::size_t yPos = currentLine.find(" ");
+				std::string y = currentLine.substr(0, yPos);
+				currentLine.erase(currentLine.begin(), currentLine.begin() + y.length() + 1);
+
+				std::size_t zPos = currentLine.find(" ");
+				std::string z = currentLine.substr(0, zPos);
+
+				K::Vector3 normal;
+
+				normal.x = std::stof(x);
+				normal.y = std::stof(y);
+				normal.z = std::stof(z);
+
+				normals.push_back(normal);
+			}
+			else if (currentLine.find("vt ") != std::string::npos)
+			{
+				currentLine.erase(currentLine.begin(), currentLine.begin() + 3);
+
+				std::size_t xPos = currentLine.find(" ");
+				std::string x = currentLine.substr(0, xPos);
+				currentLine.erase(currentLine.begin(), currentLine.begin() + x.length() + 1);
+
+				std::size_t yPos = currentLine.find(" ");
+				std::string y = currentLine.substr(0, yPos);
+
+				K::Vector2 uv;
+
+				uv.x = std::stof(x);
+				uv.y = std::stof(y);
+
+				uvs.push_back(uv);
+			}
+			else if (currentLine.find("f ") != std::string::npos)
+			{
+				currentLine.erase(currentLine.begin(), currentLine.begin() + 2);
+
+				for(int i = 0; i < 3; i++)
+				{
+					std::size_t vertex = currentLine.find("/");
+					std::string vertexVal = currentLine.substr(0, vertex);
+					int vertexIndex = std::stoi(vertexVal);
+					currentLine.erase(currentLine.begin(), currentLine.begin() + vertexVal.length() + 1);
+
+					std::size_t uvSize = currentLine.find("/");
+					std::string uvVal = currentLine.substr(0, uvSize);
+					int uvIndex = std::stoi(uvVal);
+					currentLine.erase(currentLine.begin(), currentLine.begin() + uvVal.length() + 1);
+
+					std::size_t normalSize;
+					int normalIndex;
+
+					if(currentLine.find(" ") != std::string::npos)
+					{
+						normalSize = currentLine.find(" ");
+						std::string normalVal = currentLine.substr(0, normalSize);
+						normalIndex = std::stoi(normalVal);
+						currentLine.erase(currentLine.begin(), currentLine.begin() + normalVal.length() + 1);
+					}
+					else
+					{
+						normalSize = currentLine.length();
+						std::string normalVal = currentLine.substr(0, normalSize);
+						normalIndex = std::stoi(normalVal);
+						currentLine.erase(currentLine.begin(), currentLine.begin() + normalVal.length());
+					}
+
+					K::Vector3 position = positions[vertexIndex - 1];
+					K::Vector3 normal = normals[normalIndex - 1];
+					K::Vector2 uv = uvs[uvIndex - 1];
+
+					K::Vertex vert(position, uv, normal);
+					vertices.push_back(vert);
+					indices.push_back(index);
+					index++;
+				}
 			}
 		}
 		return true;
