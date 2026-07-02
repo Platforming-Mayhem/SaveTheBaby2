@@ -24,6 +24,11 @@ namespace K
 		this->foundKey = found;
 	}
 
+	bool Lock::GetKey()
+	{
+		return this->foundKey;
+	}
+
 	void Lock::Update()
 	{
 		if (this->col != nullptr) 
@@ -32,7 +37,7 @@ namespace K
 			{
 				if (this->foundKey) 
 				{
-					K::Editor::Delete(this->parent);
+					K::SceneManager::LoadNextScene();
 				}
 			}
 		}

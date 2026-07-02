@@ -27,56 +27,131 @@ namespace K
 		this->shader = newShader;
 	}
 
-	bool Mesh::LoadModelsAssimp(std::string file)
+	bool Mesh::LoadOBJModel(std::string file)
 	{
-		Assimp::Importer importer;
-		const aiScene* scene = importer.ReadFile(ASSET_DIR + file, aiProcess_Triangulate);
-		if (scene->HasMeshes())
-		{
+		std::ifstream newMesh(ASSET_DIR + file);
+		int index = 0;
+		std::vector<K::Vector3> positions;
+		std::vector<K::Vector3> normals;
+		std::vector<K::Vector2> uvs;
+		if (!newMesh.is_open())
+			return false;
+		else
 			vertices.clear();
 			indices.clear();
-
-			unsigned int offset_faces = 0;
-
-			for (unsigned int i = 0; i < scene->mNumMeshes; i++)
+		
+		for (std::string currentLine; std::getline(newMesh, currentLine); )
+		{
+			if (currentLine.find("v ") != std::string::npos)
 			{
-				aiMesh* mesh = scene->mMeshes[i];
+				currentLine.erase(currentLine.begin(), currentLine.begin() + 2);
 
-				for (unsigned int k = 0; k < mesh->mNumFaces; k++)
+				std::size_t xPos = currentLine.find(" ");
+				std::string x = currentLine.substr(0, xPos);
+				currentLine.erase(currentLine.begin(), currentLine.begin() + x.length() + 1);
+
+				std::size_t yPos = currentLine.find(" ");
+				std::string y = currentLine.substr(0, yPos);
+				currentLine.erase(currentLine.begin(), currentLine.begin() + y.length() + 1);
+
+				std::size_t zPos = currentLine.find(" ");
+				std::string z = currentLine.substr(0, zPos);
+
+				K::Vector3 vertex;
+
+				vertex.x = std::stof(x);
+				vertex.y = std::stof(y);
+				vertex.z = std::stof(z);
+
+				positions.push_back(vertex);
+			}
+			else if (currentLine.find("vn ") != std::string::npos)
+			{
+				currentLine.erase(currentLine.begin(), currentLine.begin() + 3);
+
+				std::size_t xPos = currentLine.find(" ");
+				std::string x = currentLine.substr(0, xPos);
+				currentLine.erase(currentLine.begin(), currentLine.begin() + x.length() + 1);
+
+				std::size_t yPos = currentLine.find(" ");
+				std::string y = currentLine.substr(0, yPos);
+				currentLine.erase(currentLine.begin(), currentLine.begin() + y.length() + 1);
+
+				std::size_t zPos = currentLine.find(" ");
+				std::string z = currentLine.substr(0, zPos);
+
+				K::Vector3 normal;
+
+				normal.x = std::stof(x);
+				normal.y = std::stof(y);
+				normal.z = std::stof(z);
+
+				normals.push_back(normal);
+			}
+			else if (currentLine.find("vt ") != std::string::npos)
+			{
+				currentLine.erase(currentLine.begin(), currentLine.begin() + 3);
+
+				std::size_t xPos = currentLine.find(" ");
+				std::string x = currentLine.substr(0, xPos);
+				currentLine.erase(currentLine.begin(), currentLine.begin() + x.length() + 1);
+
+				std::size_t yPos = currentLine.find(" ");
+				std::string y = currentLine.substr(0, yPos);
+
+				K::Vector2 uv;
+
+				uv.x = std::stof(x);
+				uv.y = std::stof(y);
+
+				uvs.push_back(uv);
+			}
+			else if (currentLine.find("f ") != std::string::npos)
+			{
+				currentLine.erase(currentLine.begin(), currentLine.begin() + 2);
+
+				for(int i = 0; i < 3; i++)
 				{
-					aiFace face = mesh->mFaces[k];
-					for (unsigned int l = 0; l < face.mNumIndices; l++)
-						indices.push_back(face.mIndices[l] + offset_faces);
-				}
+					std::size_t vertex = currentLine.find("/");
+					std::string vertexVal = currentLine.substr(0, vertex);
+					int vertexIndex = std::stoi(vertexVal);
+					currentLine.erase(currentLine.begin(), currentLine.begin() + vertexVal.length() + 1);
 
-				for (unsigned int j = 0; j < mesh->mNumVertices; j++)
-				{
-					Vector3 vertex;
-					vertex.x = mesh->mVertices[j].x;
-					vertex.y = mesh->mVertices[j].y;
-					vertex.z = mesh->mVertices[j].z;
-					Vector3 normal;
-					if (mesh->HasNormals()) 
-					{
-						normal.x = mesh->mNormals[j].x;
-						normal.y = mesh->mNormals[j].y;
-						normal.z = mesh->mNormals[j].z;
-					}
-					Vector2 texCoord;
-					if (mesh->HasTextureCoords(0)) 
-					{
-						texCoord.x = mesh->mTextureCoords[0][j].x;
-						texCoord.y = mesh->mTextureCoords[0][j].y;
-					}
-					K::Vertex vert(vertex, texCoord, normal);
+					std::size_t uvSize = currentLine.find("/");
+					std::string uvVal = currentLine.substr(0, uvSize);
+					int uvIndex = std::stoi(uvVal);
+					currentLine.erase(currentLine.begin(), currentLine.begin() + uvVal.length() + 1);
 
+					std::size_t normalSize;
+					int normalIndex;
+
+					if(currentLine.find(" ") != std::string::npos)
+					{
+						normalSize = currentLine.find(" ");
+						std::string normalVal = currentLine.substr(0, normalSize);
+						normalIndex = std::stoi(normalVal);
+						currentLine.erase(currentLine.begin(), currentLine.begin() + normalVal.length() + 1);
+					}
+					else
+					{
+						normalSize = currentLine.length();
+						std::string normalVal = currentLine.substr(0, normalSize);
+						normalIndex = std::stoi(normalVal);
+						currentLine.erase(currentLine.begin(), currentLine.begin() + normalVal.length());
+					}
+
+					K::Vector3 position = positions[vertexIndex - 1];
+					K::Vector3 normal = normals[normalIndex - 1];
+					K::Vector2 uv = uvs[uvIndex - 1];
+
+					K::Vertex vert(position, uv, normal);
 					vertices.push_back(vert);
+					indices.push_back(index);
+					index++;
 				}
-
-				offset_faces += mesh->mNumVertices;
 			}
 		}
-		return scene->HasMeshes();
+		return true;
 	}
 
 	void Mesh::RenderInit() 
@@ -172,7 +247,7 @@ namespace K
 				{
 					const char* file = (const char*)payload->Data;
 					this->mesh = file;
-					this->LoadModelsAssimp(this->mesh);
+					this->LoadOBJModel(this->mesh);
 
 					glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->EBO);
 					glBufferData(GL_ELEMENT_ARRAY_BUFFER, this->indices.size() * sizeof(int), &this->indices[0], GL_DYNAMIC_DRAW);
@@ -247,7 +322,7 @@ namespace K
 				if (temp != "")
 				{
 					this->mesh = temp;
-					this->LoadModelsAssimp(this->mesh);
+					this->LoadOBJModel(this->mesh);
 				}
 				break;
 			}

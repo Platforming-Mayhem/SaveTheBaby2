@@ -320,7 +320,7 @@ namespace K
 					K::Vector3 contactResolution = originToJ + (normal * col->GetRadius());
 					offsetAmount += contactResolution;
 
-					if (angle < 0.8f && angle > -0.8f && angle1 > 0.0f)
+					if (angle < 0.8f && angle > -0.8f && angle1 > 0.0f && J.position.z < col->GetPosition().z)
 					{
 						col->SetIsColliding(true);
 						J.other->SetIsColliding(true);
@@ -359,7 +359,7 @@ namespace K
 					K::Vector3 contactResolution = originToJ + (normal * col->GetRadius());
 					offsetAmount += contactResolution;
 
-					if (angle < 0.8f && angle > -0.8f && angle1 > 0.0f)
+					if (angle < 0.8f && angle > -0.8f && angle1 > 0.0f && J.position.z < col->GetPosition().z - (col->GetHeight() * 0.5f))
 					{
 						col->SetIsColliding(true);
 						J.other->SetIsColliding(true);
@@ -387,7 +387,7 @@ namespace K
 					float angle = K::Vector3::DotProduct(normal, right);
 					float angle1 = K::Vector3::DotProduct(normal, up);
 
-					if (angle < 0.8f && angle > -0.8f && angle1 > 0.0f)
+					if (angle < 0.8f && angle > -0.8f && angle1 > 0.0f && J.position.z < col->GetPosition().z - (col->GetHeight() * 0.5f))
 					{
 						col->SetIsColliding(true);
 						J.other->SetIsColliding(true);
@@ -423,7 +423,7 @@ namespace K
 					K::Vector3 contactResolution = originToJ + (normal * col->GetRadius());
 					offsetAmount += contactResolution;
 
-					if (angle < 0.8f && angle > -0.8f && angle1 > 0.0f)
+					if (angle < 0.8f && angle > -0.8f && angle1 > 0.0f && J.position.z < col->GetPosition().z - (col->GetHeight() * 0.5f))
 					{
 						col->SetIsColliding(true);
 						J.other->SetIsColliding(true);
@@ -451,7 +451,7 @@ namespace K
 					float angle = K::Vector3::DotProduct(normal, right);
 					float angle1 = K::Vector3::DotProduct(normal, up);
 
-					if (angle < 0.8f && angle > -0.8f && angle1 > 0.0f)
+					if (angle < 0.8f && angle > -0.8f && angle1 > 0.0f && J.position.z < col->GetPosition().z - (col->GetHeight() * 0.5f))
 					{
 						col->SetIsColliding(true);
 						J.other->SetIsColliding(true);
@@ -509,7 +509,7 @@ namespace K
 					float angle = K::Vector3::DotProduct(normal, right);
 					float angle1 = K::Vector3::DotProduct(normal, up);
 
-					if (angle < 0.8f && angle > -0.8f && angle1 > 0.0f)
+					if (angle < 0.8f && angle > -0.8f && angle1 > 0.0f && J.position.z < col->GetPosition().z - (col->GetHeight() * 0.5f))
 					{
 						col->SetIsColliding(true);
 						J.other->SetIsColliding(true);

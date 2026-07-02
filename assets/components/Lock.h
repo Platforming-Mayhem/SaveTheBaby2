@@ -17,6 +17,8 @@ namespace K
 
 		void SetKey(bool found);
 
+		bool GetKey();
+
 		void Init() override;
 
 		void UpdateEditor() override;
