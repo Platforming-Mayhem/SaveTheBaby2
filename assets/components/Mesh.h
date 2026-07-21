@@ -32,7 +32,7 @@ namespace K
 
 	KC_API struct Colour
 	{
-		Colour(float r, float g, float b) 
+		Colour(float r = 0.0f, float g = 0.0f, float b = 0.0f) 
 		{
 			this->rgb[0] = r;
 			this->rgb[1] = g;
@@ -50,7 +50,7 @@ namespace K
 	{
 	private:
 		bool canDepth = true;
-		float colourTint[3] = { 1.0f, 1.0f, 1.0f };
+		Colour colourTint = Colour( 1.0f, 1.0f, 1.0f );
 		unsigned int VAO;
 		unsigned int VBO;
 		unsigned int EBO;
@@ -114,6 +114,8 @@ namespace K
 		void SetShader(std::string newShader);
 
 		bool LoadOBJModel(std::string file);
+
+		void ReloadGeometry();
 
 		void RenderInit() override;
 

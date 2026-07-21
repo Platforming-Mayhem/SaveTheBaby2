@@ -13,7 +13,7 @@ namespace K
 
 	Mesh::~Mesh() 
 	{
-		//std::cout << "Begin Mesh Destruction..." << std::endl;
+		std::cout << "Begin Mesh Destruction..." << std::endl;
 		glDeleteVertexArrays(1, &this->VAO);
 		glDeleteBuffers(1, &this->VBO);
 		glDeleteBuffers(1, &this->EBO);
@@ -209,7 +209,7 @@ namespace K
 		glBindVertexArray(this->VAO);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->EBO);
 
-		glUniform3f(this->parent->GetMaterial()->GetShader()->GetUniform("colorTint"), this->colourTint[0], this->colourTint[1], this->colourTint[2]);
+		glUniform3f(this->parent->GetMaterial()->GetShader()->GetUniform("colorTint"), this->colourTint.rgb[0], this->colourTint.rgb[1], this->colourTint.rgb[2]);
 		glUniform1i(this->parent->GetMaterial()->GetShader()->GetUniform("canDepth"), this->canDepth);
 	}
 
@@ -224,6 +224,15 @@ namespace K
 		glBindVertexArray(0);
 	}
 
+	void Mesh::ReloadGeometry()
+	{
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->EBO);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, this->indices.size() * sizeof(int), &this->indices[0], GL_DYNAMIC_DRAW);
+
+		glBindBuffer(GL_ARRAY_BUFFER, this->VBO);
+		glBufferData(GL_ARRAY_BUFFER, this->vertices.size() * sizeof(K::Vertex), &this->vertices[0], GL_DYNAMIC_DRAW);
+	}
+
 	void Mesh::UpdateEditor()
 	{
 		if (ImGui::CollapsingHeader("Mesh Renderer Settings")) 
@@ -231,7 +240,7 @@ namespace K
 			ImGui::Text("Vertices: %i", this->vertices.size());
 			ImGui::Text("Indices: %i", this->indices.size());
 			ImGui::Checkbox("Can Depth", &this->canDepth);
-			ImGui::ColorPicker3("Colour Tint", this->colourTint);
+			ImGui::ColorPicker3("Colour Tint", &this->colourTint.rgb[0]);
 
 			if (this->mesh.empty()) 
 			{
@@ -248,12 +257,7 @@ namespace K
 					const char* file = (const char*)payload->Data;
 					this->mesh = file;
 					this->LoadOBJModel(this->mesh);
-
-					glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->EBO);
-					glBufferData(GL_ELEMENT_ARRAY_BUFFER, this->indices.size() * sizeof(int), &this->indices[0], GL_DYNAMIC_DRAW);
-
-					glBindBuffer(GL_ARRAY_BUFFER, this->VBO);
-					glBufferData(GL_ARRAY_BUFFER, this->vertices.size() * sizeof(K::Vertex), &this->vertices[0], GL_DYNAMIC_DRAW);
+					this->ReloadGeometry();
 				}
 				ImGui::EndDragDropTarget();
 			}
@@ -270,14 +274,14 @@ namespace K
 
 	K::Colour Mesh::GetColourTint()
 	{
-		return K::Colour(this->colourTint[0], this->colourTint[1], this->colourTint[2]);
+		return this->colourTint;
 	}
 
 	void Mesh::SetColourTint(float r, float g, float b) 
 	{
-		this->colourTint[0] = r;
-		this->colourTint[1] = g;
-		this->colourTint[2] = b;
+		this->colourTint.rgb[0] = r;
+		this->colourTint.rgb[1] = g;
+		this->colourTint.rgb[2] = b;
 	}
 
 	void Mesh::Unbind() 
@@ -293,13 +297,13 @@ namespace K
 			switch (valueIndex)
 			{
 			case 0:
-				this->colourTint[0] = std::stof(temp);
+				this->colourTint.rgb[0] = std::stof(temp);
 				break;
 			case 1:
-				this->colourTint[1] = std::stof(temp);
+				this->colourTint.rgb[1] = std::stof(temp);
 				break;
 			case 2:
-				this->colourTint[2] = std::stof(temp);
+				this->colourTint.rgb[2] = std::stof(temp);
 				break;
 			case 3:
 				if (temp == "true") 
@@ -331,9 +335,9 @@ namespace K
 
 	const char* Mesh::GetPropertyValues()
 	{
-		this->properties = std::to_string(this->colourTint[0]) + ",";
-		this->properties += std::to_string(this->colourTint[1]) + ",";
-		this->properties += std::to_string(this->colourTint[2]) + ",";
+		this->properties = std::to_string(this->colourTint.rgb[0]) + ",";
+		this->properties += std::to_string(this->colourTint.rgb[1]) + ",";
+		this->properties += std::to_string(this->colourTint.rgb[2]) + ",";
 		if (this->canDepth) 
 		{
 			this->properties += "true,";
