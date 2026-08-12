@@ -13,27 +13,14 @@ namespace K
 
 	bool K::LineArt::IsCollidingWithTriangle(K::Vector3 P, K::Vector3 A, K::Vector3 B, K::Vector3 C)
 	{
-		K::Vector3 v0 = A - C;
-		K::Vector3 v1 = B - A;
-		K::Vector3 v2 = P - A;
+		double s1 = C.z - A.z;
+		double s2 = C.x - A.x;
+		double s3 = B.z - A.z;
+		double s4 = P.z - A.z;
 
-		v0.y = 0.0f;
-		v1.y = 0.0f;
-		v2.y = 0.0f;
-
-		float dot00 = K::Vector3::DotProduct(v0, v0);
-		float dot01 = K::Vector3::DotProduct(v0, v1);
-		float dot02 = K::Vector3::DotProduct(v0, v2);
-		float dot11 = K::Vector3::DotProduct(v1, v1);
-		float dot12 = K::Vector3::DotProduct(v1, v2);
-
-		float denom = dot00 * dot11 - dot01 * dot01;
-		if(std::abs(denom) < 1e-20)
-			return true;
-		float invDenom = 1.0f / denom;
-		float u = (dot11 * dot02 - dot01 * dot12) * invDenom;
-		float v = (dot00 * dot12 - dot01 * dot02) * invDenom;
-		return (u >= 0) && (v >= 0) && (u + v < 1);
+		double w1 = (A.x * s1 + s4 * s2 - P.x * s1) / (s3 * s2 - (B.x - A.x) * s1);
+		double w2 = (s4 - w1 * s3) / s1;
+		return w1 >= 0 && w2 >= 0 && (w1 + w2) <= 1;
 	}
 
 	bool K::LineArt::IsEar(int currentIndex, int nextIndex, int previousIndex)
@@ -71,135 +58,22 @@ namespace K
 		}
 	}
 
-	bool K::LineArt::ProcessNode(int index, K::Mesh* mesh)
+	std::vector<int> K::LineArt::ProcessNodes(std::vector<int> nodes, K::Mesh* mesh)
 	{
-		int currentIndex = index;
-		int previousIndex = index - 1;
-		int nextIndex = index + 1;
-
-		if (previousIndex < 0)
+		int i = 0;
+		while (nodes.size() > 2)
 		{
-			previousIndex = currentLine.points.size() - 1;
-		}
+			int previousIndex = nodes[i - 1];
+			int currentIndex = nodes[i];
+			int nextIndex = nodes[i + 1];
 
-		if (nextIndex >= currentLine.points.size())
-		{
-			nextIndex = 0;
-		}
+			if(i - 1 < 0)
+				previousIndex = nodes[nodes.size() - 1];
 
-		std::cout << "Currently processing:" << currentIndex << std::endl;
-
-		while (currentLine.points[previousIndex].indexAdded || previousIndex == currentIndex || previousIndex == nextIndex)
-		{
-			if (previousIndex <= 0)
-			{
-				previousIndex = currentLine.points.size() - 1;
-			}
-			else
-			{
-				previousIndex--;
-			}
-			if (previousIndex == index - 1)
-			{
-				return false;
-			}
-		}
-
-		if (IsEar(currentIndex, nextIndex, previousIndex))
-		{
-			int offset = 0;
-
-			for (auto line : this->lineArtLines)
-			{
-				offset += line.points.size();
-			}
-
-			mesh->indices.push_back(currentIndex + offset);
-			mesh->indices.push_back(previousIndex + offset);
-			mesh->indices.push_back(nextIndex + offset);
-			currentLine.points[currentIndex].indexAdded = true;
-			return true;
-		}
-		else
-		{
-			return false;
-		}
-	}
-
-	std::vector<int> K::LineArt::Triangulate(std::vector<int> points, K::Mesh *mesh)
-	{
-		std::vector<int> triangles;
-
-		std::vector<int> initialPoints = points;
-		if (points.size() < 3) // let's make sure that the user don't feed the function with less than 3 points !
-			return triangles;
-		else
-		{
-			bool impossibleToTriangulate = false;
-			bool triangleFound = true;
-
-			while (points.size() != 0) // run the algorithm until our polygon is empty
-			{
-				if (!triangleFound) // if we've looped once without finding any ear, the program is stuck, the polygon is not triangulable for our algorithm (likely to be a 8 shape or such self intersecting polygon)
-					return triangles;
-
-				triangleFound = false; // we want to find a new ear at each loop
-
-				for (int i(0); i < points.size() - 2; i++) // for each 3 consecutive points we check if it's an ear : an ear is a triangle that wind in the right direction and that do not contain any other point of the polygon
-				{
-					if (!triangleFound) // if we still didn't find an ear
-					{
-						bool result = IsEar(points[i + 1], points[i + 2], points[i]);
-
-						if (result) // now, we have found an ear :
-						{
-							triangleFound = true;
-
-							triangles.push_back(points[i]); // so we add our 3 vec2f to the triangle array : it's one of our triangles !
-							triangles.push_back(points[i + 1]);
-							triangles.push_back(points[i + 2]);
-
-							int offset = 0;
-
-							for (auto line : this->lineArtLines)
-							{
-								offset += line.points.size();
-							}
-
-							mesh->indices.push_back(points[i] + offset); // so we add our 3 vec2f to the triangle array : it's one of our triangles !
-							mesh->indices.push_back(points[i + 1] + offset);
-							mesh->indices.push_back(points[i + 2] + offset);
-
-							std::vector<int> bufferArray;
-							for (int j(0); j < points.size(); j++) // then we delete the triangle in the points array : we already know that it's an ear, we don't need it anymore
-							{
-								if (j != i + 1) // we copiy all the points in a buffer array except the point we don't want
-								{
-									bufferArray.push_back(points[j]);
-								}
-							}
-							points = bufferArray;
-						}
-					}
-				}
-			}
-		}
-		return triangles; // we return the triangle array
-	}
-
-	std::vector<int> K::LineArt::ProcessNodes(std::vector<int> nodes, K::Mesh *mesh)
-	{
-		for(int index = 0; index < nodes.size(); index++)
-		{
-			int previousIndex = nodes[index - 1];
-			int currentIndex = nodes[index];
-			int nextIndex = nodes[index + 1];
-
-			if (index + 1 >= nodes.size() - 1)
+			if(i + 1 >= nodes.size())
 				nextIndex = nodes[0];
 
-			if (index - 1 < 0)
-				previousIndex = nodes[nodes.size() - 1];
+			std::cout << "Currently processing:" << currentIndex << std::endl;
 
 			if (IsEar(currentIndex, nextIndex, previousIndex))
 			{
@@ -213,9 +87,12 @@ namespace K
 				mesh->indices.push_back(currentIndex + offset);
 				mesh->indices.push_back(previousIndex + offset);
 				mesh->indices.push_back(nextIndex + offset);
-				currentLine.points[currentIndex].indexAdded = true;
-				nodes.erase(nodes.begin() + index);
+				nodes.erase(nodes.begin() + i);
 			}
+			if(i < nodes.size() - 1)
+				i++;
+			else
+				i = 0;
 		}
 		return nodes;
 	}
@@ -225,35 +102,26 @@ namespace K
 		int initIndices = mesh->indices.size();
 		int initVertices = mesh->vertices.size();
 
-		std::vector<int> nonEars;
+		mesh->vertices.clear();
+		mesh->indices.clear();
+
+		std::vector<int> nodes;
 
 		for(int i = 0; i < currentLine.points.size(); i++)
 		{
-			if(!currentLine.points[i].vertexAdded)
-			{
-				K::Vertex vert = K::Vertex(currentLine.points[i].position, K::Vector2(0.0f, 0.0f));
-				mesh->vertices.push_back(vert);
-				currentLine.points[i].vertexAdded = true;
-			}
-			if (!currentLine.points[i].indexAdded)
-			{
-				nonEars.push_back(i);
-				currentLine.points[i].indexAdded = true;
-			}
+			K::Vertex vert = K::Vertex(currentLine.points[i].position, K::Vector2(0.0f, 0.0f));
+			mesh->vertices.push_back(vert);
+			nodes.push_back(i);
 		}
 
-		std::cout << "starting non ears left:" << nonEars.size() << std::endl;
-
-		nonEars = Triangulate(nonEars, mesh);
-
-		std::cout << "final non ears left:" << nonEars.size() << std::endl;
+		nodes = ProcessNodes(nodes, mesh);
 
 		if(initIndices != mesh->indices.size() || initVertices != mesh->vertices.size())
 		{
 			for (int index : mesh->indices)
 			{
 				std::cout << index << std::endl;
-				std::cout << mesh->vertices[index].position.x << "," << mesh->vertices[index].position.y << "," << mesh->vertices[index].position.z << std::endl;
+				std::cout << mesh->vertices[index].position.x << "," << mesh->vertices[index].position.z << "," << mesh->vertices[index].position.z << std::endl;
 			}
 			mesh->ReloadGeometry();
 		}
@@ -375,8 +243,8 @@ namespace K
 			this->mesh->vertices.clear();
 			this->mesh->indices.clear();
 		}
-		PolygonTest01();
-		//DrawPolygon(7, 1.0f);
+		PolygonTest02();
+		//DrawPolygon(32, 1.0f);
 	}
 
 	void K::Draw::Bind() 
@@ -390,23 +258,23 @@ namespace K
 		{
 			if(K::InputManager::IsMouseKeyPressed(0))
 			{
-				if(!this->drawingLine)
-					currentLine.points.clear();
 				this->drawingLine = true;
-
-				K::Vector3 worldSpaceDirection = K::InputManager::GetWorldMouseDirection();
-				K::Vector3 camPosition = *K::Editor::cameraPosition;
-
-				K::Vector3 P = (camPosition + (worldSpaceDirection * 10.0f));
-
-				K::LinePoint point = K::LinePoint(P, K::Colour(0.0f, 0.0f, 0.0f), 1.0f);
-				currentLine.points.push_back(point);
 			}
 			else if(K::InputManager::IsMouseKeyReleased(0) && this->drawingLine)
 			{
 				this->drawingLine = false;
+
+				K::Vector3 worldSpaceDirection = K::InputManager::GetWorldMouseDirection();
+				K::Vector3 camPosition = *K::Editor::cameraPosition;
+				K::Vector3 forward = K::Vector3(0.0f, 1.0f, 0.0f);
+				float t = -K::Vector3::DotProduct(forward, camPosition) / K::Vector3::DotProduct(forward, worldSpaceDirection);
+
+				K::Vector3 P = (camPosition + (worldSpaceDirection * t));
+
+				K::LinePoint point = K::LinePoint(P, K::Colour(0.0f, 0.0f, 0.0f), 1.0f);
+				currentLine.points.push_back(point);
+
 				this->lineart.Render(this->mesh);
-				this->lineart.AddLineArtLine(currentLine);
 			}
 		}
 	}
