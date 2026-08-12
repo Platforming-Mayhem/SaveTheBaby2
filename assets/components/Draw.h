@@ -9,7 +9,8 @@ namespace K
 		K::Vector3 position;
 		K::Colour colour;
 		float thickness;
-		bool rendered = false;
+		bool vertexAdded = false;
+		bool indexAdded = false;
 
 		LinePoint();
 
@@ -37,6 +38,18 @@ namespace K
 
 			void Render(K::Mesh* mesh);
 
+			void Clear();
+
+			bool IsEar(int index, int nextIndex, int previousIndex);
+
+			bool ProcessNode(int index, K::Mesh* mesh);
+
+			std::vector<int> Triangulate(std::vector<int> points, K::Mesh* mesh);
+
+			std::vector<int> ProcessNodes(std::vector<int> nodes, K::Mesh* mesh);
+
+			bool IsCollidingWithTriangle(K::Vector3 point, K::Vector3 A, K::Vector3 B, K::Vector3 C);
+
 			LineArt();
 
 			~LineArt();
@@ -56,6 +69,12 @@ namespace K
 		Draw();
 
 		~Draw();
+
+		void DrawPolygon(int sides, float radius);
+
+		void PolygonTest01();
+
+		void PolygonTest02();
 
 		void Init() override;
 
