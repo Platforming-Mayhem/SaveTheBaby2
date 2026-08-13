@@ -72,6 +72,8 @@ namespace K
 
 		void PolygonTest02();
 
+		void PolygonTest03();
+
 		void Init() override;
 
 		void Update() override;

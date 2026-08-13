@@ -41,7 +41,7 @@ namespace K
 			angle = (2.0 * std::numbers::pi) + angle;
 		}
 
-		if (angle <= std::numbers::pi)
+		if (angle < std::numbers::pi)
 		{
 			for (int i = 0; i < currentLine.points.size(); i++)
 			{
@@ -73,7 +73,23 @@ namespace K
 			if(i + 1 >= nodes.size())
 				nextIndex = nodes[0];
 
-			std::cout << "Currently processing:" << currentIndex << std::endl;
+			//std::cout << "Currently processing:" << currentIndex << std::endl;
+
+			K::Vector3 A = currentLine.points[previousIndex].position;
+			K::Vector3 B = currentLine.points[currentIndex].position;
+			K::Vector3 C = currentLine.points[nextIndex].position;
+			K::Vector3 BA = B - A;
+			K::Vector3 CA = C - A;
+
+			K::Vector3 N = K::Vector3::CrossProduct(BA, CA);
+			K::Vector3 forward = K::Vector3(0.0f, 1.0f, 0.0f);
+			if(K::Vector3::DotProduct(N, forward) < 0.0f)
+			{
+				int tempNext = nextIndex;
+				int tempPrevious = previousIndex;
+				nextIndex = tempPrevious;
+				previousIndex = tempNext;
+			}
 
 			if (IsEar(currentIndex, nextIndex, previousIndex))
 			{
@@ -233,6 +249,24 @@ namespace K
 		this->lineart.AddLineArtLine(currentLine);
 	}
 
+	void K::Draw::PolygonTest03()
+	{
+		K::LinePoint point = K::LinePoint(K::Vector3(1.0f, 0.0f, 1.0f), K::Colour(0.0f, 0.0f, 0.0f), 1.0f);
+		currentLine.points.push_back(point);
+
+		point = K::LinePoint(K::Vector3(-1.0f, 0.0f, -1.0f), K::Colour(0.0f, 0.0f, 0.0f), 1.0f);
+		currentLine.points.push_back(point);
+
+		point = K::LinePoint(K::Vector3(-1.0f, 0.0f, 1.0f), K::Colour(0.0f, 0.0f, 0.0f), 1.0f);
+		currentLine.points.push_back(point);
+
+		point = K::LinePoint(K::Vector3(1.0f, 0.0f, -1.0f), K::Colour(0.0f, 0.0f, 0.0f), 1.0f);
+		currentLine.points.push_back(point);
+
+		this->lineart.Render(this->mesh);
+		this->lineart.AddLineArtLine(currentLine);
+	}
+
 	void K::Draw::Init() 
 	{
 		this->mesh = (K::Mesh*)this->parent->GetComponentOfType(GetTypeName<K::Mesh>());
@@ -243,7 +277,8 @@ namespace K
 			this->mesh->vertices.clear();
 			this->mesh->indices.clear();
 		}
-		PolygonTest02();
+		glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
+		//PolygonTest03();
 		//DrawPolygon(32, 1.0f);
 	}
 
