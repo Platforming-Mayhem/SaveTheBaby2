@@ -20,7 +20,7 @@ namespace K
 
 		double w1 = (A.x * s1 + s4 * s2 - P.x * s1) / (s3 * s2 - (B.x - A.x) * s1);
 		double w2 = (s4 - w1 * s3) / s1;
-		return w1 >= 0 && w2 >= 0 && (w1 + w2) <= 1;
+		return w1 > 0 && w2 > 0 && (w1 + w2) < 1;
 	}
 
 	bool K::LineArt::IsEar(int currentIndex, int nextIndex, int previousIndex)
@@ -45,7 +45,7 @@ namespace K
 		{
 			for (int i = 0; i < currentLine.points.size(); i++)
 			{
-				if (i != previousIndex && i != currentIndex && i != nextIndex && IsCollidingWithTriangle(currentLine.points[i].position, A, B, C))
+				if (IsCollidingWithTriangle(currentLine.points[i].position, A, B, C))
 				{
 					return false;
 				}
@@ -58,9 +58,54 @@ namespace K
 		}
 	}
 
+	K::Vector3 center;
+
+	bool less(int firstIndex, int secondIndex)
+	{
+		K::Vector3 a = currentLine.points[firstIndex].position;
+		K::Vector3 b = currentLine.points[secondIndex].position;
+		if (a.x - center.x >= 0 && b.x - center.x < 0)
+			return true;
+		if (a.x - center.x < 0 && b.x - center.x >= 0)
+			return false;
+		if (a.x - center.x == 0 && b.x - center.x == 0)
+		{
+			if (a.z - center.z >= 0 || b.z - center.z >= 0)
+				return a.z > b.z;
+			return b.z > a.z;
+		}
+
+		// compute the cross product of vectors (center -> a) x (center -> b)
+		int det = (a.x - center.x) * (b.z - center.z) - (b.x - center.x) * (a.z - center.z);
+		if (det < 0)
+			return true;
+		if (det > 0)
+			return false;
+
+		// points a and b are on the same line from the center
+		// check which point is closer to the center
+		int d1 = (a.x - center.x) * (a.x - center.x) + (a.z - center.z) * (a.z - center.z);
+		int d2 = (b.x - center.x) * (b.x - center.x) + (b.z - center.z) * (b.z - center.z);
+		return d1 > d2;
+	}
+
+	bool more(int firstIndex, int secondIndex)
+	{
+		return !less(firstIndex, secondIndex);
+	}
+
 	std::vector<int> K::LineArt::ProcessNodes(std::vector<int> nodes, K::Mesh* mesh)
 	{
 		int i = 0;
+
+		/* for(int node : nodes)
+		{
+			center += currentLine.points[node].position;
+		}
+		center = center / nodes.size();
+
+		std::sort(nodes.begin(), nodes.end(), more); */
+		
 		while (nodes.size() > 2)
 		{
 			int previousIndex = nodes[i - 1];
@@ -74,22 +119,6 @@ namespace K
 				nextIndex = nodes[0];
 
 			//std::cout << "Currently processing:" << currentIndex << std::endl;
-
-			K::Vector3 A = currentLine.points[previousIndex].position;
-			K::Vector3 B = currentLine.points[currentIndex].position;
-			K::Vector3 C = currentLine.points[nextIndex].position;
-			K::Vector3 BA = B - A;
-			K::Vector3 CA = C - A;
-
-			K::Vector3 N = K::Vector3::CrossProduct(BA, CA);
-			K::Vector3 forward = K::Vector3(0.0f, 1.0f, 0.0f);
-			if(K::Vector3::DotProduct(N, forward) < 0.0f)
-			{
-				int tempNext = nextIndex;
-				int tempPrevious = previousIndex;
-				nextIndex = tempPrevious;
-				previousIndex = tempNext;
-			}
 
 			if (IsEar(currentIndex, nextIndex, previousIndex))
 			{
@@ -105,7 +134,7 @@ namespace K
 				mesh->indices.push_back(nextIndex + offset);
 				nodes.erase(nodes.begin() + i);
 			}
-			if(i < nodes.size() - 1)
+			if (i < nodes.size())
 				i++;
 			else
 				i = 0;
