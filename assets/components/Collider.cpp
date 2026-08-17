@@ -148,9 +148,8 @@ namespace K
 				float val1 = vertex1.y * vertex2.y;
 				float val2 = vertex2.y * vertex3.y;
 				float val3 = vertex3.y * vertex1.y;
-				K::Vector3 points[2];
+				std::vector<K::Vector3> points;
 				K::Vector3 direction;
-				int count = 0;
 				float t;
 				if (val1 <= 0.0f || val2 <= 0.0f || val3 <= 0.0f) 
 				{
@@ -159,11 +158,10 @@ namespace K
 						t = -vertex1.y / direction.y;
 					else
 						t = 0.0f;
-					if (t >= 0.0f && t < (vertex2 - vertex1).magnitude() && count < 2)
+					if (t >= 0.0f && t < (vertex2 - vertex1).magnitude())
 					{
 						K::Vector3 position = vertex1 + direction * t;
-						points[count] = position;
-						count++;
+						points.push_back(position);
 					}
 
 					direction = (vertex3 - vertex2).normalise();
@@ -171,11 +169,10 @@ namespace K
 						t = -vertex2.y / direction.y;
 					else
 						t = 0.0f;
-					if (t >= 0.0f && t < (vertex3 - vertex2).magnitude() && count < 2)
+					if (t >= 0.0f && t < (vertex3 - vertex2).magnitude())
 					{
 						K::Vector3 position = vertex2 + direction * t;
-						points[count] = position;
-						count++;
+						points.push_back(position);
 					}
 
 					direction = (vertex1 - vertex3).normalise();
@@ -183,25 +180,26 @@ namespace K
 						t = -vertex3.y / direction.y;
 					else
 						t = 0.0f;
-					if (t >= 0.0f && t < (vertex1 - vertex3).magnitude() && count < 2)
+					if (t >= 0.0f && t < (vertex1 - vertex3).magnitude())
 					{
 						K::Vector3 position = vertex3 + direction * t;
-						points[count] = position;
-						count++;
+						points.push_back(position);
 					}
 
-					if (count == 2) 
+					for(int j = 0; j < points.size(); j++)
 					{
+						int currentIndex = j;
+						int nextIndex = (j + 1) % points.size();
 						K::Vector3 triangleNormal = (mesh->vertices[index1].normal + mesh->vertices[index2].normal + mesh->vertices[index3].normal) / 3.0f;
 						K::Vector3 rotatedNormal;
 						K::Matrix4x4 rotationMatrix = K::Quaternion::Euler(this->parent->GetTransform()->rotation).QuaternionToMatrix();
 						K::MultiplyMatrixVector(triangleNormal, rotatedNormal, rotationMatrix);
-						K::Vector3 calculatedNormal = GetNormal(K::Vector3(points[0].x, points[0].z, 0.0f), K::Vector3(points[1].x, points[1].z, 0.0f));
+						K::Vector3 calculatedNormal = GetNormal(K::Vector3(points[currentIndex].x, points[currentIndex].z, 0.0f), K::Vector3(points[nextIndex].x, points[nextIndex].z, 0.0f));
 						float dotProduct = K::Vector3::DotProduct(rotatedNormal, calculatedNormal);
 
 						K::Vector3 pointA, pointB;
-						K::MultiplyMatrixVector(points[0], pointA, inverseModelMatrix);
-						K::MultiplyMatrixVector(points[1], pointB, inverseModelMatrix);
+						K::MultiplyMatrixVector(points[currentIndex], pointA, inverseModelMatrix);
+						K::MultiplyMatrixVector(points[nextIndex], pointB, inverseModelMatrix);
 
 						K::Line line;
 
