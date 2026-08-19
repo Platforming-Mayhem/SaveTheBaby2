@@ -1,1 +1,4 @@
-scenes/EarClipping.JAWS
+scenes/Menu.JAWS
+scenes/LevelOne.JAWS
+scenes/LevelTwo.JAWS
+scenes/LevelThree.JAWS

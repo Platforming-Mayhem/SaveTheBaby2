@@ -56,9 +56,9 @@ namespace K
 	{
 		if (K::Player::lastInteractedIndex != -1) 
 		{
+			K::Player::spawnPoint = *this->parent->GetTransform()->position;
 			*this->parent->GetTransform()->position = K::Player::spawnPoint;
 			K::Player::lastInteractedIndex = -1;
-			K::Player::spawnPoint = K::Vector3();
 		}
 	}
 

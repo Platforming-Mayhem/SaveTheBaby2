@@ -306,7 +306,7 @@ namespace K
 			this->mesh->vertices.clear();
 			this->mesh->indices.clear();
 		}
-		glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
+		//glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
 		//PolygonTest03();
 		//DrawPolygon(32, 1.0f);
 	}
