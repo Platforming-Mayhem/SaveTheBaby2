@@ -191,7 +191,7 @@ namespace K
 
 	void Mesh::Init() 
 	{
-		
+		glEnable(GL_CULL_FACE); 
 	}
 
 	void Mesh::Bind() 

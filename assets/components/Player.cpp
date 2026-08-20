@@ -341,6 +341,37 @@ namespace K
 			this->previousDirection = moveDirection;
 		}
 	}
+	
+	void Player::Render()
+	{
+		K::Vector3 up = K::Vector3(0.0f, 0.0f, 1.0f);
+		K::Matrix4x4 R = K::LookAt(*this->parent->GetTransform()->position, *K::Editor::cameraPosition, up);
+		float pitch, roll, yaw;
+		if (R.m[2][0] < 1.0)
+		{
+			if (R.m[2][0] > -1.0)
+			{
+				pitch = std::asin(-R.m[2][0]);
+				roll = std::atan2(R.m[2][1], R.m[2][2]);
+				yaw = std::atan2(R.m[1][0], R.m[0][0]);
+			}
+			else
+			{ // M[2][0] == -1
+				pitch = std::numbers::pi / 2.0;
+				yaw = 0.0;
+				roll = std::atan2(R.m[0][1], R.m[1][1]);
+			}
+		}
+		else
+		{ // M[2][0] == 1
+			pitch = -std::numbers::pi / 2.0;
+			yaw = 0.0;
+			roll = -std::atan2(R.m[0][1], R.m[1][1]);
+		}
+		float conversion = 180.0f / std::numbers::pi;
+		this->parent->GetTransform()->rotation->z = -pitch * conversion;
+		this->parent->GetTransform()->rotation->x = -yaw * conversion;
+	}
 
 	void Player::Unbind() 
 	{

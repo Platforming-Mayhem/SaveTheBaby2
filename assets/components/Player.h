@@ -66,6 +66,8 @@ namespace K
 
 		void Update() override;
 
+		void Render() override;
+
 		void UpdateEditor() override;
 
 		void RenderBind() override;
